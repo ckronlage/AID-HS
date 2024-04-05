@@ -154,6 +154,11 @@ def plot_controls_chart(ax, data_c, feature, color = 'green', cmap=False, fill_c
     ax.set_ylabel(return_features_title(feature, features_title), fontsize=18)
     ax.set_xlabel('age (years)', fontsize=18)
 
+def find_nearest(array, value):
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return idx, array[idx]
+
 def plot_patient_on_controls_charts(subj, features, controls_GAM, filename):
     '''
     Plot patient left and right features on normative trajectories
@@ -162,28 +167,58 @@ def plot_patient_on_controls_charts(subj, features, controls_GAM, filename):
     age_scan_p, sex_p= subj.get_demographic_features(["Age at preoperative", "Sex"])
 
     fig = plt.figure(figsize=(15,9))
-    gs1 = GridSpec(2, 3, wspace=0.5, hspace=0.2)
+    gs1 = GridSpec(2, 3, wspace=0.5, hspace=0.3, height_ratios=[1, 1])
     axs = []
 
     i=0
+    feat_out = {'lh':0, 'rh':0}
     for feature in features:
         axs.append(fig.add_subplot(gs1[i]))
-            
+        
         #plot controls chart
         data_c = controls_GAM[feature][sex_p]
         plot_controls_chart(axs[i], data_c, feature,  cmap='Greens_r', fill_color=True)
-            
+         
         #plot patient in chart
         for (hemi,color,label) in zip(['lh','rh'], ['navy','deeppink'],['Left hippocampus','Right hippocampus']):
             vals = subj.load_feature_values(feature, hemi)[0]
             axs[i].scatter(age_scan_p, vals, c=color,s=10, zorder=3, label=label)
             axs[i].text(age_scan_p+1, vals, f'{label[0:5]}',fontsize = 12, color=color)
+            
+            #find if value outside 5th and 95th normal range
+            idx_age, age_XX = find_nearest(data_c['age_range'], age_scan_p)
+            
+            if (any(ele in feature for ele in ['volume','thickness','gyrification'])) & (vals < data_c['predict_vals_intervals'][0.05][idx_age]):
+                feat_out[hemi] = feat_out[hemi]+1
+            elif (any(ele in feature for ele in ['curv'])) & (vals > data_c['predict_vals_intervals'][0.95][idx_age]):
+                feat_out[hemi] = feat_out[hemi]+1
+            else:
+                pass
         i=i+1
-        
+    #add legend
     axs.append(fig.add_subplot(gs1[i]))  
     h, l = axs[0].get_legend_handles_labels() # get labels and handles from ax1
     axs[i].legend(h, l, loc='upper left', fontsize='18')
     axs[i].axis('off')
+    
+    #add text
+    if (feat_out['rh'] == 0) & (feat_out['lh'] == 0):
+        textstr = "Hippocampi does not exhibit \nHS-abnormal features"
+    elif (feat_out['rh'] < 2) & (feat_out['lh'] < 2):
+        textstr = "Hippocampi does not exhibit \nconsistently HS-abnormal features"
+    elif (feat_out['lh'] > 2) & (feat_out['rh'] < 2) :
+        textstr = f"Left hippocampus exhibits \n{feat_out['lh']} features consistently HS-abnormal"
+    elif (feat_out['rh'] > 2) & (feat_out['lh'] < 2) :
+        textstr = f"Right hippocampus exhibits \n{feat_out['rh']} features consistently HS-abnormal"
+    elif (feat_out['rh'] > 2) & (feat_out['lh'] > 2) :
+        textstr = f"Both hippocampi exhibit \nat least {min(feat_out['lh'],feat_out['rh'])} features \nconsistently HS-abnormal \n\nNote: Could be a bilateral case"
+    else:
+        textstr = ''
+
+    props = dict(boxstyle="round", facecolor=[240/256,128/256,128/256,1], alpha=0.5)
+    axs[i].text(0.5, 0.5, textstr, transform=axs[i].transAxes, fontsize=18, verticalalignment="top", ha='center',  bbox=props, )
+    axs[i].axis('off')
+    
     plt.tight_layout()
     #save plot
     fig.savefig(filename, bbox_inches="tight")
@@ -202,7 +237,8 @@ def plot_abnormalities_direction_subject(subj, features, filename):
     '.inter_z.asym.combat.label-avg.gauss-curv_filtered_sm1':1,
     '.inter_z.asym.combat.label-avg.gyrification.sm1':-1,
     '.inter_z.asym.combat.label-avg.thickness.sm1':-1,
-    '.inter_z.asym.combat.label-avg.hippunfold_volume_icvcorr':-1
+    # '.inter_z.asym.combat.label-avg.hippunfold_volume_icvcorr':-1,
+    '.inter_z.asym.combat.label-avg.hippunfold_volume':-1
     }
 
     features_AI_title = {
@@ -210,7 +246,8 @@ def plot_abnormalities_direction_subject(subj, features, filename):
     '.inter_z.asym.combat.label-avg.gauss-curv_filtered_sm1': 'Increased intrinsic\ncurvature ',
     '.inter_z.asym.combat.label-avg.gyrification.sm1' : 'Decreased gyrification ',
     '.inter_z.asym.combat.label-avg.thickness.sm1' : 'Decreased thickness ',
-    '.inter_z.asym.combat.label-avg.hippunfold_volume_icvcorr' :'Decreased volume',
+    # '.inter_z.asym.combat.label-avg.hippunfold_volume_icvcorr' :'Decreased volume',
+    '.inter_z.asym.combat.label-avg.hippunfold_volume' :'Decreased volume',
     }
 
     #load abnormality thresholds
@@ -444,7 +481,8 @@ def write_prediction_subject(subj, output_file, cohort, filename_model):
     '.inter_z.asym.combat.label-avg.gauss-curv_filtered_sm1',
     '.inter_z.asym.combat.label-avg.gyrification.sm1',
     '.inter_z.asym.combat.label-avg.thickness.sm1',
-    '.inter_z.asym.combat.label-avg.hippunfold_volume_icvcorr',
+    # '.inter_z.asym.combat.label-avg.hippunfold_volume_icvcorr',
+    '.inter_z.asym.combat.label-avg.hippunfold_volume',
     ]
 
     #predict 
@@ -538,7 +576,8 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir,):
         '''
     # setup parameters
     base_feature_sets = [
-        '.label-avg.hippunfold_volume_icvcorr',
+        # '.label-avg.hippunfold_volume_icvcorr',
+         '.label-avg.hippunfold_volume',
         '.label-{}.thickness.sm1',
         '.label-{}.gyrification.sm1',
         '.label-{}.curvature.sm1',

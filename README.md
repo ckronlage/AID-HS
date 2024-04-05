@@ -94,7 +94,7 @@ You will find an example of the folder architecture for subject *H1P0003* on the
 
 Notes: 
 - Please ensure that the nifti scan is following the **BIDS standard** and is a compressed format (**gzip**).
-- AID-HS has been developped on **3D T1w scans acquired at 3T**. We cannot guarantee robustness and accuracy of the results on 2D scans nor scans acquired at lower (1.5T) or higher (7T) magnetic strenghs. 
+- AID-HS has been developped on **3D T1w scans acquired at 3T**. We cannot guarantee robustness and accuracy of the results on 2D scans nor scans acquired at lower (1.5T) or higher (7T) magnetic strenghts. 
 
 #### demographic data
 

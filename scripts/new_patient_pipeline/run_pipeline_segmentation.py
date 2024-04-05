@@ -103,8 +103,8 @@ class SubjectSeg:
             subject_input_dir= self.get_input_dir(input_dir)  
             #find modality
             try:
-                glob(opj(subject_input_dir, 'anat', f'*preop_{modality}*.nii*'))[0]
-                subject_path = glob(opj(subject_input_dir, 'anat', f'*preop_{modality}*.nii*'))
+                glob(opj(subject_input_dir, 'anat', f'*{modality}*.nii*'))[0]
+                subject_path = glob(opj(subject_input_dir, 'anat', f'*{modality}*.nii*'))
             except:
                 subject_path = glob(opj(subject_input_dir, 'anat', f'*preop_{modality}*.nii*'))
             if len(subject_path) > 1:
@@ -168,15 +168,15 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
     if use_parallel:
         #launch segmentation and feature extraction in parallel
         print(get_m(f'Run subjects in parallel', None, 'INFO'))   
-        if not skip_fs:
-            print(get_m(f'STEP 1: Neocortical segmentation', None, 'INFO'))
-            subject_ids_succeed  = run_segmentation_parallel(subjects, fs_dir=fs_dir, verbose=verbose)
-            subject_ids_failed= list(set(subject_ids).difference(subject_ids_succeed))
-            if len(subject_ids_failed):
-                print(get_m(f'One step of the pipeline has failed. Process has been aborted for subjects {subject_ids_failed}', None, 'ERROR'))
-                return False
-        else:
-            print(get_m(f'STEP 1: Skip neocortical segmentation', None, 'INFO'))   
+        # if not skip_fs:
+        #     print(get_m(f'STEP 1: Neocortical segmentation', None, 'INFO'))
+        #     subject_ids_succeed  = run_segmentation_parallel(subjects, fs_dir=fs_dir, verbose=verbose)
+        #     subject_ids_failed= list(set(subject_ids).difference(subject_ids_succeed))
+        #     if len(subject_ids_failed):
+        #         print(get_m(f'One step of the pipeline has failed. Process has been aborted for subjects {subject_ids_failed}', None, 'ERROR'))
+        #         return False
+        # else:
+        #     print(get_m(f'STEP 1: Skip neocortical segmentation', None, 'INFO'))   
         # prepare T1
         print(get_m(f'STEP 2a: Prepare T1 for hippunfold', None, 'INFO'))
         prepare_T1_parallel(subjects)
@@ -198,14 +198,14 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
         for subject in subjects:
             result = True
             #run FS segmentation
-            if not skip_fs:
-                print(get_m(f'STEP 1: Neocortical segmentation', subject.id, 'INFO'))
-                result = run_segmentation(subject, fs_dir=fs_dir, verbose=verbose)
-                if result == False:
-                    subject_ids_failed.append(subject.id)
-                    continue
-            else:
-                print(get_m(f'STEP 1: Skip neocortical segmentation', subject.id, 'INFO'))
+            # if not skip_fs:
+            #     print(get_m(f'STEP 1: Neocortical segmentation', subject.id, 'INFO'))
+            #     result = run_segmentation(subject, fs_dir=fs_dir, verbose=verbose)
+            #     if result == False:
+            #         subject_ids_failed.append(subject.id)
+            #         continue
+            # else:
+            #     print(get_m(f'STEP 1: Skip neocortical segmentation', subject.id, 'INFO'))
             #prepare T1
             print(get_m(f'STEP 2a: Prepare T1 for hippunfold', subject.id, 'INFO'))
             result = prepare_T1(subject)

@@ -163,31 +163,31 @@ def run_data_processing_new_subjects(subject_ids, site_code, output_dir=BASE_PAT
             avg.compute_avg_feature(feature)
 
 
-    ### CORRECT HIPPOCAMPAL VOLUMES FOR INTRACRANIAL VOLUME ###
-    # -----------------------------------------------------------------------------------------------
-    print("PROCESS : CORRECT HIPPOCAMPAL VOLUMES FOR INTRACRANIAL VOLUME")
+    # ### CORRECT HIPPOCAMPAL VOLUMES FOR INTRACRANIAL VOLUME ###
+    # # -----------------------------------------------------------------------------------------------
+    # print("PROCESS : CORRECT HIPPOCAMPAL VOLUMES FOR INTRACRANIAL VOLUME")
 
-    # create cohort to correct icv 
-    c_avg = AidhsCohort(hdf5_file_root="{site_code}_{group}_featurematrix_smoothed_avg.hdf5", dataset=tmp.name)
+    # # create cohort to correct icv 
+    # c_avg = AidhsCohort(hdf5_file_root="{site_code}_{group}_featurematrix_smoothed_avg.hdf5", dataset=tmp.name)
   
-    # create object 
-    icv_correct = Preprocess(
-       c_avg,
-       write_hdf5_file_root="{site_code}_{group}_featurematrix_smoothed_avg.hdf5",
-       data_dir=BASE_PATH,
-    )
+    # # create object 
+    # icv_correct = Preprocess(
+    #    c_avg,
+    #    write_hdf5_file_root="{site_code}_{group}_featurematrix_smoothed_avg.hdf5",
+    #    data_dir=BASE_PATH,
+    # )
 
-    # call function to comput ICV correction
-    for feature in features_smooth_avg:
-        if 'volume' in feature:
-            print(feature)
-            icv_correct.correct_volume_ICV(feature, params_icv_correct=os.path.join(PARAMS_PATH,ICV_PARAMS_FILE))
+    # # call function to comput ICV correction
+    # for feature in features_smooth_avg:
+    #     if 'volume' in feature:
+    #         print(feature)
+    #         icv_correct.correct_volume_ICV(feature, params_icv_correct=os.path.join(PARAMS_PATH,ICV_PARAMS_FILE))
 
 
-    #add features to list and update
-    base_features.append('.label-avg.hippunfold_volume_icvcorr')
-    features_smooth_avg = [feature.format('avg') for feature in base_features]
-    features_combat_avg = [feat.combat_feat(feature) for feature in features_smooth_avg]
+    # #add features to list and update
+    # base_features.append('.label-avg.hippunfold_volume_icvcorr')
+    # features_smooth_avg = [feature.format('avg') for feature in base_features]
+    # features_combat_avg = [feat.combat_feat(feature) for feature in features_smooth_avg]
 
     if do_harmonisation:
         ### COMPUTE HARMONISATION ###
