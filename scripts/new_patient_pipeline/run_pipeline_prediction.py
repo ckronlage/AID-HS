@@ -22,7 +22,17 @@ from aidhs.paths import DATA_PATH, BASE_PATH, HIPPUNFOLD_SUBJECTS_PATH, SUBFIELD
 from aidhs.train_evaluate import create_dataset_file, predict_subject
 from aidhs.tools_print import get_m
 
-
+def convert_bids_id(bids_id=None):
+        #clean id
+        list_exclude = ['{','}','_']
+        for l in list_exclude:
+            if l in bids_id:
+                bids_id = bids_id.replace(l, '')
+        #add 'sub' if needed  
+        if not 'sub-' in bids_id:
+            bids_id = 'sub-'+bids_id
+        return bids_id
+    
 class PDF(FPDF):    
     def lines(self):
         self.set_line_width(0.0)
@@ -365,12 +375,12 @@ def plot_segmentations_subject(subject, hippunfold_folder, output_file, hemis=['
     Plot HippUnfold segmentations for left and right hippocampi
     '''
     import SimpleITK as sitk
-
+    subject_bids = convert_bids_id(subject)
     fig, axs = plt.subplots(3, 2, figsize=(4,6), layout=None)
 
     for i,hemi in enumerate(hemis):
-        file_hipo = os.path.join(hippunfold_folder, 'hippunfold', f'sub-{subject}', 'anat', f'sub-{subject}_hemi-{hemi}_space-cropT1w_desc-preproc_T1w.nii.gz')
-        file_hipo_seg = os.path.join(hippunfold_folder, 'hippunfold', f'sub-{subject}', 'anat', f'sub-{subject}_hemi-{hemi}_space-cropT1w_desc-subfields_atlas-bigbrain_dseg.nii.gz')
+        file_hipo = os.path.join(hippunfold_folder, 'hippunfold', subject_bids, 'anat', f'{subject_bids}_hemi-{hemi}_space-cropT1w_desc-preproc_T1w.nii.gz')
+        file_hipo_seg = os.path.join(hippunfold_folder, 'hippunfold', subject_bids, 'anat', f'{subject_bids}_hemi-{hemi}_space-cropT1w_desc-subfields_atlas-bigbrain_dseg.nii.gz')
 
         #load images
         img_array = sitk.GetArrayFromImage(sitk.ReadImage(file_hipo, sitk.sitkFloat32))  # convert to sitk object
@@ -436,6 +446,7 @@ def plot_surfaces_subject(subject, hippunfold_folder, labels_file, output_file):
     '''
     Plot hippocampal surface folded extracted from HippUnfold
     '''
+    subject_bids = convert_bids_id(subject)
     #get labels
     labels = nb.load(labels_file).darrays[0].data
     subfields=list(set(labels))
@@ -448,7 +459,7 @@ def plot_surfaces_subject(subject, hippunfold_folder, labels_file, output_file):
     faces={}
     borders={}
     for i,hemi in enumerate(['L','R']):
-        file_fold = os.path.join(hippunfold_folder, 'hippunfold', f'sub-{subject}', 'surf', f'sub-{subject}_hemi-{hemi}_space-T1w_den-0p5mm_label-hipp_midthickness.surf.gii')
+        file_fold = os.path.join(hippunfold_folder, 'hippunfold', subject_bids, 'surf', f'{subject_bids}_hemi-{hemi}_space-T1w_den-0p5mm_label-hipp_midthickness.surf.gii')
         gii = nb.load(file_fold)
         vertices[hemi] = gii.get_arrays_from_intent('NIFTI_INTENT_POINTSET')[0].data
         faces[hemi] = gii.get_arrays_from_intent('NIFTI_INTENT_TRIANGLE')[0].data
@@ -470,7 +481,7 @@ def plot_surfaces_subject(subject, hippunfold_folder, labels_file, output_file):
 
     fig.savefig(output_file, dpi=96, transparent =True)
 
-def write_prediction_subject(subj, output_file, cohort, filename_model):
+def write_prediction_subject(subj, output_file, cohort, filename_model, csv_output):
     '''
     Predict subject with a given trained model
     Plot the predicted probabilities of being left HS, right HS or no HS
@@ -522,10 +533,11 @@ def write_prediction_subject(subj, output_file, cohort, filename_model):
                 y+height*1.05,
                 f'{round(scores_number[i]*100,1)}%',
                 ha='center', fontsize=18)
+    
 
     # plot info in text box in upper left in axes coords
-    group = ['control', 'HS patient', 'HS patient'][max_ind]
-    if group=='control':
+    group = ['no asymmetry', 'left HS', 'right HS'][max_ind]
+    if group=='no asymmetry':
         textstr = "\n".join(
             (
                 f"AID-HS classifier indicates \n features consistent with normal hippocampi \n (predicted probability = {round(smax[0][0]*100,1)}%)",
@@ -546,12 +558,22 @@ def write_prediction_subject(subj, output_file, cohort, filename_model):
     ax2.axis("off")
         #fig.tight_layout()
     fig.savefig(output_file)
+    
+    #save predictions in csv
+    values = {}
+    for score_name, score_number in zip(scores_name, scores_number):
+        values[f'score {score_name}'] = score_number
+    values['prediction'] = group
+    df = pd.DataFrame([values])
+    df.to_csv(csv_output)
+    
     return textstr
 
 def plot_dice_score_subject(subject, hippunfold_folder, output_file):
+    subject_bids = convert_bids_id(subject)
     txt=['Quality check of segmentation (scores):']
     for i, hemi in enumerate(['L','R']):
-        file_dice = os.path.join(hippunfold_folder, 'hippunfold', f'sub-{subject}', 'qc', f'sub-{subject}_hemi-{hemi}_desc-unetf3d_dice.tsv')
+        file_dice = os.path.join(hippunfold_folder, 'hippunfold', subject_bids, 'qc', f'{subject_bids}_hemi-{hemi}_desc-unetf3d_dice.tsv')
         df_temp = pd.read_csv(file_dice, sep = '\t', header=None)
         dice = round(df_temp.values[0][0],2)
         
@@ -656,10 +678,12 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir,):
         else:
             filename_model = os.path.join(EXPERIMENT_PATH, f'model_LogReg_Hippunfold features_trainwhole.sav')
         filename5 = os.path.join(output_dir_subj,f'{subject}_predictions_scores.png')
+        csv_output = os.path.join(output_dir_subj,f'{subject}_predictions.csv')
         write_prediction_subject(subj, 
                                  filename5,
                                  cohort = c_norm,
-                                 filename_model= filename_model,
+                                 filename_model = filename_model,
+                                 csv_output = csv_output
                                 )
         
 

@@ -22,7 +22,17 @@ from aidhs.aidhs_cohort_hip import AidhsSubject
 from neuroCombat import neuroCombat, neuroCombatFromTraining
 import aidhs.distributedCombat as dc
 
-
+def convert_bids_id(bids_id=None):
+        #clean id
+        list_exclude = ['{','}','_']
+        for l in list_exclude:
+            if l in bids_id:
+                bids_id = bids_id.replace(l, '')
+        #add 'sub' if needed  
+        if not 'sub-' in bids_id:
+            bids_id = 'sub-'+bids_id
+        return bids_id
+    
 class Preprocess:
     def __init__(self, cohort, site_codes=None, write_hdf5_file_root=None, data_dir=BASE_PATH, params_dir=PARAMS_PATH):
         self.log = logging.getLogger(__name__)
@@ -268,8 +278,9 @@ class Preprocess:
                 vals_lh = extract_volume_freesurfer(os.path.join(FS_SUBJECTS_PATH, 'sub-'+subject), hemi='lh')
                 vals_rh = extract_volume_freesurfer(os.path.join(FS_SUBJECTS_PATH, 'sub-'+subject), hemi='rh')
             elif 'hippunfold' in feature:
-                vals_lh = extract_volume_hippunfold(os.path.join(HIPPUNFOLD_SUBJECTS_PATH, 'hippunfold',f'sub-{subject}','anat', f'sub-{subject}_'), hemi='lh')
-                vals_rh = extract_volume_hippunfold(os.path.join(HIPPUNFOLD_SUBJECTS_PATH, 'hippunfold',f'sub-{subject}','anat', f'sub-{subject}_'), hemi='rh')
+                subject_bids=convert_bids_id(subject)
+                vals_lh = extract_volume_hippunfold(os.path.join(HIPPUNFOLD_SUBJECTS_PATH, 'hippunfold',subject_bids,'anat', f'{subject_bids}_'), hemi='lh')
+                vals_rh = extract_volume_hippunfold(os.path.join(HIPPUNFOLD_SUBJECTS_PATH, 'hippunfold',subject_bids,'anat', f'{subject_bids}_'), hemi='rh')
             else:
                 return
             if (vals_lh!=0) & (vals_rh!=0):

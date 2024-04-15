@@ -113,7 +113,7 @@ if __name__ == "__main__":
     #---------------------------------------------------------------------------------
     ### EXTRACT FEATURES ###
     
-    print(get_m(f'Call script preprocessing', None, 'SCRIPT 2'))
+    print(get_m(f'Extract features', None, 'SCRIPT 2'))
     extract_features_hdf5(list_ids=args.list_ids, 
                             sub_id=args.id, 
                             data_dir=DATA_PATH, 
