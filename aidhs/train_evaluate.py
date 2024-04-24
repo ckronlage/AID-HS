@@ -331,7 +331,7 @@ def compute_performances(Y, y_bin, y_pred, scores):
     #initialise results array
     performances['roc_auc']=np.zeros( y_bin.shape[1])
     performances['accurately_classified']=np.zeros(len(Y))
-    performances['accuracy_classes']=np.zeros(len(set(Y)))
+    performances['accuracy_classes']=np.zeros(3)
     
 
     if y_bin.shape[1]<2:
