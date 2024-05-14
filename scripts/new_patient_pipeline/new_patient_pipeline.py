@@ -36,10 +36,10 @@ if __name__ == "__main__":
                         help="File containing list of ids. Can be txt or csv with 'ID' column",
                         required=False,
                         )
-    parser.add_argument("-site",
-                        "--site_code",
-                        help="Site code",
-                        required=True,
+    parser.add_argument("-harmo","--harmo_code",
+                        default="noHarmo",
+                        help="Harmonisation code",
+                        required=False,
                         )
     parser.add_argument("--parallelise", 
                         help="parallelise segmentation", 
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     
     print(get_m(f'Call script preprocessing', None, 'SCRIPT 2'))
     run_pipeline_preprocessing(
-                    site_code=args.site_code,
+                    harmo_code=args.harmo_code,
                     list_ids=args.list_ids,
                     sub_id=args.id,
                     harmonisation_only = args.harmo_only,

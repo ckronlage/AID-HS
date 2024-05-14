@@ -686,7 +686,35 @@ class Preprocess:
             print('No data to combat harmonised')
             pass
 
-
+    def transfer_features_no_combat(self, feature_name):
+        # find adapted mask
+        if 'label-dentate' in feature_name:
+            mask = self.cohort.dentate_mask
+        elif 'label-avg' in feature_name:
+            mask = self.cohort.avg_mask
+        else:
+            mask = self.cohort.hippo_mask
+        # load combat parameters        
+        precombat_features = []
+        subjects_included=[]
+        for subject in self.subject_ids:
+            subj = AidhsSubject(subject, cohort=self.cohort)
+            if subj.has_features(feature_name):
+                lh = subj.load_feature_values(feature_name, hemi="lh")[mask]
+                rh = subj.load_feature_values(feature_name, hemi="rh")[mask]
+                combined_hemis = np.hstack([lh, rh])
+                precombat_features.append(combined_hemis)
+                subjects_included.append(subject)
+        #if matrix empty, pass
+        if precombat_features:
+            precombat_features = np.array(precombat_features)
+            post_combat_feature_name = self.feat.combat_feat(feature_name)
+            print("Transfer finished \n Saving data")
+            self.save_cohort_features(post_combat_feature_name, precombat_features, np.array(subjects_included))
+        else:
+            print('No data to transfer')
+            pass
+        
     def compute_mean_std_controls(self, feature, cohort, asym=False, params_norm=None):
         """retrieve controls from given cohort, intra-normalise feature and return mean and std for inter-normalisation"""
         # find adapted mask

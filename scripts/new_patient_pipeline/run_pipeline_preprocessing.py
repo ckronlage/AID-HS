@@ -28,16 +28,16 @@ def create_dataset_file(subjects_ids, save_file):
     df['split']=['test' for subject in subjects_ids]
     df.to_csv(save_file)
 
-def which_combat_file(site_code):
-    file_site=os.path.join(BASE_PATH, f'AIDHS_{site_code}', f'{site_code}_combat_parameters.hdf5')
-    if site_code in SITE_CODES:
+def which_combat_file(harmo_code):
+    file_harmo=os.path.join(BASE_PATH, f'AIDHS_{harmo_code}', f'{harmo_code}_combat_parameters.hdf5')
+    if harmo_code in SITE_CODES:
         print(get_m(f'Use combat parameters from AID-HS cohort', None, 'INFO'))
         return os.path.join(PARAMS_PATH, COMBAT_PARAMS_FILE)
-    elif os.path.isfile(file_site):
-        print(get_m(f'Use combat parameters from site', None, 'INFO'))
-        return file_site
+    elif os.path.isfile(file_harmo):
+        print(get_m(f'Use combat parameters from harmo {harmo_code}', None, 'INFO'))
+        return file_harmo
     else:
-        print(get_m(f'Could not find combat parameters for {site_code}', None, 'WARNING'))
+        print(get_m(f'Could not find combat parameters for {harmo_code}', None, 'WARNING'))
         return 'None'
 
 def check_demographic_file(demographic_file, subject_ids):
@@ -56,34 +56,8 @@ def check_demographic_file(demographic_file, subject_ids):
         sys.exit(get_m(f'Missing subject in the demographic file', None, 'ERROR'))
 
 
-def new_site_harmonisation(subject_ids, dataset, features, site_code, output_dir=BASE_PATH):
 
-    ### INITIALISE ###
-    #check enough subjects for harmonisation
-    if len(np.unique(subject_ids))<20:
-        print(get_m(f'We recommend to use at least 20 subjects for an acurate harmonisation of the data. Here you are using only {len(np.unique(subject_ids))}', None, 'WARNING'))
-
-
-    demographic_file = os.path.join(BASE_PATH, DEMOGRAPHIC_FEATURES_FILE)
-    check_demographic_file(demographic_file, subject_ids)
-   
-    ### COMBAT DISTRIBUTED DATA ###
-    #-----------------------------------------------------------------------------------------------
-    print(get_m(f'Compute combat harmonisation parameters for new site', None, 'STEP'))
-  
-    #create cohort for the new subject
-    c_smooth= AidhsCohort(hdf5_file_root='{site_code}_{group}_featurematrix_smoothed_avg.hdf5', dataset=dataset)
-    #create object combat
-    combat =Preprocess(c_smooth,
-                           site_codes=[site_code],
-                           write_hdf5_file_root="AIDHS_{site_code}/{site_code}_combat_parameters.hdf5",
-                           data_dir=output_dir)
-    #features names
-    for feature in features:
-        print(feature)
-        combat.get_combat_new_site_parameters(feature, demographic_file)
-
-def run_data_processing_new_subjects(subject_ids, site_code, output_dir=BASE_PATH, do_harmonisation=False, harmonisation_only=False ):
+def run_data_processing_new_subjects(subject_ids, harmo_code, output_dir=BASE_PATH, compute_harmonisation=False, harmonisation_only=False ):
 
     # initialise surface_features and smoothing kernel
     surface_features = {
@@ -127,7 +101,7 @@ def run_data_processing_new_subjects(subject_ids, site_code, output_dir=BASE_PAT
                         data_dir=output_dir)
 
     #file to store subject with outliers vertices
-    outliers_file=os.path.join(output_dir, 'list_subject_extreme_vertices.csv')
+    outliers_file=os.path.join(output_dir, f'AIDHS_{harmo_code}', 'list_subject_extreme_vertices.csv')
 
     #file with clipping parameters
     clipping_parameters = os.path.join(PARAMS_PATH, CLIPPING_PARAMS_FILE)
@@ -189,31 +163,69 @@ def run_data_processing_new_subjects(subject_ids, site_code, output_dir=BASE_PAT
     # features_smooth_avg = [feature.format('avg') for feature in base_features]
     # features_combat_avg = [feat.combat_feat(feature) for feature in features_smooth_avg]
 
-    if do_harmonisation:
-        ### COMPUTE HARMONISATION ###
+    if compute_harmonisation:
+        ### COMPUTE COMBAT PARAMS ###
         # -----------------------------------------------------------------------------------------------
-        print("PROCESS : RUN HARMONISATION")
-        new_site_harmonisation(subject_ids, dataset=tmp.name, features=features_smooth_avg, site_code=site_code, output_dir=BASE_PATH)
+        print("PROCESS : COMPUTE HARMONISATION PARAMETERS")
+        
+        #check enough subjects for harmonisation
+        if len(np.unique(subject_ids))<20:
+            print(get_m(f'We recommend to use at least 20 subjects for an acurate harmonisation of the data. Here you are using only {len(np.unique(subject_ids))}', None, 'WARNING'))
 
-    if not harmonisation_only:
-        ### COMBAT AVG FEATURES ###
-        # -----------------------------------------------------------------------------------------------
-        print("PROCESS : COMBAT AVG FEATURES")
-        # get combat parameters file
-        combat_params_file = which_combat_file(site_code)
-        # create cohort to combat
-        c_avg = AidhsCohort(hdf5_file_root="{site_code}_{group}_featurematrix_smoothed_avg.hdf5", dataset=tmp.name)
-        # create object combat
-        combat = Preprocess(
-        c_avg,
-        write_hdf5_file_root="{site_code}_{group}_featurematrix_combat_avg.hdf5",
-        data_dir=output_dir,
-        )
-        # call function to combat data
+        demographic_file = os.path.join(BASE_PATH, DEMOGRAPHIC_FEATURES_FILE)
+        check_demographic_file(demographic_file, subject_ids)
+    
+        ### COMBAT DISTRIBUTED DATA ###
+        #-----------------------------------------------------------------------------------------------
+        print(get_m(f'Compute combat harmonisation parameters for new site', None, 'STEP'))
+    
+        #create cohort for the new subject
+        c_smooth= AidhsCohort(hdf5_file_root='{site_code}_{group}_featurematrix_smoothed_avg.hdf5', dataset=tmp.name)
+        #create object combat
+        combat =Preprocess(c_smooth,
+                            site_codes=[harmo_code],
+                            write_hdf5_file_root="AIDHS_{site_code}/{site_code}_combat_parameters.hdf5",
+                            data_dir=output_dir)
+        #features names
         for feature in features_smooth_avg:
             print(feature)
-            combat.combat_new_subject(feature, combat_params_file=combat_params_file)
+            combat.get_combat_new_site_parameters(feature, demographic_file)
+    
 
+    if not harmonisation_only:
+        
+        if harmo_code != 'noHarmo':
+            ### COMBAT AVG FEATURES ###
+            # -----------------------------------------------------------------------------------------------
+            print("PROCESS : COMBAT AVG FEATURES")
+            # get combat parameters file
+            combat_params_file = which_combat_file(harmo_code)
+            # create cohort to combat
+            c_avg = AidhsCohort(hdf5_file_root="{site_code}_{group}_featurematrix_smoothed_avg.hdf5", dataset=tmp.name)
+            # create object combat
+            combat = Preprocess(
+                                c_avg,
+                                write_hdf5_file_root="{site_code}_{group}_featurematrix_combat_avg.hdf5",
+                                data_dir=output_dir,
+                                )
+            # call function to combat data
+            for feature in features_smooth_avg:
+                print(feature)
+                combat.combat_new_subject(feature, combat_params_file=combat_params_file)
+        else:
+            #transfer smoothed features as combat features
+            print(get_m(f'Transfer features - no harmonisation', subject_ids, 'STEP'))
+            #create cohort for the new subject
+            c_smooth = AidhsCohort(hdf5_file_root='{site_code}_{group}_featurematrix_smoothed_avg.hdf5', dataset=tmp.name)
+            #create object no combat
+            nocombat =Preprocess(c_smooth,
+                            write_hdf5_file_root='{site_code}_{group}_featurematrix_combat_avg.hdf5',
+                            data_dir=output_dir)
+            #features names
+            for feature in features_smooth_avg:
+                print(feature)
+                nocombat.transfer_features_no_combat(feature)
+            
         ###  ASYMMETRIES ON AVG COMBAT FEATURES ###
         # -----------------------------------------------------------------------------------------------
         print('PROCESS: ASYMMETRIES & NORMALISATION')
@@ -232,8 +244,8 @@ def run_data_processing_new_subjects(subject_ids, site_code, output_dir=BASE_PAT
 
     print(time.asctime(time.localtime(time.time())))
 
-def run_pipeline_preprocessing(site_code, list_ids=None, sub_id=None, output_dir=BASE_PATH,  harmonisation_only=False, verbose=False):
-    site_code = str(site_code)
+def run_pipeline_preprocessing(harmo_code, list_ids=None, sub_id=None, output_dir=BASE_PATH,  harmonisation_only=False, verbose=False):
+    harmo_code = str(harmo_code)
     subject_ids=None
     if list_ids != None:
         list_ids=os.path.join(DATA_PATH, list_ids)
@@ -250,26 +262,34 @@ def run_pipeline_preprocessing(site_code, list_ids=None, sub_id=None, output_dir
         subject_ids=np.array([sub_id])
     else:
         print(get_m(f'No ids were provided', None, 'ERROR'))
-        print(get_m(f'Please specify both subject(s) and site_code ...', None, 'ERROR'))
+        print(get_m(f'Please specify both subject(s) and harmonisation code ...', None, 'ERROR'))
         sys.exit(-1) 
-       
-    #check that combat parameters exist for this site or compute it
-    combat_params_file = which_combat_file(site_code)
-    if combat_params_file=='None':
-        print(get_m(f'Compute combat parameters for {site_code} with subjects {subject_ids}', None, 'INFO'))
-        do_harmonisation = True
-        #check that demographic file exist and is adequate
-        demographic_file = os.path.join(DATA_PATH, DEMOGRAPHIC_FEATURES_FILE) 
-        if os.path.isfile(demographic_file):
-            print(get_m(f'Use demographic file {demographic_file}', None, 'INFO'))
-            demographic_file = check_demographic_file(demographic_file, subject_ids) 
+    
+    if harmo_code != 'noHarmo':
+        #check that combat parameters exist for this harmo or compute it
+        combat_params_file = which_combat_file(harmo_code)
+        if combat_params_file=='None':
+            print(get_m(f'Compute combat parameters for {harmo_code} with subjects {subject_ids}', None, 'INFO'))
+            do_harmonisation = True
+            #check that demographic file exist and is adequate
+            demographic_file = os.path.join(DATA_PATH, DEMOGRAPHIC_FEATURES_FILE) 
+            if os.path.isfile(demographic_file):
+                print(get_m(f'Use demographic file {demographic_file}', None, 'INFO'))
+                demographic_file = check_demographic_file(demographic_file, subject_ids) 
+            else:
+                sys.exit(get_m(f'Could not find demographic file {demographic_file}', None, 'ERROR'))
         else:
-            sys.exit(get_m(f'Could not find demographic file {demographic_file}', None, 'ERROR'))
+            compute_harmonisation=False
     else:
-        do_harmonisation=False
-    #compute the combat parameters for a new site
-    run_data_processing_new_subjects(subject_ids, site_code=site_code, output_dir=output_dir, do_harmonisation=do_harmonisation, harmonisation_only=harmonisation_only)
-
+        print(get_m(f'No harmonisation done on the features', None, 'INFO'))
+        compute_harmonisation = False
+        combat_params_file = None
+    #compute the combat parameters for a new harmo
+    run_data_processing_new_subjects(subject_ids, 
+                                     harmo_code=harmo_code, 
+                                     output_dir=output_dir, 
+                                     compute_harmonisation = compute_harmonisation,
+                                     harmonisation_only=harmonisation_only)
 
 if __name__ == '__main__':
 
@@ -285,10 +305,11 @@ if __name__ == '__main__':
                         help="File containing list of ids. Can be txt or csv with 'ID' column",
                         required=False,
                         )
-    parser.add_argument("-site",
-                        "--site_code",
-                        help="Site code",
-                        required=True,
+    parser.add_argument("-harmo",
+                        "--harmo_code",
+                        default="noHarmo",
+                        help="harmonisation code",
+                        required=False,
                         )
     parser.add_argument('--harmo_only', 
                         action="store_true", 
@@ -308,7 +329,7 @@ if __name__ == '__main__':
     print(args)
    
     run_pipeline_preprocessing(
-                    site_code=args.site_code,
+                    harmo_code=args.harmo_code,
                     list_ids=args.list_ids,
                     sub_id=args.id,
                     harmonisation_only = args.harmo_only,
