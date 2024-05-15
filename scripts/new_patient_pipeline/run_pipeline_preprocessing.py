@@ -270,7 +270,7 @@ def run_pipeline_preprocessing(harmo_code, list_ids=None, sub_id=None, output_di
         combat_params_file = which_combat_file(harmo_code)
         if combat_params_file=='None':
             print(get_m(f'Compute combat parameters for {harmo_code} with subjects {subject_ids}', None, 'INFO'))
-            do_harmonisation = True
+            compute_harmonisation = True
             #check that demographic file exist and is adequate
             demographic_file = os.path.join(DATA_PATH, DEMOGRAPHIC_FEATURES_FILE) 
             if os.path.isfile(demographic_file):
