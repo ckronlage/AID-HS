@@ -873,6 +873,8 @@ def extract_volume_freesurfer(path, hemi="lh",):
 def extract_totalbrainvolume_freesurfer(path,):
     # extract intracranial volume from freesurfer segmentation 
     volume_file = os.path.join(path, FS_STATS_FILE)
+    if not os.path.isfile(volume_file):
+        volume_file = os.path.join(path, 'stats/aseg.stats')
     with open(volume_file,"r") as fp:
         for line in fp:
             if  'Measure EstimatedTotalIntraCranialVol' in line:
