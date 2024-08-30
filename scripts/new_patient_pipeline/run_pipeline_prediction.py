@@ -136,6 +136,7 @@ def plot_controls_chart(ax, data_c, feature, color = 'green', cmap=False, fill_c
 
     #plot percentiles 
     percentiles = np.sort(list(set(data_c['predict_vals_intervals'])))
+    print(percentiles)
     for p, percentile in enumerate(percentiles):
         if cmap != False:
             color = cmap(abs(0.5-percentile))
@@ -186,6 +187,7 @@ def plot_patient_on_controls_charts(subj, features, controls_GAM, filename):
         axs.append(fig.add_subplot(gs1[i]))
         
         #plot controls chart
+        print(sex_p)
         data_c = controls_GAM[feature][sex_p]
         plot_controls_chart(axs[i], data_c, feature,  cmap='Greens_r', fill_color=True)
          
