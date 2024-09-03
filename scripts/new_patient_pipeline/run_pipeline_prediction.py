@@ -187,7 +187,6 @@ def plot_patient_on_controls_charts(subj, features, controls_GAM, filename):
         axs.append(fig.add_subplot(gs1[i]))
         
         #plot controls chart
-        print(sex_p)
         data_c = controls_GAM[feature][sex_p]
         plot_controls_chart(axs[i], data_c, feature,  cmap='Greens_r', fill_color=True)
          
@@ -215,15 +214,15 @@ def plot_patient_on_controls_charts(subj, features, controls_GAM, filename):
     
     #add text
     if (feat_out['rh'] == 0) & (feat_out['lh'] == 0):
-        textstr = "Hippocampi does not exhibit \nHS-abnormal features"
+        textstr = "Neither hippocampus exhibits\nclear features of hippocampal sclerosis"
     elif (feat_out['rh'] < 2) & (feat_out['lh'] < 2):
-        textstr = "Hippocampi does not exhibit \nconsistently HS-abnormal features"
+        textstr = "Neither hippocampus exhibits\nclear features of hippocampal sclerosis"
     elif (feat_out['lh'] > 2) & (feat_out['rh'] < 2) :
-        textstr = f"Left hippocampus exhibits \n{feat_out['lh']} features consistently HS-abnormal"
+        textstr = f"Left hippocampus\n exhibits {feat_out['lh']}/5 features\nconsistent with HS"
     elif (feat_out['rh'] > 2) & (feat_out['lh'] < 2) :
-        textstr = f"Right hippocampus exhibits \n{feat_out['rh']} features consistently HS-abnormal"
+        textstr = f"Right hippocampus\n exhibits {feat_out['rh']}/5 features\nconsistent with HS"
     elif (feat_out['rh'] > 2) & (feat_out['lh'] > 2) :
-        textstr = f"Both hippocampi exhibit \nat least {min(feat_out['lh'],feat_out['rh'])} features \nconsistently HS-abnormal \n\nNote: Could be a bilateral case"
+        textstr = f"Left and right hippocampi exibit\nrespectively {feat_out['lh']}/5 and {feat_out['rh']}/5 features\n consistent with HS\n\nNote: This could be bilateral HS"
     else:
         textstr = ''
 
@@ -542,15 +541,15 @@ def write_prediction_subject(subj, output_file, cohort, filename_model, csv_outp
     if group=='no asymmetry':
         textstr = "\n".join(
             (
-                f"AID-HS classifier indicates \n features consistent with normal hippocampi \n (predicted probability = {round(smax[0][0]*100,1)}%)",
+                f"AID-HS indicates asymmetries\nconsistent with no specific \n lateralisation \n (predicted probability = {round(smax[0][0]*100,1)}%)",
                 "",
-                f"Note: the predcited probability of {side_ipsi} HS \n is relatively higher than \n of {side_contra} HS",
+                f"Note: the predicted probability of {side_ipsi} HS \n is relatively higher than \n of {side_contra} HS",
                 )
         )
     else:
         textstr = "\n".join(
             (
-                f"AID-HS classifier indicates \n features consistent with \n {side_ipsi} hippocampal sclerosis \n (predicted probability={round(smax[0][max_ind]*100,1)}%)",
+                f"AID-HS indicates assymetries\nconsistent with {side_ipsi} hippocampal sclerosis \n (predicted probability={round(smax[0][max_ind]*100,1)}%)",
                 )
         )
 
