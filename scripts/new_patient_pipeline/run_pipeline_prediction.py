@@ -20,6 +20,7 @@ from aidhs.aidhs_cohort_hip import AidhsCohort, AidhsSubject
 from aidhs.paths import DATA_PATH, HIPPUNFOLD_SUBJECTS_PATH, SUBFIELDS_LABEL_FILE, EXPERIMENT_PATH, SITE_CODES, PARAMS_PATH
 from aidhs.train_evaluate import create_dataset_file, predict_subject
 from aidhs.tools_pipeline import get_m
+import aidhs.hippunfold_plotting as plotting
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -437,7 +438,6 @@ def plot_segmentations_subject(subject, hippunfold_folder, output_file, hemis=['
 
 def create_surf_plot(borders, faces, vertices, cmap=False, file='/tmp/tmp.png'):
     """plot and reload surface images"""
-    from hippunfold_toolbox import plotting
     fig, ax_temp = plt.subplots(nrows=1, ncols=1, figsize=(8,8), subplot_kw={'projection': "3d"})
     plotting.surfplot_cdata(ax_temp,borders,faces,vertices, cmap=cmap)
     ax_temp.view_init(elev=90, azim=-90)
