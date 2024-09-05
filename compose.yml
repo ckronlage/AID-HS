@@ -4,7 +4,7 @@ services:
     platform: "linux/amd64"
     volumes:
       - /home/mathilde/Documents/projects/surHippo/processes/240830_test_aidhs_docker:/data
-    user: $DOCKER_USER
+    user: $DOCKER_AIDHS_USER
     deploy:
       resources:
         reservations:
