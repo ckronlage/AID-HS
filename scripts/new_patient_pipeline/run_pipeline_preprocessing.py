@@ -17,7 +17,7 @@ import argparse
 from aidhs.aidhs_cohort_hip import AidhsCohort
 from aidhs.data_preprocessing import Preprocess, Feature
 from aidhs.paths import DATA_PATH, BASE_PATH, PARAMS_PATH, ICV_PARAMS_FILE, NORM_CONTROLS_PARAMS_FILE, COMBAT_PARAMS_FILE, CLIPPING_PARAMS_FILE, SITE_CODES, DEMOGRAPHIC_FEATURES_FILE
-from aidhs.tools_print import get_m
+from aidhs.tools_pipeline import get_m
 
 
 def create_dataset_file(subjects_ids, save_file):

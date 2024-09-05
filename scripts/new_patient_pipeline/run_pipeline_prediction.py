@@ -15,12 +15,14 @@ import subprocess
 import pickle
 from PIL import Image
 import tempfile
-from sklearn.utils.extmath import softmax
 
 from aidhs.aidhs_cohort_hip import AidhsCohort, AidhsSubject
-from aidhs.paths import DATA_PATH, BASE_PATH, HIPPUNFOLD_SUBJECTS_PATH, SUBFIELDS_LABEL_FILE, EXPERIMENT_PATH, SITE_CODES, PARAMS_PATH
+from aidhs.paths import DATA_PATH, HIPPUNFOLD_SUBJECTS_PATH, SUBFIELDS_LABEL_FILE, EXPERIMENT_PATH, SITE_CODES, PARAMS_PATH
 from aidhs.train_evaluate import create_dataset_file, predict_subject
-from aidhs.tools_print import get_m
+from aidhs.tools_pipeline import get_m
+
+import warnings
+warnings.filterwarnings('ignore')
 
 def convert_bids_id(bids_id=None):
         #clean id
@@ -136,7 +138,6 @@ def plot_controls_chart(ax, data_c, feature, color = 'green', cmap=False, fill_c
 
     #plot percentiles 
     percentiles = np.sort(list(set(data_c['predict_vals_intervals'])))
-    print(percentiles)
     for p, percentile in enumerate(percentiles):
         if cmap != False:
             color = cmap(abs(0.5-percentile))
@@ -170,7 +171,7 @@ def find_nearest(array, value):
     idx = (np.abs(array - value)).argmin()
     return idx, array[idx]
 
-def plot_patient_on_controls_charts(subj, features, controls_GAM, filename):
+def plot_patient_on_controls_charts(subj, features, controls_GAM, filename, harmo_code="noHarmo",):
     '''
     Plot patient left and right features on normative trajectories
     '''
@@ -212,19 +213,24 @@ def plot_patient_on_controls_charts(subj, features, controls_GAM, filename):
     axs[i].legend(h, l, loc='upper left', fontsize='18')
     axs[i].axis('off')
     
-    #add text
-    if (feat_out['rh'] == 0) & (feat_out['lh'] == 0):
-        textstr = "Neither hippocampus exhibits\nclear features of hippocampal sclerosis"
-    elif (feat_out['rh'] < 2) & (feat_out['lh'] < 2):
-        textstr = "Neither hippocampus exhibits\nclear features of hippocampal sclerosis"
-    elif (feat_out['lh'] > 2) & (feat_out['rh'] < 2) :
-        textstr = f"Left hippocampus\n exhibits {feat_out['lh']}/5 features\nconsistent with HS"
-    elif (feat_out['rh'] > 2) & (feat_out['lh'] < 2) :
-        textstr = f"Right hippocampus\n exhibits {feat_out['rh']}/5 features\nconsistent with HS"
-    elif (feat_out['rh'] > 2) & (feat_out['lh'] > 2) :
-        textstr = f"Left and right hippocampi exibit\nrespectively {feat_out['lh']}/5 and {feat_out['rh']}/5 features\n consistent with HS\n\nNote: This could be bilateral HS"
+    
+    #add warning on curve should not be analysed if no harmonisation
+    if harmo_code == "noHarmo":
+        textstr = "Growth curves were created with\ndata that harmonised to adjust\n for between-scanner differences.\nYour data have not been harmonised,\n making this analysis unreliable.\n\nPerformance of the classifier\n should remain unaffected"
     else:
-        textstr = ''
+        #add analysis text
+        if (feat_out['rh'] == 0) & (feat_out['lh'] == 0):
+            textstr = "Neither hippocampus exhibits\nclear features of hippocampal sclerosis"
+        elif (feat_out['rh'] < 2) & (feat_out['lh'] < 2):
+            textstr = "Neither hippocampus exhibits\nclear features of hippocampal sclerosis"
+        elif (feat_out['lh'] > 2) & (feat_out['rh'] < 2) :
+            textstr = f"Left hippocampus\n exhibits {feat_out['lh']}/5 features\nconsistent with HS"
+        elif (feat_out['rh'] > 2) & (feat_out['lh'] < 2) :
+            textstr = f"Right hippocampus\n exhibits {feat_out['rh']}/5 features\nconsistent with HS"
+        elif (feat_out['rh'] > 2) & (feat_out['lh'] > 2) :
+            textstr = f"Left and right hippocampi exibit\nrespectively {feat_out['lh']}/5 and {feat_out['rh']}/5 features\n consistent with HS\n\nNote: This could be bilateral HS"
+        else:
+            textstr = ''
 
     props = dict(boxstyle="round", facecolor=[240/256,128/256,128/256,1], alpha=0.5)
     axs[i].text(0.5, 0.5, textstr, transform=axs[i].transAxes, fontsize=18, verticalalignment="top", ha='center',  bbox=props, )
@@ -429,7 +435,7 @@ def plot_segmentations_subject(subject, hippunfold_folder, output_file, hemis=['
 
         fig.savefig(output_file, dpi=96, transparent =True)
 
-def create_surf_plot(borders, faces, vertices, cmap=False, file='./tmp.png'):
+def create_surf_plot(borders, faces, vertices, cmap=False, file='/tmp/tmp.png'):
     """plot and reload surface images"""
     from hippunfold_toolbox import plotting
     fig, ax_temp = plt.subplots(nrows=1, ncols=1, figsize=(8,8), subplot_kw={'projection': "3d"})
@@ -450,8 +456,8 @@ def plot_surfaces_subject(subject, hippunfold_folder, labels_file, output_file):
     subject_bids = convert_bids_id(subject)
     #get labels
     labels = nb.load(labels_file).darrays[0].data
-    subfields=list(set(labels))
-    subfields_name={1:'Sub', 2:'CA1', 3:'CA2', 4:'CA3', 5:'CA4', 6:'DG'} 
+    # subfields=list(set(labels))
+    # subfields_name={1:'Sub', 2:'CA1', 3:'CA2', 4:'CA3', 5:'CA4', 6:'DG'} 
     colors =  np.array([[0,0,128/255], [0,79/255,1], [0,200/255,1],  [0,1,108/255], [1,188/255,0], [128/255,128/255,128/255] ])
     
     #get surfaces and plot
@@ -591,11 +597,12 @@ def plot_dice_score_subject(subject, hippunfold_folder, output_file):
     #fig.tight_layout()
     fig.savefig(output_file)
 
-def generate_prediction_report(subject_ids, hippunfold_dir, output_dir,):
+def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_code="noHarmo"):
     ''' Create report of hippocampal abnormalities
     inputs: 
         subject_ids: subjects ID
         output_dir: directory to save final reports
+        harmo_code: code for harmonisation or "noHarmo" if no harmonisation
         '''
     # setup parameters
     base_feature_sets = [
@@ -614,7 +621,7 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir,):
     file_gam = os.path.join(PARAMS_PATH, 'GAM_curves_controls.pkl')   
     with open(file_gam, 'rb') as handle:
         controls_GAM = pickle.load(handle)
-
+    
     for subject in subject_ids:
 
         # create dataset containing subject
@@ -634,21 +641,21 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir,):
         
         #-----------------------------------------
         # plot segmentation hippocampus 
-        filename1 = os.path.join(output_dir_subj, f'{subject}_hippo_segmentation.png')
+        filename1 = os.path.join(output_dir_subj, f'hippo_segmentation.png')
         plot_segmentations_subject(subject, hippunfold_dir, filename1)
 
         # add dices scores segmentation
-        filename1bis = os.path.join(output_dir_subj, f'{subject}_hippo_segmentation_dices.png')
+        filename1bis = os.path.join(output_dir_subj, f'hippo_segmentation_dices.png')
         plot_dice_score_subject(subject, hippunfold_dir, filename1bis)
 
         #add legend subfields
-        filename1bis2 = os.path.join(output_dir_subj, f'{subject}_hippo_segmentation_legend.png')
+        filename1bis2 = os.path.join(output_dir_subj, f'hippo_segmentation_legend.png')
         return_labels_cmap(filename1bis2)
 
         #-----------------------------------------
         # plot surarface hippocampus 
         labels_file = SUBFIELDS_LABEL_FILE
-        filename2 = os.path.join(output_dir_subj, f'{subject}_hippo_surfaces.png')
+        filename2 = os.path.join(output_dir_subj, f'hippo_surfaces.png')
         plot_surfaces_subject(subject, hippunfold_dir, labels_file, output_file=filename2)
 
         #-----------------------------------------
@@ -656,8 +663,8 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir,):
         features = ['.combat'+feature.format('avg') for feature in base_feature_sets]
         subj = AidhsSubject(subject, cohort=c_combat)
 
-        filename3 = os.path.join(output_dir_subj,f'{subject}_normative_charts.png')
-        plot_patient_on_controls_charts(subj, features, controls_GAM, filename3)
+        filename3 = os.path.join(output_dir_subj,f'normative_charts.png')
+        plot_patient_on_controls_charts(subj, features, controls_GAM, filename3, harmo_code)
         
 
         #-----------------------------------------
@@ -665,7 +672,7 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir,):
         features = ['.inter_z.asym.combat'+feature.format('avg') for feature in base_feature_sets]
         subj = AidhsSubject(subject, cohort=c_norm)  
 
-        filename4 = os.path.join(output_dir_subj,f'{subject}_abnormalities_directions.png')
+        filename4 = os.path.join(output_dir_subj,f'abnormalities_directions.png')
         plot_abnormalities_direction_subject(subj, features[::-1], filename= filename4)
         
         #-----------------------------------------
@@ -678,8 +685,8 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir,):
             filename_model = os.path.join(EXPERIMENT_PATH, f'model_LogReg_Hippunfold features_{site_code}.sav')
         else:
             filename_model = os.path.join(EXPERIMENT_PATH, f'model_LogReg_Hippunfold features_trainwhole.sav')
-        filename5 = os.path.join(output_dir_subj,f'{subject}_predictions_scores.png')
-        csv_output = os.path.join(output_dir_subj,f'{subject}_predictions.csv')
+        filename5 = os.path.join(output_dir_subj,f'predictions_scores.png')
+        csv_output = os.path.join(output_dir_subj,f'predictions.csv')
         write_prediction_subject(subj, 
                                  filename5,
                                  cohort = c_norm,
@@ -768,7 +775,8 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir,):
 
         print(f'Report ready at {file_path}')
 
-def run_pipeline_prediction(list_ids=None, sub_id=None, verbose=False):
+def run_pipeline_prediction(list_ids=None, sub_id=None, harmo_code='noHarmo', verbose=False):
+    harmo_code = str(harmo_code)
     subject_ids=None
     if list_ids != None:
         list_ids=os.path.join(DATA_PATH, list_ids)
@@ -790,7 +798,8 @@ def run_pipeline_prediction(list_ids=None, sub_id=None, verbose=False):
     generate_prediction_report(
         subject_ids,
         hippunfold_dir=HIPPUNFOLD_SUBJECTS_PATH,
-        output_dir=os.path.join(DATA_PATH,'output','prediction_reports'),
+        output_dir=os.path.join(DATA_PATH,'output','predictions_reports'),
+        harmo_code = harmo_code,
     )
 
 if __name__ == "__main__":
@@ -804,6 +813,11 @@ if __name__ == "__main__":
     parser.add_argument("-ids","--list_ids",
                         default=None,
                         help="File containing list of ids. Can be txt or csv with 'ID' column",
+                        required=False,
+                        )
+    parser.add_argument("-harmo_code","--harmo_code",
+                        default="noHarmo",
+                        help="Harmonisation code",
                         required=False,
                         )
     parser.add_argument("--debug_mode", 
@@ -820,6 +834,7 @@ if __name__ == "__main__":
                     list_ids=args.list_ids,
                     sub_id=args.id,
                     verbose = args.debug_mode,
+                    harmo_code=args.harmo_code
                     )
 
 

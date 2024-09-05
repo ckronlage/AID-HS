@@ -35,7 +35,7 @@ base_features=[
     # '.label-{}.gauss-curv_filtered_sm1',
     # '.label-{}.gyrification.sm1',
     # '.label-{}.thickness.sm1',
-    '.label-avg.hippunfold_volume_icvcorr',
+    '.label-avg.hippunfold_volume',
     ]
 feat = Feature()
 features_smooth_avg = [feature.format('avg') for feature in base_features]

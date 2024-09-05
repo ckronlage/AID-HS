@@ -120,6 +120,7 @@ def extract_features_hdf5(list_ids=None, sub_id=None, data_dir=None, output_dir=
     subject_id=None
     subject_ids=None
     if list_ids != None:
+        list_ids=os.path.join(DATA_PATH, list_ids)
         try:
             sub_list_df=pd.read_csv(list_ids)
             subject_ids=np.array(sub_list_df.ID.values)
@@ -153,7 +154,7 @@ def extract_features_hdf5(list_ids=None, sub_id=None, data_dir=None, output_dir=
     for subject_id in subject_ids:
         # print(subject_id)
         bids_id = convert_bids_id(subject_id)
-        subject_dir = os.path.join(data_dir, 'output', 'bids_outputs', bids_id, 'surf')
+        subject_dir = os.path.join(data_dir, 'hippunfold', bids_id, 'surf_aidhs')
         print(subject_dir)
         print('INFO: Extract features for subject {}'.format(subject_id))
         for feature_name in features:

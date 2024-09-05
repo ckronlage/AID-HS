@@ -7,7 +7,7 @@ from scripts.new_patient_pipeline.run_pipeline_segmentation import run_pipeline_
 from scripts.preprocess.extract_features_hdf5 import extract_features_hdf5
 from scripts.new_patient_pipeline.run_pipeline_preprocessing import run_pipeline_preprocessing
 from scripts.new_patient_pipeline.run_pipeline_prediction import run_pipeline_prediction
-from aidhs.tools_print import get_m
+from aidhs.tools_pipeline import get_m
 from aidhs.paths import DATA_PATH, BASE_PATH, FS_SUBJECTS_PATH, HIPPUNFOLD_SUBJECTS_PATH, BIDS_SUBJECTS_PATH
 
 class Logger(object):
@@ -36,7 +36,7 @@ if __name__ == "__main__":
                         help="File containing list of ids. Can be txt or csv with 'ID' column",
                         required=False,
                         )
-    parser.add_argument("-harmo","--harmo_code",
+    parser.add_argument("-harmo_code","--harmo_code",
                         default="noHarmo",
                         help="Harmonisation code",
                         required=False,
@@ -73,7 +73,8 @@ if __name__ == "__main__":
 
      
     #write terminal output in a log
-    file_path=os.path.join(os.path.abspath(os.getcwd()), 'AIDHS_pipeline_'+time.strftime('%Y-%m-%d-%H-%M-%S') + '.log')
+    os.makedirs(os.path.join(BASE_PATH, 'logs'), exist_ok=True)
+    file_path=os.path.join(BASE_PATH, 'logs', 'AIDHS_pipeline_'+time.strftime('%Y-%m-%d-%H-%M-%S') + '.log')
     sys.stdout = Logger(sys.stdout,file_path)
     sys.stderr = Logger(sys.stderr, file_path)
     
@@ -116,7 +117,7 @@ if __name__ == "__main__":
     print(get_m(f'Extract features', None, 'SCRIPT 2'))
     extract_features_hdf5(list_ids=args.list_ids, 
                             sub_id=args.id, 
-                            data_dir=DATA_PATH, 
+                            data_dir=HIPPUNFOLD_SUBJECTS_PATH, 
                             output_dir=BASE_PATH)
 
     #---------------------------------------------------------------------------------
@@ -140,6 +141,7 @@ if __name__ == "__main__":
                     list_ids=args.list_ids,
                     sub_id=args.id,
                     verbose = args.debug_mode,
+                    harmo_code=args.harmo_code
                     )
         if result == False:
             print(get_m(f'Prediction and creating report has failed at least for one subject. See log at {file_path}. Consider fixing errors or excluding these subjects before re-running the pipeline. Segmentation will be skipped for subjects already processed', None, 'SCRIPT 3'))    
