@@ -1,5 +1,8 @@
 # Docker container
 
+
+**WARNING: Installation and use not yet tested on Windows. Please do let us know if you are succeeding / failing to use the docker container on Windows**
+
 The Docker container has all the prerequisites embedded on it which makes it easier to install and compatible with most of the OS systems. 
 
 Notes: 
@@ -35,24 +38,19 @@ In order to run the docker, you'll need to configure a couple of files
     volumes:
       - /mnt/datadrive/aidhs-data:/data
 ```
-5. In order to use docker as a non-root user, the compose.yml file pass the current user ID to the docker. For that we recommand to add a DOCKER_USER_AIDHS variable in your bashrc file by running: 
-```bash
-echo 'export DOCKER_AIDHS_USER="$(id -u):$(id -g)"' >> ~/.bashrc
-```
-Or to always export the this variable before using the docker 
 
 ## Verify installation
 To verify that you have installed all packages, set up paths correctly, and downloaded all data, this verification script will run the pipeline to predict the HS side on a test patient which already has the hippocampal segmentation done. It takes approximately 1 minutes to run.
 
 ```bash
-docker-compose run aidhs pytest
+DOCKER_USER="$(id -u):$(id -g)" docker-compose run aidhs pytest
 ```
 
 ### Errors
 If you run into errors at this stage and need help, you can re-run by changing the last line of the command by the command below to save the terminal outputs in a txt file. Please send `pytest_errors.log` to us so we can work with you to solve any problems. [How best to reach us.](#contact)
 
 ```bash
-docker-compose run aidhs pytest -s | tee pytest_errors.log
+DOCKER_USER="$(id -u):$(id -g)" docker-compose run aidhs pytest -s | tee pytest_errors.log
 ```
 
 You will find `pytest_errors.log` in the folder where you launched the command. 

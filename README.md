@@ -20,9 +20,9 @@ The AID-HS software is intended for research purposes only and has not been revi
 
 ### Installations available 
 You can install and use the AID-HS pipeline with :
-- [**docker container**]() (STILL IN PROGRESS) recommended for easy installation of the pipeline as all the prerequisite packages are already embeded into the container. Note: Dockers are not working on High Performance Computing (HCP) systems.
+- [**docker container**](/docs/install_docker.md) (STILL IN PROGRESS) recommended for easy installation of the pipeline as all the prerequisite packages are already embeded into the container. Note: Dockers are not working on High Performance Computing (HCP) systems.
 - **singularity container (COMING SOON)** enables to run a container on High Performance Computing (HCP) systems. 
-- **native installation**: Not supported 
+- [**native installation**](/docs/install_native.md): Not supported 
 
 ### Running the pipeline 
 Once installed you will be able to use the AID-HS pipeline on your data following the steps:
@@ -34,7 +34,7 @@ Once installed you will be able to use the AID-HS pipeline on your data followin
 
 **What is the harmonisation process ?**
 
-Scanners can induce a bias in the MRI data. The MELD pipeline recommends adjusting for these scanners differences by running a preliminary harmonisation step to compute the harmonisation parameters for that specific scanner. Note: this step needs to be run only once, and requires data from at least 20 subjects acquired on the same scanner and demographic information (e.g age and sex). See [harmonisation instructions](https://meld-graph.readthedocs.io/en/latest/harmonisation.html) for more details. 
+Scanners can induce a bias in the MRI data. To use the full potential of the AID-HS tool, we recommend adjusting for these scanners differences by running a preliminary harmonisation step to compute the harmonisation parameters for that specific scanner. Note: this step needs to be run only once, and requires data from at least 20 subjects acquired on the same scanner and demographic information (e.g age and sex). See [harmonisation instructions]() for more details. 
 
 Note: The MELD pipeline can also be run without harmonisation, with a small drop in performance.
 
