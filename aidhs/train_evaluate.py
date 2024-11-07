@@ -331,7 +331,7 @@ def compute_performances(Y, y_bin, y_pred, scores):
     #initialise results array
     performances['roc_auc']=np.zeros( y_bin.shape[1])
     performances['accurately_classified']=np.zeros(len(Y))
-    performances['accuracy_classes']=np.zeros(len(set(Y)))
+    performances['accuracy_classes']=np.zeros(3)
     
 
     if y_bin.shape[1]<2:
@@ -353,6 +353,7 @@ def compute_performances(Y, y_bin, y_pred, scores):
     return performances
 
 def get_lateralisation_performances(Y, scores):
+    ''' Y needs to be labelled 0=controls, 1=left HS and 2=right HS'''
     #add prediction of lateralisation only
     from sklearn.utils.extmath import softmax
     predict_side = []

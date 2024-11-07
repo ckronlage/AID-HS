@@ -6,7 +6,7 @@ from subprocess import Popen, DEVNULL, STDOUT, check_call
 import multiprocessing
 from functools import partial
 import shutil
-from aidhs.tools_print import get_m
+from aidhs.tools_pipeline import get_m
 
 
 def init(lock):
@@ -15,8 +15,6 @@ def init(lock):
 
 def prepare_T1_parallel(subjects, num_procs=20):
     # parallel version of the pipeline, finish each stage for all subjects first
-    ini_freesurfer = format("$FREESURFER_HOME/SetUpFreeSurfer.sh")
-    check_call(ini_freesurfer, shell=True, stdout = DEVNULL, stderr=STDOUT)
 
     pool = multiprocessing.Pool(processes=num_procs, initializer=init, initargs=[multiprocessing.Lock()])
     for _ in pool.imap_unordered(partial(prepare_T1), subjects):
@@ -30,7 +28,6 @@ def prepare_T1(subject):
     #check t1 fs file exists
     # t1_s = opj(subject.fs_dir, 'mri', 'T1.mgz') #use T1 from FS dir
     t1_s = subject.t1_input #use raw T1
-    print(t1_s)
     if not os.path.isfile(t1_s):
         print(f'ERROR: Could not find the T1 file output from freesurfer for subject {subject_id}')
         return
@@ -98,9 +95,9 @@ def extract_surface_features(subject, output_dir=None, verbose=False):
 
     #create new directory for subject if does not exist
     if output_dir != None:
-        surf_s = opj(output_dir, subject_id , 'surf')
+        surf_s = opj(output_dir, 'hippunfold', subject_id , 'surf_aidhs')
     else:
-        surf_s = opj(hippo_s, 'surf')
+        surf_s = opj(hippo_s, 'surf_aidhs')
     
     if not os.path.isdir(surf_s):  
         os.makedirs(surf_s, exist_ok=True)
@@ -129,7 +126,7 @@ def extract_surface_features(subject, output_dir=None, verbose=False):
             if os.path.isfile(input_file):
                 #create mean curv
                 command = format(
-                    f"$WORKBENCH_HOME/wb_command -surface-curvature {input_file}  -mean {surf_s}/{hemi}.{label}.mean-curv.shape.gii")
+                    f"wb_command -surface-curvature {input_file}  -mean {surf_s}/{hemi}.{label}.mean-curv.shape.gii")
                 proc = Popen(command, shell=True, stdout = subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                 stdout, stderr= proc.communicate()
                 if verbose:
@@ -140,7 +137,7 @@ def extract_surface_features(subject, output_dir=None, verbose=False):
 
                 #create gauss curv
                 command = format(
-                    f"$WORKBENCH_HOME/wb_command -surface-curvature {input_file} -gauss {surf_s}/{hemi}.{label}.gauss-curv.shape.gii")
+                    f"wb_command -surface-curvature {input_file} -gauss {surf_s}/{hemi}.{label}.gauss-curv.shape.gii")
                 proc = Popen(command, shell=True, stdout = subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                 stdout, stderr= proc.communicate()
                 if verbose:
@@ -151,7 +148,7 @@ def extract_surface_features(subject, output_dir=None, verbose=False):
             
                 #filter intrinsic curvature : abs
                 command = format(
-                    f"$WORKBENCH_HOME/wb_command -metric-math 'abs(x)' {surf_s}/{hemi}.{label}.gauss-curv_filtered.shape.gii -var x {surf_s}/{hemi}.{label}.gauss-curv.shape.gii ")
+                    f"wb_command -metric-math 'abs(x)' {surf_s}/{hemi}.{label}.gauss-curv_filtered.shape.gii -var x {surf_s}/{hemi}.{label}.gauss-curv.shape.gii ")
                 proc = Popen(command, shell=True, stdout = subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                 stdout, stderr= proc.communicate()
                 if verbose:
@@ -162,7 +159,7 @@ def extract_surface_features(subject, output_dir=None, verbose=False):
         
                 #smooth intrinsic curvature (kernel 10mm) with or without masking of the side
                 command = format(
-                    f"$WORKBENCH_HOME/wb_command -metric-smoothing  {input_file} {surf_s}/{hemi}.{label}.gauss-curv_filtered.shape.gii '1' {surf_s}/{hemi}.{label}.gauss-curv_filtered_sm1.shape.gii")
+                    f"wb_command -metric-smoothing  {input_file} {surf_s}/{hemi}.{label}.gauss-curv_filtered.shape.gii '1' {surf_s}/{hemi}.{label}.gauss-curv_filtered_sm1.shape.gii")
                 proc = Popen(command, shell=True, stdout = subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                 stdout, stderr= proc.communicate()
                 if verbose:

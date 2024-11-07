@@ -5,9 +5,11 @@ import numpy as np
 from glob import glob
 from os.path import join as opj
 import pandas as pd
+import json
+import bids.layout
 
-from aidhs.tools_print import get_m
-from scripts.preprocess.run_script_segmentation import run_hippunfold_parallel, run_hippunfold, run_segmentation_parallel, run_segmentation
+from aidhs.tools_pipeline import get_m
+from scripts.preprocess.run_script_segmentation import run_hippunfold_parallel, run_hippunfold
 from scripts.preprocess.run_script_dataprep import prepare_T1_parallel ,prepare_T1, bidsify_results, extract_surface_features
 from aidhs.paths import DATA_PATH, FS_SUBJECTS_PATH, HIPPUNFOLD_SUBJECTS_PATH, BIDS_SUBJECTS_PATH
 
@@ -23,6 +25,7 @@ class SubjectSeg:
         
         #update bids id
         self.bids_id = self.convert_bids_id(bids_id=bids_id)
+        
         #update directories
         self.get_input_dir(input_dir)
         self.get_fs_dir(fs_dir)
@@ -59,7 +62,7 @@ class SubjectSeg:
     #update with input directory
     def get_input_dir(self, input_dir):
         if input_dir != None:
-            self.input_dir = opj(input_dir, self.bids_id)
+            self.input_dir = opj(input_dir, self.id)
         else:
             print('WARNING: no input directory provided or existing')
             self.input_dir = None
@@ -92,6 +95,7 @@ class SubjectSeg:
 
     #find inputs volumes paths
     def get_inputs_volumes_path(self, modality='T1',input_dir=None):
+        '''Find input volume in BIDS or MELD format'''
         if input_dir == None :
             input_dir= self.input_dir
         if input_dir == None:
@@ -99,24 +103,43 @@ class SubjectSeg:
             return
         if not os.path.isdir(input_dir):
             print(f'ERROR: Input directory provided does not exist at {input_dir}')
-        else:    
-            subject_input_dir= self.get_input_dir(input_dir)  
-            #find modality
-            try:
-                glob(opj(subject_input_dir, 'anat', f'*preop_{modality}*.nii*'))[0]
-                subject_path = glob(opj(subject_input_dir, 'anat', f'*preop_{modality}*.nii*'))
-            except:
-                subject_path = glob(opj(subject_input_dir, 'anat', f'*preop_{modality}*.nii*'))
+            return
+        
+        subject_input_dir= self.get_input_dir(input_dir)
+        #look if MELD format
+        subject_path = glob(os.path.join(subject_input_dir, modality, "*.nii*"))
+        if len(subject_path) > 1:
+            raise FileNotFoundError(
+                f"Find too much volumes for {modality}. Check and remove the additional volumes with same key name"
+            )
+        elif not subject_path:
+            subject_path = None
+        else:
+            subject_path = subject_path[0]
+        
+        # look if BIDS format
+        if subject_path == None:
+            # get bids structure
+            layout = bids.layout.BIDSLayout(input_dir)
+            # find parameters to extract bids file
+            config_file = os.path.join(input_dir, 'bids_config.json')
+            with open(config_file, "r") as json_file:
+                dict = json.load(json_file)
+            # Create query
+            query = dict[modality]
+            query['subject'] = self.id
+            # Get a list of matching files
+            subject_path = layout.get(return_type='file', extension=['nii.gz'], **query)
             if len(subject_path) > 1:
                 raise FileNotFoundError(
-                    f"Find too much volumes for {modality}. Check and remove the additional volumes with same key name"
+                f"Find too much volumes for {modality}. Check and remove the additional volumes with same key name"
                 )
             elif not subject_path:
                 print(f"No {modality} file has been found for {self.id}")
-                subject_path = None
+                subject_path = 'None'
             else:
                 subject_path = subject_path[0]
-            return subject_path
+        return subject_path
 
     #find bids volumes paths
     def get_bids_volumes_path(self, modality='T1w',bids_dir=None):
@@ -140,6 +163,7 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
     subject_id=None
     subject_ids=None
     if list_ids != None:
+        list_ids=os.path.join(DATA_PATH, list_ids)
         try:
             sub_list_df=pd.read_csv(list_ids)
             subject_ids=np.array(sub_list_df.ID.values)
@@ -168,15 +192,15 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
     if use_parallel:
         #launch segmentation and feature extraction in parallel
         print(get_m(f'Run subjects in parallel', None, 'INFO'))   
-        if not skip_fs:
-            print(get_m(f'STEP 1: Neocortical segmentation', None, 'INFO'))
-            subject_ids_succeed  = run_segmentation_parallel(subjects, fs_dir=fs_dir, verbose=verbose)
-            subject_ids_failed= list(set(subject_ids).difference(subject_ids_succeed))
-            if len(subject_ids_failed):
-                print(get_m(f'One step of the pipeline has failed. Process has been aborted for subjects {subject_ids_failed}', None, 'ERROR'))
-                return False
-        else:
-            print(get_m(f'STEP 1: Skip neocortical segmentation', None, 'INFO'))   
+        # if not skip_fs:
+        #     print(get_m(f'STEP 1: Neocortical segmentation', None, 'INFO'))
+        #     subject_ids_succeed  = run_segmentation_parallel(subjects, fs_dir=fs_dir, verbose=verbose)
+        #     subject_ids_failed= list(set(subject_ids).difference(subject_ids_succeed))
+        #     if len(subject_ids_failed):
+        #         print(get_m(f'One step of the pipeline has failed. Process has been aborted for subjects {subject_ids_failed}', None, 'ERROR'))
+        #         return False
+        # else:
+        #     print(get_m(f'STEP 1: Skip neocortical segmentation', None, 'INFO'))   
         # prepare T1
         print(get_m(f'STEP 2a: Prepare T1 for hippunfold', None, 'INFO'))
         prepare_T1_parallel(subjects)
@@ -189,7 +213,7 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
         print(get_m(f'STEP 3: Extract hippocampal surface features', None, 'INFO')) 
         subject_ids_failed =[]
         for subject in subjects:
-            result = extract_surface_features(subject, output_dir=bids_dir, verbose=verbose)
+            result = extract_surface_features(subject, output_dir=hippo_dir, verbose=verbose)
             if result == False:
                 subject_ids_failed.append(subject.id)
     else:
@@ -198,14 +222,14 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
         for subject in subjects:
             result = True
             #run FS segmentation
-            if not skip_fs:
-                print(get_m(f'STEP 1: Neocortical segmentation', subject.id, 'INFO'))
-                result = run_segmentation(subject, fs_dir=fs_dir, verbose=verbose)
-                if result == False:
-                    subject_ids_failed.append(subject.id)
-                    continue
-            else:
-                print(get_m(f'STEP 1: Skip neocortical segmentation', subject.id, 'INFO'))
+            # if not skip_fs:
+            #     print(get_m(f'STEP 1: Neocortical segmentation', subject.id, 'INFO'))
+            #     result = run_segmentation(subject, fs_dir=fs_dir, verbose=verbose)
+            #     if result == False:
+            #         subject_ids_failed.append(subject.id)
+            #         continue
+            # else:
+            #     print(get_m(f'STEP 1: Skip neocortical segmentation', subject.id, 'INFO'))
             #prepare T1
             print(get_m(f'STEP 2a: Prepare T1 for hippunfold', subject.id, 'INFO'))
             result = prepare_T1(subject)
@@ -220,7 +244,7 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
                 continue
             #extract surface based features
             print(get_m(f'STEP 3: Extract hippocampal surface features', subject.id, 'INFO'))
-            result = extract_surface_features(subject, output_dir=bids_dir)
+            result = extract_surface_features(subject, output_dir=hippo_dir)
             if result == False:
                 subject_ids_failed.append(subject.id)
                 continue

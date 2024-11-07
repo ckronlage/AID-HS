@@ -1,0 +1,14 @@
+services:
+  aidhs:
+    image: aidhs
+    platform: "linux/amd64"
+    volumes:
+      - /home/mathilde/Documents/projects/surHippo/processes/240830_test_aidhs_docker:/data
+    user: $DOCKER_AIDHS_USER
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+              count: 0
+

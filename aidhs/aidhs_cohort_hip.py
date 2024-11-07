@@ -251,7 +251,7 @@ class AidhsCohort:
     def get_sites(self):
         """get all valid site codes that exist on this system"""
         sites = []
-        for f in glob.glob(os.path.join(self.data_dir, "AIDHS_H*")):
+        for f in glob.glob(os.path.join(self.data_dir, "AIDHS_*")):
             if os.path.isdir(f):
                 sites.append(f.split("_")[-1])
         return sites

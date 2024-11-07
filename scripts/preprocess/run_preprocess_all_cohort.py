@@ -101,35 +101,35 @@ for feature in base_features:
         avg.compute_avg_feature(feature)
 
 
-### CORRECT HIPPOCAMPAL VOLUMES FOR INTRACRANIAL VOLUME ###
-# -----------------------------------------------------------------------------------------------
-print("PROCESS : AVERAGE SURFACE BASED FEATURES AND EXTRACT VOLUMES")
+# ### CORRECT HIPPOCAMPAL VOLUMES FOR INTRACRANIAL VOLUME ###
+# # -----------------------------------------------------------------------------------------------
+# print("PROCESS : AVERAGE SURFACE BASED FEATURES AND EXTRACT VOLUMES")
 
-# create cohort to correct icv 
-c_avg = AidhsCohort(hdf5_file_root="{site_code}_{group}_featurematrix_smoothed_avg.hdf5", dataset='dataset_C-P-DC_alltrain.csv')
-# create cohort to compute parameters correct icv 
-c_avg_controls = AidhsCohort(hdf5_file_root="{site_code}_{group}_featurematrix_smoothed_avg.hdf5", dataset='dataset_C.csv')
+# # create cohort to correct icv 
+# c_avg = AidhsCohort(hdf5_file_root="{site_code}_{group}_featurematrix_smoothed_avg.hdf5", dataset='dataset_C-P-DC_alltrain.csv')
+# # create cohort to compute parameters correct icv 
+# c_avg_controls = AidhsCohort(hdf5_file_root="{site_code}_{group}_featurematrix_smoothed_avg.hdf5", dataset='dataset_C.csv')
 
-# create object 
-icv_correct = Preprocess(
-   c_avg,
-   site_codes=site_codes,
-   write_hdf5_file_root="{site_code}_{group}_featurematrix_smoothed_avg.hdf5",
-   data_dir=BASE_PATH,
-)
+# # create object 
+# icv_correct = Preprocess(
+#    c_avg,
+#    site_codes=site_codes,
+#    write_hdf5_file_root="{site_code}_{group}_featurematrix_smoothed_avg.hdf5",
+#    data_dir=BASE_PATH,
+# )
 
-# call function to comput ICV correction
-for feature in features_smooth_avg:
-    if 'volume' in feature:
-        print(feature)
-        icv_correct.compute_parameters_correction_volume_ICV(feature, c_avg_controls, params_icv_correct=os.path.join(BASE_PATH,"icv_correct_parameters.hdf5"))
-        icv_correct.correct_volume_ICV(feature, params_icv_correct=os.path.join(BASE_PATH,"icv_correct_parameters.hdf5"))
+# # call function to comput ICV correction
+# for feature in features_smooth_avg:
+#     if 'volume' in feature:
+#         print(feature)
+#         icv_correct.compute_parameters_correction_volume_ICV(feature, c_avg_controls, params_icv_correct=os.path.join(BASE_PATH,"icv_correct_parameters.hdf5"))
+#         icv_correct.correct_volume_ICV(feature, params_icv_correct=os.path.join(BASE_PATH,"icv_correct_parameters.hdf5"))
 
-#add features to list and update
-base_features.append('.label-avg.hippunfold_volume_icvcorr')
-features_smooth_avg = [feature.format('avg') for feature in base_features]
-features_combat_avg = [feat.combat_feat(feature) for feature in features_smooth_avg]
-features_asym_avg = [feat.asym_feat(feature) for feature in features_combat_avg]
+# #add features to list and update
+# base_features.append('.label-avg.hippunfold_volume_icvcorr')
+# features_smooth_avg = [feature.format('avg') for feature in base_features]
+# features_combat_avg = [feat.combat_feat(feature) for feature in features_smooth_avg]
+# features_asym_avg = [feat.asym_feat(feature) for feature in features_combat_avg]
 
 
 ### COMBAT AVG FEATURES ###
@@ -142,7 +142,7 @@ c_avg = AidhsCohort(hdf5_file_root="{site_code}_{group}_featurematrix_smoothed_a
 combat = Preprocess(
    c_avg,
    site_codes=site_codes,
-   write_hdf5_file_root="{site_code}_{group}_featurematrix_combat_avg_TMP.hdf5",
+   write_hdf5_file_root="{site_code}_{group}_featurematrix_combat_avg.hdf5",
    data_dir=BASE_PATH,
 )
 # call function to combat data

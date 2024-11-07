@@ -105,10 +105,22 @@ def get_feature_values(subj_id, hemi, f_name, base_path, hdf5_file_root='{}_{}_f
     overlay = surf_dir[f_name][:]
     return overlay
 
+def convert_bids_id(bids_id=None):
+        #clean id
+        list_exclude = ['{','}','_']
+        for l in list_exclude:
+            if l in bids_id:
+                bids_id = bids_id.replace(l, '')
+        #add 'sub' if needed  
+        if not 'sub-' in bids_id:
+            bids_id = 'sub-'+bids_id
+        return bids_id
+    
 def extract_features_hdf5(list_ids=None, sub_id=None, data_dir=None, output_dir=None):
     subject_id=None
     subject_ids=None
     if list_ids != None:
+        list_ids=os.path.join(DATA_PATH, list_ids)
         try:
             sub_list_df=pd.read_csv(list_ids)
             subject_ids=np.array(sub_list_df.ID.values)
@@ -128,7 +140,6 @@ def extract_features_hdf5(list_ids=None, sub_id=None, data_dir=None, output_dir=
         print('ERROR: No ids were provided')
         print("ERROR: Please specify subject(s) ...")
         sys.exit(-1) 
-
     
     #initialise
     hemis=['lh', 'rh']
@@ -141,7 +152,9 @@ def extract_features_hdf5(list_ids=None, sub_id=None, data_dir=None, output_dir=
 
     # load subjects
     for subject_id in subject_ids:
-        subject_dir = os.path.join(data_dir, 'output', 'bids_outputs', f'sub-{subject_id}', 'surf')
+        # print(subject_id)
+        bids_id = convert_bids_id(subject_id)
+        subject_dir = os.path.join(data_dir, 'hippunfold', bids_id, 'surf_aidhs')
         print(subject_dir)
         print('INFO: Extract features for subject {}'.format(subject_id))
         for feature_name in features:
