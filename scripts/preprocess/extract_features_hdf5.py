@@ -14,7 +14,51 @@ def load_gii_shape(filename):
     array_data=np.ndarray.flatten(mmap_data)
     return array_data
 
-def save_subject(subj_id, hemi, f_name, feature, base_path, hdf5_file_root='{}_{}_featurematrix.hdf5', label='label-hipp'):
+def get_group_site(fs_id, csv_path):
+        """
+        Read demographic features from csv file and extract group, sex and scanner 
+        """
+        features_name=["Harmo code", "Group", "Scanner"]
+        df = pd.read_csv(csv_path, header=0, encoding="latin")
+        # get index column
+        id_col = None
+        for col in df.keys():
+            if "ID" in col:
+                id_col = col
+        # ensure that found an index column
+        if id_col is None:
+            print("No ID column found in file, please check the csv file")
+            return None
+        df = df.set_index(id_col)
+        # find desired demographic features
+        features = []
+        for desired_name in features_name:
+            matched_name = None
+            for col in df.keys():
+                if desired_name in col:
+                    if matched_name is not None:
+                        # already found another matching col
+                        print(
+                            f"Multiple columns matching {desired_name} found ({matched_name}, {col}), please make search more specific"
+                        )
+                        return None
+                    matched_name = col
+            # ensure that found necessary data
+            if matched_name is None:
+                    print(f"Unable to find column matching {desired_name}, please double check for typos")
+                    return None
+
+            # read feature
+            # if subject does not exists, add None
+            if fs_id in df.index:
+                feature = df.loc[fs_id][matched_name]
+            else:
+                print(f"Unable to find subject matching {fs_id}, please double check this subject exists in {csv_path}")
+                return None
+            features.append(feature)
+        return features
+
+def save_subject(subj_id, hemi, f_name, feature, base_path, demographic_file, hdf5_file_root='{}_{}_featurematrix.hdf5', label='label-hipp'):
     if label=='label-hipp':
         n_vert = 7262  
     elif label=='label-dentate':
@@ -22,8 +66,20 @@ def save_subject(subj_id, hemi, f_name, feature, base_path, hdf5_file_root='{}_{
     else:
         print('label unknowns')
         return
-    site_code, scanner, c_p = get_demographic_features(subj_id, ['Site','Scanner','Patient or Control'], DATA_PATH, DEMOGRAPHIC_FEATURES_FILE)
-    c_p = ['control','patient'][int(c_p)]
+    #get subject info from id
+    print(subj_id)
+    print(demographic_file)
+    site_code, c_p, scanner = get_group_site(subj_id, demographic_file)
+    if scanner in ("15T" , "1.5T" , "15t" , "1.5t" ):
+        scanner="15T"
+    elif scanner in ("3T" , "3t" ):
+        scanner="3T"
+    else:
+        print('scanner for subject '+ subj_id + ' cannot be identified as either 1.5T or 3T...')
+        scanner='false'
+    #skip subject if info not available
+    if 'false' in (c_p, scanner, site_code):
+        print("Skipping subject " + subj_id)
     os.makedirs(os.path.join(base_path,'AIDHS_'+site_code), exist_ok=True)        
     if os.path.isfile(os.path.join(base_path,'AIDHS_'+site_code,hdf5_file_root.format(site_code,c_p))):
         mode='r+'
@@ -36,7 +92,7 @@ def save_subject(subj_id, hemi, f_name, feature, base_path, hdf5_file_root='{}_{
     f.close()
     return 
 
-def get_demographic_features(subject_id, feature_names, base_path, csv_file='demographics_qc_allgroups.csv'):
+def get_demographic_features(subject_id, feature_names, base_path, csv_file='demographics.csv'):
     """
     Read demographic features from csv file. Features are given as (partial) column titles
     Args:
@@ -165,7 +221,14 @@ def extract_features_hdf5(list_ids=None, sub_id=None, data_dir=None, output_dir=
                     overlay = load_gii_shape(overlay_file)
                     #save in hdf5
                     label = feature_name.split('.')[0]
-                    save_subject(subject_id, hemi, '.'+feature_name, overlay, output_dir, '{}_{}_featurematrix.hdf5', label)
+                    save_subject(subject_id, 
+                                 hemi = hemi, 
+                                 f_name='.'+feature_name, 
+                                 feature = overlay, 
+                                 base_path= output_dir, 
+                                 demographic_file= DEMOGRAPHIC_FEATURES_FILE,
+                                 hdf5_file_root='{}_{}_featurematrix.hdf5', 
+                                label = label)
                 else:
                     print(f'feature {hemi}.{feature_name} not available for subject {subject_id}')
 

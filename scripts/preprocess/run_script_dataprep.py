@@ -29,7 +29,7 @@ def prepare_T1(subject):
     # t1_s = opj(subject.fs_dir, 'mri', 'T1.mgz') #use T1 from FS dir
     t1_s = subject.t1_input #use raw T1
     if not os.path.isfile(t1_s):
-        print(f'ERROR: Could not find the T1 file output from freesurfer for subject {subject_id}')
+        print(f'ERROR: Could not find the T1 file for subject {subject_id}')
         return
   
     #bidsify 

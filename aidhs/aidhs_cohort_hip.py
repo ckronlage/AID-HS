@@ -1,3 +1,4 @@
+import sys
 from contextlib import contextmanager
 from aidhs.paths import (
     DEMOGRAPHIC_FEATURES_FILE,
@@ -446,20 +447,33 @@ class AidhsSubject:
     #adapted for hippo
     @property
     def scanner(self):
-        scanner = self.get_demographic_features('Scanner', csv_file=DEMOGRAPHIC_FEATURES_FILE)
+        scanner = self.get_demographic_features('Scanner')
+        if scanner in ("15T" , "1.5T" , "15t" , "1.5t" ):
+            scanner="15T"
+        elif scanner in ("3T" , "3t" ):
+            scanner="3T"
+        else:
+            print(
+                f"Error: incorrect scanner for {self.subject_id}. Unable to determine if scanner 1.5T or 3T "
+            )
+            sys.exit()
         return scanner
     
     #adapted for hippo
     @property
     def group(self):
-        group = self.get_demographic_features('Patient or Control', csv_file=DEMOGRAPHIC_FEATURES_FILE)
-        group = ['control','patient'][group]
+        group = self.get_demographic_features('Group')
+        if (group != "patient") and (group != "control") :
+            print(
+                f"Error: incorrect group for {self.subject_id}. Unable to determine if patient or control."
+            )
+            sys.exit()
         return group
     
     #adapted for hippo
     @property
     def site_code(self):
-        site_code = self.get_demographic_features('Site', csv_file=DEMOGRAPHIC_FEATURES_FILE)
+        site_code = self.get_demographic_features('Harmo code', csv_file=DEMOGRAPHIC_FEATURES_FILE)
         return site_code  
 
     def surf_dir_path(self, hemi):
