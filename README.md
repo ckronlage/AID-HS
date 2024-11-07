@@ -42,7 +42,6 @@ Note: The MELD pipeline can also be run without harmonisation, with a small drop
 With the native installation of the MELD classifier you can reproduce the figures from our paper and train/evaluate your own models.
 For more details, check out the guides linked below:
 - [Notebooks to reproduce figures](https://meld-graph.readthedocs.io/en/latest/figure_notebooks.html)
-- [Train and evaluate models](https://meld-graph.readthedocs.io/en/latest/train_evaluate.html)
 
 
 ## Manuscript
