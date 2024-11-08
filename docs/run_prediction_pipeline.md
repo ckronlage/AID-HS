@@ -33,7 +33,7 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_pati
 
 ## Tune the command
 
-You can tune the MELD pipeline command using additional variables and flags as detailed bellow:
+You can tune the AID-HS pipeline command using additional variables and flags as detailed bellow:
 
 | **Mandatory variables**         |  Comment | 
 |-------|---|

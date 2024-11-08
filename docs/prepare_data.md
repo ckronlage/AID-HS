@@ -16,7 +16,7 @@ Note: AID-HS has been developped on 3D T1w scans acquired at 3T. We cannot guara
 
 ## Prepare the MRI data in BIDS format (Mandatory)
 
-The MELD pipeline now accept BIDS format as input data. For more information about BIDS format, please refers to their [instructions](https://bids.neuroimaging.io/)
+The AID-HS pipeline relies on the BIDS format as input data. For more information about BIDS format, please refers to their [instructions](https://bids.neuroimaging.io/)
 
 The main key ingredients are : 
 - each subject has a folder following the structure : `sub-<subject_id>`
@@ -28,7 +28,7 @@ A simple example of the BIDS structure for patient sub-test001 is given below:\
 ![example](/docs/images/input_structure_bids_format.png)
 
 Additionally, you will need to have two json files in the `input` folder:
-- `meld_bids_config.json` containing the key words for session, datatype and modality suffix \
+- `bids_config.json` containing the key words for session, datatype and modality suffix \
     Example: 
     ```json
     {"T1": {"session": null, 
