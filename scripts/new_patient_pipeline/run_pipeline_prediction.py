@@ -680,7 +680,7 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_co
         subj = AidhsSubject(subject, cohort=c_norm)  
 
         #get model, if subject from site part of the training , use model trained without this site, otherwise use model trained on the whole dataset
-        site_code = subj.get_demographic_features(["Site"])[0]
+        site_code = subj.get_demographic_features(["Harmo code"])[0]
         if site_code in SITE_CODES:
             filename_model = os.path.join(EXPERIMENT_PATH, f'model_LogReg_Hippunfold features_{site_code}.sav')
         else:
