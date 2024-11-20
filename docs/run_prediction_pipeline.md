@@ -17,7 +17,7 @@ Open a terminal and `cd` to where you extracted the release zip.
 Ensure "noHarmo" is provided as an harmonisation code for that subject in the `demographics_file` \
 Then run:
 ```bash
-DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_pt_pipeline.py -id <subject_id> -demos <demographic_file>
+DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -id <subject_id> -demos <demographic_file>
 ```
 
 
@@ -27,7 +27,7 @@ Ensure you the same harmonisation code is provided for that subject in the `demo
 Then run: 
 
 ```bash
-DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_pt_pipeline.py -id <subject_id> -demos <demographic_file> -harmo_code <harmonisation_code>
+DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -id <subject_id> -demos <demographic_file> -harmo_code <harmonisation_code>
 ```
 
 
@@ -54,17 +54,17 @@ NOTES:
 
 To run the whole prediction pipeline on subject 'test001' without harmonising the data:
 ```bash
-DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_pt_pipeline.py -id sub-test001
+DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001
 ```
 
 To run the whole prediction pipeline on subject 'test001' using harmonisation code H1:
 ```bash
-DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_pt_pipeline.py -id sub-test001 -harmo_code H1
+DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001 -harmo_code H1
 ```
 
 To run the whole prediction pipeline on multiples subjects with parallelisation:
 ```bash
-DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_pt_pipeline.py -ids list_subjects.txt --parallelise
+DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -ids list_subjects.txt --parallelise
 ```
 
 
