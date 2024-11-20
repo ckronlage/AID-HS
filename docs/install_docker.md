@@ -43,14 +43,14 @@ In order to run the docker, you'll need to configure a couple of files
 To verify that you have installed all packages, set up paths correctly, and downloaded all data, this verification script will run the pipeline to predict the HS side on a test patient which already has the hippocampal segmentation done. It takes approximately 1 minutes to run.
 
 ```bash
-DOCKER_USER="$(id -u):$(id -g)" docker-compose run aidhs pytest
+DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs pytest
 ```
 
 ### Errors
 If you run into errors at this stage and need help, you can re-run by changing the last line of the command by the command below to save the terminal outputs in a txt file. Please send `pytest_errors.log` to us so we can work with you to solve any problems. [How best to reach us.](#contact)
 
 ```bash
-DOCKER_USER="$(id -u):$(id -g)" docker-compose run aidhs pytest -s | tee pytest_errors.log
+DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs pytest -s | tee pytest_errors.log
 ```
 
 You will find `pytest_errors.log` in the folder where you launched the command. 
