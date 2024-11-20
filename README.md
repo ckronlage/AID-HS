@@ -3,7 +3,7 @@
 **Automated and Interpretable Detection of Hippocampal Sclerosis**
 
 AID-HS extracts hippocampal volume- and surface-based features from T1w scans using [HippUnfold](https://hippunfold.readthedocs.io/en/latest/), to provide an in-depth characterisation of hippocampal abnormality and provide an automated detection and lateralisation of hippocampal sclerosis (HS). 
-For more details please read our [preprint](https://www.medrxiv.org/content/10.1101/2023.10.13.23296991v1)
+For more details please read our [manuscript](https://onlinelibrary.wiley.com/doi/10.1002/ana.27089?af=R))
 
 Note: 
 - AID-HS has been developped on T1w scans acauired at 3T. It is not yet thoroughly evaluated on 1.5T and 7T data
@@ -20,7 +20,7 @@ The AID-HS software is intended for research purposes only and has not been revi
 
 ### Installations available 
 You can install and use the AID-HS pipeline with :
-- [**docker container**](/docs/install_docker.md) (STILL IN PROGRESS) recommended for easy installation of the pipeline as all the prerequisite packages are already embeded into the container. Note: Dockers are not working on High Performance Computing (HCP) systems.
+- [**docker container**](/docs/install_docker.md) recommended for easy installation of the pipeline as all the prerequisite packages are already embeded into the container. Note: Dockers are not working on High Performance Computing (HCP) systems.
 - **singularity container (COMING SOON)** enables to run a container on High Performance Computing (HCP) systems. 
 - [**native installation**](/docs/install_native.md): Not supported 
 
@@ -29,18 +29,22 @@ Once installed you will be able to use the AID-HS pipeline on your data followin
 1. Prepare your data : [guidelines](/docs/prepare_data.md)
 2. (OPTIONAL) Compute the harmonisation parameters : [guidelines](/docs/harmonisation.md)
 3. Run the prediction pipeline: [guidelines](/docs/run_prediction_pipeline.md)
-4. Interpret the results: [guidelines]()(COMING SOON)
+4. Interpret the results: [guidelines](/docs/interpret_results.md)
 
 
 **What is the harmonisation process ?**
 
-Scanners can induce a bias in the MRI data. To use the full potential of the AID-HS tool, we recommend adjusting for these scanners differences by running a preliminary harmonisation step to compute the harmonisation parameters for that specific scanner. Note: this step needs to be run only once, and requires data from at least 20 subjects acquired on the same scanner and demographic information (e.g age and sex). See [harmonisation instructions](/docs/harmonisation.md) for more details. 
+Scanners can induce a bias in the MRI data. To use the full potential of the AID-HS tool, we recommend adjusting for these scanners differences by running a preliminary harmonisation step to compute the harmonisation parameters for that specific scanner. 
 
-Note: The AID-HS pipeline can also be run without harmonisation with no drop in performances. However, the characterisation of the hippocampal features compared to the normative growth curves will not be interpretable.
+Notes: 
+- This step needs to be run only once, and requires data from at least 20 subjects acquired on the same scanner and demographic information (e.g age and sex). See [harmonisation instructions](/docs/harmonisation.md) for more details. 
+- The AID-HS pipeline can also be run without harmonisation with no drop in performances. However, the characterisation of the hippocampal features compared to the normative growth curves will not be interpretable.
 
 
 ## Manuscript
-Please check out our [manuscript](IN PRESS) to learn more.
+If you are using the AID-HS tool or part of the code, please cite:
+
+[Ripart et al. 2024. “Automated and Interpretable Detection of Hippocampal Sclerosis in Temporal Lobe Epilepsy: AID-HS.” Annals of Neurology, November. https://doi.org/10.1002/ana.27089](https://onlinelibrary.wiley.com/doi/10.1002/ana.27089?af=R)
 
 An overview of the notebooks that we used to create the figures can be found [here](figure_notebooks.md).
 
