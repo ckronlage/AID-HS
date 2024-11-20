@@ -3,8 +3,8 @@ services:
     image: aidhs
     platform: "linux/amd64"
     volumes:
-      - /home/mathilde/Documents/projects/surHippo/processes/240830_test_aidhs_docker:/data
-    user: $DOCKER_AIDHS_USER
+      - volumes:/data
+    user: $DOCKER_USER
     deploy:
       resources:
         reservations:
