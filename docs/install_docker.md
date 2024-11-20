@@ -71,7 +71,7 @@ deploy:
 To disable gpus, change it back to `0`.
 
 ## FAQs
-Please see our {doc}`FAQs` for common installation problems.
+Please see our [FAQs](/docs/FAQ.md) for common installation problems.
 
 ## Contact
 

@@ -70,4 +70,4 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_pati
 
 ## Interpretation of results
 
-Refer to our [guidelines]() for details on how to read and interprete the AID-HS pipeline results
+Refer to our [guidelines](/docs/interpret_results.md) for details on how to read and interprete the AID-HS pipeline results
