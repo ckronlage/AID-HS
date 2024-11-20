@@ -1,6 +1,7 @@
 
 # Use HippUnfold v1.0.0 docker as base
 FROM khanlab/hippunfold:v1.1.0
+USER root
 
 # Remove hippunfold model not used
 RUN rm /opt/hippunfold_cache/trained_model.3d_fullres.Task102_hcp1200_T2w.nnUNetTrainerV2.model_best.tar && \
@@ -19,7 +20,7 @@ RUN apt-get install -y python3-pip \
 # Define working directory
 RUN mkdir /app
 WORKDIR /app
-COPY . /app/
+COPY . .
 
 # create cache 
 RUN mkdir /.cache
@@ -32,7 +33,7 @@ RUN mkdir /data
 # RUN conda env create -f environment.yml
 
 # install hippunfold_toolbox
-RUN cd hippunfold_toolbox/ && conda run -n base /bin/bash -c "pip install -e ."
+#RUN cd hippunfold_toolbox/ && conda run -n base /bin/bash -c "pip install -e ."
 # or download latest hippunfold toolbox
 # RUN  mkdir -p /opt/hippunfold_toolbox \
 # && git clone https://github.com/jordandekraker/hippunfold_toolbox.git /opt/hippunfold_toolbox

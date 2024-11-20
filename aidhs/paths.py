@@ -86,4 +86,4 @@ NVERT_AVG = 1
 
 
 # list of sites code used for training
-SITE_CODES=['H1', 'H11', 'H16', 'H29']
+#SITE_CODES=['H1', 'H11', 'H16', 'H29']
