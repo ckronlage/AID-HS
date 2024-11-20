@@ -17,7 +17,7 @@ from PIL import Image
 import tempfile
 
 from aidhs.aidhs_cohort_hip import AidhsCohort, AidhsSubject
-from aidhs.paths import DATA_PATH, HIPPUNFOLD_SUBJECTS_PATH, SUBFIELDS_LABEL_FILE, EXPERIMENT_PATH, SITE_CODES, PARAMS_PATH
+from aidhs.paths import DATA_PATH, HIPPUNFOLD_SUBJECTS_PATH, SUBFIELDS_LABEL_FILE, EXPERIMENT_PATH, PARAMS_PATH
 from aidhs.train_evaluate import create_dataset_file, predict_subject
 from aidhs.tools_pipeline import get_m
 import aidhs.hippunfold_plotting as plotting
@@ -681,10 +681,7 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_co
 
         #get model, if subject from site part of the training , use model trained without this site, otherwise use model trained on the whole dataset
         site_code = subj.get_demographic_features(["Harmo code"])[0]
-        if site_code in SITE_CODES:
-            filename_model = os.path.join(EXPERIMENT_PATH, f'model_LogReg_Hippunfold features_{site_code}.sav')
-        else:
-            filename_model = os.path.join(EXPERIMENT_PATH, f'model_LogReg_Hippunfold features_trainwhole.sav')
+        filename_model = os.path.join(EXPERIMENT_PATH, f'model_LogReg_Hippunfold features_trainwhole.sav')
         filename5 = os.path.join(output_dir_subj,f'predictions_scores.png')
         csv_output = os.path.join(output_dir_subj,f'predictions.csv')
         write_prediction_subject(subj, 

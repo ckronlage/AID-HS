@@ -16,7 +16,7 @@ import argparse
 
 from aidhs.aidhs_cohort_hip import AidhsCohort
 from aidhs.data_preprocessing import Preprocess, Feature
-from aidhs.paths import DATA_PATH, BASE_PATH, PARAMS_PATH, ICV_PARAMS_FILE, NORM_CONTROLS_PARAMS_FILE, COMBAT_PARAMS_FILE, CLIPPING_PARAMS_FILE, SITE_CODES, DEMOGRAPHIC_FEATURES_FILE
+from aidhs.paths import DATA_PATH, BASE_PATH, PARAMS_PATH, ICV_PARAMS_FILE, NORM_CONTROLS_PARAMS_FILE, COMBAT_PARAMS_FILE, CLIPPING_PARAMS_FILE, DEMOGRAPHIC_FEATURES_FILE
 from aidhs.tools_pipeline import get_m
 
 
@@ -30,10 +30,7 @@ def create_dataset_file(subjects_ids, save_file):
 
 def which_combat_file(harmo_code):
     file_harmo=os.path.join(BASE_PATH, f'AIDHS_{harmo_code}', f'{harmo_code}_combat_parameters.hdf5')
-    if harmo_code in SITE_CODES:
-        print(get_m(f'Use combat parameters from AID-HS cohort', None, 'INFO'))
-        return os.path.join(PARAMS_PATH, COMBAT_PARAMS_FILE)
-    elif os.path.isfile(file_harmo):
+    if os.path.isfile(file_harmo):
         print(get_m(f'Use combat parameters from harmo {harmo_code}', None, 'INFO'))
         return file_harmo
     else:

@@ -84,6 +84,3 @@ NVERT_HIPP = 7262
 NVERT_DG = 1788
 NVERT_AVG = 1
 
-
-# list of sites code used for training
-#SITE_CODES=['H1', 'H11', 'H16', 'H29']
