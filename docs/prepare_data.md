@@ -38,6 +38,7 @@ Additionally, you will need to have two json files in the `input` folder:
               "datatype": "anat",
               "suffix": "FLAIR"}}
     ```
+If your dataset follows another BIDS structure than the one provided in the example, you will need to adapt the bids_config.json file with the appropriate key words. Please refer to the BIDS [instructions](https://bids.neuroimaging.io/) to adapt the file to your BIDS dataset.
 
 - `dataset_description.json` containing a description of the dataset \
     Example:
@@ -48,7 +49,7 @@ Additionally, you will need to have two json files in the `input` folder:
 
 ## Prepare the demographic information to run the harmonisation
 
-To compute the harmonisation parameters, you will need to provide a couple of information about the subjects into a csv file.
+To compute the harmonisation parameters, you will need to provide a couple of information about the subjects into a csv file. You can find an example of this file in the aidh_data_folder. 
 
 - `ID` : subject ID (this should be the same ID than the one used to create the MRI folder without the 'sub-'
 - `Harmo code`: the harmonisation code associated with this subject scan (if you are running the harmonisation, it should be the same for all the subjects used for the harmonisation) 
