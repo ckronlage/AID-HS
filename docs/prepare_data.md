@@ -19,10 +19,10 @@ Note: AID-HS has been developped on 3D T1w scans acquired at 3T. We cannot guara
 The AID-HS pipeline relies on the BIDS format as input data. For more information about BIDS format, please refers to their [instructions](https://bids.neuroimaging.io/)
 
 The main key ingredients are : 
-- each subject has a folder following the structure : `sub-<subject_id>`
+- each subject has a folder following the structure : `<sub-subject_id>`
 - (optional) in each subject folder you can have a session folder, e.g. `ses-preop`. 
 - in each session folder / subject folder you will need to have a datatype folder called `anat` folder. 
-- in the anat folder your T1 and FLAIR nifti images should follow the structure : `sub-<subject_id>_<modality_suffix>.nii.gz` or `sub-<subject_id>_ses-<session>_<modality_suffix>.nii.gz` if you have a session.
+- in the anat folder your T1 and FLAIR nifti images should follow the structure : `<sub-subject_id>_<modality_suffix>.nii.gz` or `<sub-subject_id>_ses-<session>_<modality_suffix>.nii.gz` if you have a session.
 
 A simple example of the BIDS structure for patient sub-test001 is given below:\
 ![example](/docs/images/input_structure_bids_format.png)
@@ -51,7 +51,7 @@ If your dataset follows another BIDS structure than the one provided in the exam
 
 To compute the harmonisation parameters, you will need to provide a couple of information about the subjects into a csv file. You can find an example of this file in the aidh_data_folder. 
 
-- `ID` : subject ID (this should be the same ID than the one used to create the MRI folder without the 'sub-'
+- `ID` : subject ID (this should be the same ID than the one used to create the MRI folder)
 - `Harmo code`: the harmonisation code associated with this subject scan (if you are running the harmonisation, it should be the same for all the subjects used for the harmonisation) 
 - `Group`: 'patient' if the subject is a patient or 'control' if the subject is a control 
 - `Age at preoperative`: The age of the subject at the time of the preoperative T1 scan (in years)
@@ -72,7 +72,7 @@ WARNING: for harmonisation
 
 AID-HS provide individualised results, which are adapted for the age and sex of the patients. Thus, you will need to fill the demographics_file.csv file with:
 
-- `ID` : subject ID (this should be the same ID than the one used to create the MRI folder without the 'sub-'
+- `ID` : subject ID (this should be the same ID than the one used to create the MRI folder)
 - `Harmo code`: the harmonisation code associated with this subject scan or "noHarmo" if you do not want to use the harmonisation
 - `Group`: patient, as you want to predict all subjects will be considered as patients
 - `Age at preoperative`: The age of the subject at the time of the preoperative T1 scan (in years)

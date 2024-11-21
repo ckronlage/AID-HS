@@ -127,7 +127,7 @@ class SubjectSeg:
                 dict = json.load(json_file)
             # Create query
             query = dict[modality]
-            query['subject'] = self.id
+            query['subject'] = self.id.split('sub-')[-1]
             # Get a list of matching files
             subject_path = layout.get(return_type='file', extension=['nii.gz'], **query)
             if len(subject_path) > 1:

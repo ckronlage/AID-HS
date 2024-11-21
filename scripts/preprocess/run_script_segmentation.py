@@ -120,7 +120,7 @@ def run_hippunfold_parallel(subjects, bids_dir=None, hippo_dir=None, num_procs=1
             subject_id = subject_bids_id
         else:
             subject_id = subject.convert_bids_id()
-        subject_id = subject_id.split('sub-')[-1]
+        # subject_id = subject_id.split('sub-')[-1]
 
         #check if outputs already exists
         files_surf = glob(f'{hippo_s}/surf/*_den-0p5mm_label-hipp_*.surf.gii')
@@ -156,7 +156,6 @@ def run_hippunfold(subject, bids_dir=None, hippo_dir=None, verbose=False):
         subject_id = subject_bids_id
     else:
         subject_id = subject.convert_bids_id()
-    subject_id = subject_id.split('sub-')[-1]
 
     #make a directory for the outputs
     os.makedirs(hippo_dir, exist_ok=True)
@@ -165,7 +164,7 @@ def run_hippunfold(subject, bids_dir=None, hippo_dir=None, verbose=False):
     files_surf = glob(f'{hippo_s}/surf/*_den-0p5mm_label-hipp_*.surf.gii')
     if files_surf==[]:
         print(get_m(f'Start Hippunfold segmentation', subject_id, 'INFO'))
-        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {subject_id} --core 3 --modality T1w")
+        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {subject_id.split('sub-')[-1]} --core 3 --modality T1w")
         if verbose:
             print(command)
         proc = Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
