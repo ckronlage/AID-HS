@@ -1,9 +1,9 @@
 # Docker container
 
 
-**WARNING: Installation and use not yet tested on Windows. Please do let us know if you are succeeding / failing to use the docker container on Windows**
+**WARNING: Installation and use has not yet been tested on Windows. Please let us know if you have succeeded or are having challenges using the docker container on Windows**
 
-The Docker container has all the prerequisites embedded on it which makes it easier to install and compatible with most of the OS systems. 
+The Docker container has all the prerequisites embedded into it. This makes it easier to install and compatible with most OS systems. 
 
 Notes: 
 - Currently only tested on **Linux** (HPC Singularity coming soon)
@@ -19,7 +19,7 @@ You will need to have docker installed. You can check if docker is installed on 
 docker --version
 ```
 
-If this command displays the docker version then it is already installed. If not, please follow the [guidelines](https://docs.docker.com/engine/install/) to install docker on your machine.
+If this command displays the docker version then it is already installed. If not, please follow the [guidelines](https://docs.docker.com/engine/install/) to install docker on your machine. Make sure to download the correct version for your OS system!
 
 ## Enable GPUs
 
