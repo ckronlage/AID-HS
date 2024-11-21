@@ -7,7 +7,7 @@ If you wish to use the harmonisation feature of the AID-HS pipeline, you will ne
 ## Running
 
 - Ensure you have installed the AID-HS pipeline with [docker container](/docs/install_docker.md)
-- Ensure you have [organised your data](/docs/prepare_data.html) into BIDS format before running this pipeline
+- Ensure you have [organised your data](/docs/prepare_data.md) into BIDS format before running this pipeline
 - Ensure you have [computed the harmonisation parameters](/docs/harmonisation.md) if you want to use the harmonisation parameters 
 
 Open a terminal and `cd` to where you extracted the release zip.
