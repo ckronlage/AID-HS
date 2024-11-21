@@ -179,6 +179,15 @@ def plot_patient_on_controls_charts(subj, features, controls_GAM, filename, harm
     #get subject info
     age_scan_p, sex_p= subj.get_demographic_features(["Age at preoperative", "Sex"])
 
+    if sex_p=='male':
+        sex_p = 0
+    elif sex_p == 'female':
+        sex_p = 1
+    elif (sex_p==0) or (sex_p==1):
+        sex_p = sex_p
+    else:
+        print(f'ERROR: There is an issue with the coded sex of subject {subj.subject_id}')
+                
     fig = plt.figure(figsize=(15,9))
     gs1 = GridSpec(2, 3, wspace=0.5, hspace=0.3, height_ratios=[1, 1])
     axs = []

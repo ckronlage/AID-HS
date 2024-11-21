@@ -55,7 +55,7 @@ To compute the harmonisation parameters, you will need to provide a couple of in
 - `Harmo code`: the harmonisation code associated with this subject scan (if you are running the harmonisation, it should be the same for all the subjects used for the harmonisation) 
 - `Group`: 'patient' if the subject is a patient or 'control' if the subject is a control 
 - `Age at preoperative`: The age of the subject at the time of the preoperative T1 scan (in years)
-- `Sex`: 1 if male, 0 if female
+- `Sex`: "male" if male, "female" if female
 - `Scanner`: the scanner strenght associated with the MRI data ('3T' for 3 Tesla or '15T' for 1.5 Tesla)
 
 ![example](/docs/images/example_demographic_csv.png)
