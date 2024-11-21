@@ -2,12 +2,12 @@
 
 **Automated and Interpretable Detection of Hippocampal Sclerosis**
 
-AID-HS extracts hippocampal volume- and surface-based features from T1w scans using [HippUnfold](https://hippunfold.readthedocs.io/en/latest/), to provide an in-depth characterisation of hippocampal abnormality and provide an automated detection and lateralisation of hippocampal sclerosis (HS). 
+AID-HS extracts hippocampal volume- and surface-based features from T1w scans using [HippUnfold](https://hippunfold.readthedocs.io/en/latest/), and provides an in-depth characterisation of hippocampal abnormalities as well as the automated detection and lateralisation of hippocampal sclerosis (HS). 
 For more details please read our [manuscript](https://onlinelibrary.wiley.com/doi/10.1002/ana.27089?af=R))
 
 Note: 
-- AID-HS has been developped on T1w scans acauired at 3T. It is not yet thoroughly evaluated on 1.5T and 7T data
-- You will need demographic information (age at scan, sex) to run AID-HS on your patients. 
+- You will need the following demographic information (age at scan & sex) to run AID-HS on your patient's T1 MRI scan.
+- AID-HS has been developed on T1w scans acquired at 3T. It has not yet been thoroughly evaluated on 1.5T and 7T data
 
 Pipeline overview:\
 <img src="images/overview_pipeline.jpg " height="500" />
@@ -20,8 +20,8 @@ The AID-HS software is intended for research purposes only and has not been revi
 
 ### Installations available 
 You can install and use the AID-HS pipeline with :
-- [**docker container**](/docs/install_docker.md) recommended for easy installation of the pipeline as all the prerequisite packages are already embeded into the container. Note: Dockers are not working on High Performance Computing (HCP) systems.
-- **singularity container (COMING SOON)** enables to run a container on High Performance Computing (HCP) systems. 
+- [**docker container**](/docs/install_docker.md) recommended for easy installation of the pipeline as all the prerequisite packages are already embeded into the container. Note: Dockers do not work on High Performance Computing (HCP) systems.
+- **singularity container (COMING SOON)** - to run a container on High Performance Computing (HCP) systems. 
 - [**native installation**](/docs/install_native.md): Not supported 
 
 ### Running the pipeline 
@@ -34,10 +34,10 @@ Once installed you will be able to use the AID-HS pipeline on your data followin
 
 **What is the harmonisation process ?**
 
-Scanners can induce a bias in the MRI data. To use the full potential of the AID-HS tool, we recommend adjusting for these scanners differences by running a preliminary harmonisation step to compute the harmonisation parameters for that specific scanner. 
+Features extracted from MRI scans from different MRI scanners have systematic differences between them. To remove scanner related biases we recommend harmonising your MRI data to the MRI data that was used in the AID-HS manuscript. This harmonisation is required for each MRI scanner / T1 sequence you are using. 
 
 Notes: 
-- This step needs to be run only once, and requires data from at least 20 subjects acquired on the same scanner and demographic information (e.g age and sex). See [harmonisation instructions](/docs/harmonisation.md) for more details. 
+- This step needs to be run only once, and requires data from at least 20 subjects acquired on the same scanner with the same T1 sequence and demographic information (e.g age and sex). See [harmonisation instructions](/docs/harmonisation.md) for more details. 
 - The AID-HS pipeline can also be run without harmonisation with no drop in performances. However, the characterisation of the hippocampal features compared to the normative growth curves will not be interpretable.
 
 
