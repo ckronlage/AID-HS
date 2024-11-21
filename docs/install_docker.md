@@ -33,7 +33,7 @@ In order to run the docker, you'll need to configure a couple of files
 1. Download `aidhs.zip` from the [latest github release](https://github.com/MELDProject/aidhs/releases/latest) and extract it.
 2. Download the aidhs_data_folder at https://figshare.com/s/16011ee4d6b5723b14b6
 3. Unzip the folder where you want to store the aidhs_data_folder
-4. Edit the compose.yml `volumes` line before the `:` to point to the aidhs_data_folder. For example, if you wanted the folder to be on a mounted drive in Linux it might be:
+4. In the AID-HS folder, open and edit the compose.yml `volumes` line before the `:` to point to the aidhs_data_folder. For example, if you wanted the folder to be on a mounted drive in Linux it might be:
 ```
     volumes:
       - /mnt/datadrive/aidhs-data:/data
