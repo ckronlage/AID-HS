@@ -11,12 +11,12 @@ import pytest
 import numpy as np
 import nibabel as nb
 import pandas as pd
+import shutil
 from aidhs.paths import DATA_PATH
-
-
+    
 def get_data_parameters():
     data_parameters = {
-        "subject": "test001",
+        "subject": "sub-test001",
         "harmo code" :"noHarmo", 
         "expected_prediction_csv" : "predictions_expected.csv",
         "prediction_csv" : "predictions.csv",
