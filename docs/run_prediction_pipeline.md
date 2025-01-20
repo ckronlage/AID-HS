@@ -15,12 +15,11 @@ Open a terminal and `cd` to where you extracted the release zip.
 ### Running without harmonisation
 
 Ensure "noHarmo" is provided as an harmonisation code for that subject in the `demographics_file` \
+Then run:
 
 ::::{tab-set}
 :::{tab-item} Docker
 :sync: docker
-
-Then run:
 
 ```bash
 DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -id <subject_id> -demos <demographic_file>
@@ -37,6 +36,15 @@ And then run:
 ```bash
 singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/new_patient_pipeline.py -id <subject_id> -demos <demographic_file>"
 ```
+
+:::
+:::{tab-item} Native
+:sync: native
+
+```bash
+python scripts/new_patient_pipeline/new_patient_pipeline.py -id <subject_id> -demos <demographic_file>
+```
+
 :::
 ::::
 
@@ -44,12 +52,12 @@ singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_p
 ### Running with harmonisation
 You will need to have computed the harmonisation parameters for that harmonisation code \
 Ensure you the same harmonisation code is provided for that subject in the `demographics_file` \
+Then run: 
 
 ::::{tab-set}
 :::{tab-item} Docker
 :sync: docker
 
-Then run: 
 
 ```bash
 DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -id <subject_id> -demos <demographic_file> -harmo_code <harmonisation_code>
@@ -67,6 +75,15 @@ And then run:
 ```bash
 singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/new_patient_pipeline.py -id <subject_id> -demos <demographic_file> -harmo_code <harmonisation_code>"
 ```
+
+:::
+:::{tab-item} Native
+:sync: native
+
+```bash
+python scripts/new_patient_pipeline/new_patient_pipeline.py -id <subject_id> -demos <demographic_file> -harmo_code <harmonisation_code>
+```
+
 :::
 ::::
 
@@ -108,6 +125,15 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_pati
 ```bash
 singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001"
 ```
+
+:::
+:::{tab-item} Native
+:sync: native
+
+```bash
+python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001
+```
+
 :::
 ::::
 
@@ -127,6 +153,13 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_pati
 
 ```bash
 singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001 -harmo_code H1"
+```
+:::
+:::{tab-item} Native
+:sync: native
+
+```bash
+python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001 -harmo_code H1
 ```
 
 :::
@@ -148,6 +181,14 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_pati
 
 ```bash
 singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/new_patient_pipeline.py -ids list_subjects.txt --parallelise"
+```
+
+:::
+:::{tab-item} Native
+:sync: native
+
+```bash
+python scripts/new_patient_pipeline/new_patient_pipeline.py -ids list_subjects.txt --parallelise
 ```
 
 :::

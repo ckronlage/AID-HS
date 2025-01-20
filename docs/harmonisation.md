@@ -47,6 +47,15 @@ And then run:
 ```bash
 singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/new_patient_pipeline.py -harmo_code <harmo_code> -ids <subjects_list> -demos <demographic_file> --harmo_only"
 ```
+
+:::
+:::{tab-item} Native
+:sync: native
+
+```bash
+python scripts/new_patient_pipeline/new_patient_pipeline.py -harmo_code <harmo_code> -ids <subjects_list> -demos <demographic_file> --harmo_only
+```
+
 :::
 ::::
 

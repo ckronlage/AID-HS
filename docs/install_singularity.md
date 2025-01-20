@@ -71,5 +71,4 @@ You will find `pytest_errors.log` in the folder where you launched the command.
 Please see our [FAQ page](https://aid-hs.readthedocs.io/en/latest/FAQ.html) for common installation problems and questions
 
 ## Contact
-
 If you encounter any errors, please contact `m.ripart@ucl.ac.uk` for support
