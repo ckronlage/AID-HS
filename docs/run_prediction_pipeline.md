@@ -2,13 +2,13 @@
 
 The AID-HS pipeline offers a unique command line to detect and lateralize HS from T1w scan. 
 
-If you wish to use the harmonisation feature of the AID-HS pipeline, you will need to first have computed the harmonisation parameters for the scanner used to acquire the data and used the harmonisation code into the main pipeline command as described bellow. Please refer to our [guidelines to harmonise a new scanner](/docs/harmonisation.md). 
+If you wish to use the harmonisation feature of the AID-HS pipeline, you will need to first have computed the harmonisation parameters for the scanner used to acquire the data and used the harmonisation code into the main pipeline command as described bellow. Please refer to our [guidelines to harmonise a new scanner](https://aid-hs.readthedocs.io/en/latest/harmonisation.html). 
 
 ## Running
 
-- Ensure you have installed the AID-HS pipeline with [docker container](/docs/install_docker.md)
-- Ensure you have [organised your data](/docs/prepare_data.md) into BIDS format before running this pipeline
-- Ensure you have [computed the harmonisation parameters](/docs/harmonisation.md) if you want to use the harmonisation parameters 
+- Ensure you have installed the AID-HS pipeline with [docker container](https://aid-hs.readthedocs.io/en/latest/install_docker.html)
+- Ensure you have [organised your data](https://aid-hs.readthedocs.io/en/latest/prepare_data.html) into BIDS format before running this pipeline
+- Ensure you have [computed the harmonisation parameters](https://aid-hs.readthedocs.io/en/latest/harmonisation.html) if you want to use the harmonisation parameters 
 
 Open a terminal and `cd` to where you extracted the release zip.
 
@@ -40,7 +40,7 @@ You can tune the AID-HS pipeline command using additional variables and flags as
 |either ```-id <subject_id>```  |  if you want to run the pipeline on 1 single subject.|  
 |or ```-ids <subjects_list>``` |  if you want to run the pipeline on more than 1 subject, you can pass the name of a text file containing the list of subjects. An example 'subjects_list.txt' is provided in the <aidhs_data_folder>. | 
 | **Optional variables** |
-| ```-harmo_code <harmo_code>```  | provide the harmonisation code if you want to harmonise your data before prediction. This requires to have [computed the harmonisation parameters](/docs/harmonisation.md) beforehand. The harmonisation code should start with H, e.g. H1. | 
+| ```-harmo_code <harmo_code>```  | provide the harmonisation code if you want to harmonise your data before prediction. This requires to have [computed the harmonisation parameters](https://aid-hs.readthedocs.io/en/latest/harmonisation.html) beforehand. The harmonisation code should start with H, e.g. H1. | 
 |```--parallelise``` | use this flag to speed up the segmentation by running HippUnfold on multiple subjects in parallel. |
 |```--skip_segmentation``` | use this flag to skips the hippocampal segmentation and features extraction. Usefull if you already have these outputs and you just want to run the preprocessing and the predictions (e.g: after harmonisation) |
 |**More advanced variables** | 
@@ -70,4 +70,4 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_pati
 
 ## Interpretation of results
 
-Refer to our [guidelines](/docs/interpret_results.md) for details on how to read and interprete the AID-HS pipeline results
+Refer to our [guidelines](https://aid-hs.readthedocs.io/en/latest/interpret_results.html) for details on how to read and interprete the AID-HS pipeline results

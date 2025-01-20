@@ -13,7 +13,7 @@ The first page of the report provides a visualisation of the hippocampal segment
 
 Note: We recommend to visually inspected segmentation with a score below 0.7 to check whether the segmentation has failed
 
-![seg_surf](/docs/images/test001_segmentation_surfaces.png)
+![seg_surf](https://raw.githubusercontent.com//MELDProject/AID-HS/main/docs/images/test001_segmentation_surfaces.png)
 
 HippUnfold results are stored in the folder: `/output/hippunfold_outputs/hippunfold/<subject_id>`
 - Hippocampal segmentations are saved under `anat/<subject_id>_hemi-<L/R>_space-cropT1w_desc-preproc_T1w.nii.gz`
@@ -41,7 +41,7 @@ The pink box provides an interpretation of the results.
 - If your data are not harmonised, the box will mentioned that the growth curves might not be reliable and should not be interpreted
 - If your data are harmonised, it will detail the number of features per hippocampus that are exhibiting clear features of hippocampal sclerosis. If both hippocampi exhibit above 3 features consistent with HS, the box will mention that this could be a bilateral HS.
 
-![norm_curv](/docs/images/test001_normative_curves.png)
+![norm_curv](https://raw.githubusercontent.com//MELDProject/AID-HS/main/docs/images/test001_normative_curves.png)
 
 In the example above, the data for this patient were not harmonised, therefore the growth curves should not be interpreted. However, if they were interpreted, we could say that most of the features are in the normal range of the healthy population and that no hippocampi exhibit clear features of hippocampal sclerosis.
 
@@ -53,7 +53,7 @@ The second page also shows:
 
 Note: A high score for "no asymmetry" do not always means that there is no HS. If both hippocampi exhibit clear features of HS, it could mean that the individual has a bilateral HS. 
 
-![asym_scores](/docs/images/test001_asymmetry_predictions.png)
+![asym_scores](https://raw.githubusercontent.com//MELDProject/AID-HS/main/docs/images/test001_asymmetry_predictions.png)
 
 In the example above the magnitude of the asymmetries are all below the thresholds and the direction of abnormalities is not consitent with right or left HS. 
 Based on these asymmetries, the automated classifier predicted with 83.8 probability that there is no asymmetry between the hippocampi.

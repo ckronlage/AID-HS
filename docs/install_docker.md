@@ -23,7 +23,7 @@ If this command displays the docker version then it is already installed. If not
 
 ## Enable GPUs
 
-Enabling your computer's GPUs for running the pipeline accelerates the brain segmentation when using Fastsurfer and the predictions. Follow instructions for your operating system to install.
+Enabling your computer's GPUs for running the pipeline accelerates the HippUnfold segmentation . Follow instructions for your operating system to install.
 
 Install the [*nvidia container toolkit*](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
 
@@ -108,7 +108,7 @@ To disable gpus, change it back to `0`.
 Note: if you don't have GPUs on your computer you should remove the lines aboves from the compose.yml file
 
 ## FAQs
-Please see our [FAQs](/docs/FAQ.md) for common installation problems.
+Please see our [FAQs](https://aid-hs.readthedocs.io/en/latest/FAQ.html) for common installation problems.
 
 ## Contact
 

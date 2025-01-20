@@ -11,16 +11,16 @@ The harmonisation parameters are computed using [Distributed Combat](https://doi
 To get these parameters you will need a cohort of subjects acquired from the same scanner and under the same protocol (sequence, parameters, ...).
 Subjects can be controls and/or patients, but we advise to use ***at least 20 subjects*** to enable an accurate harmonisation, and to not use HS patients for the harmonisation (see (paper)[]). 
 Try to ensure the data are high quality (i.e no blurring, no artefacts, no cavities in the brain).
-Demographic information (e.g age and sex) will be required for this process, follow the [guidelines](/docs/prepare_data.md) 
+Demographic information (e.g age and sex) will be required for this process, follow the [guidelines](https://aid-hs.readthedocs.io/en/latest/prepare_data.html) 
 WARNING: zero variance in the demographics information (e.g. having the same age for all subjects) will lead to Combat failures or errors. 
 
-Once you have done the process once, you can follow the [general guidelines to predict on a new patient](/docs/run_prediction_pipeline.md) 
+Once you have done the process once, you can follow the [general guidelines to predict on a new patient](https://aid-hs.readthedocs.io/en/latest/run_prediction_pipeline.html) 
 
 ## Running
 
-- Ensure you have installed the AID-HS pipeline with [docker container](/docs/install_docker.md). 
+- Ensure you have installed the AID-HS pipeline with [docker container](https://aid-hs.readthedocs.io/en/latest/install_docker.html). 
 - **Chose a harmonisation** code for this scanner starting by 'H' (e.g H1, H2, ..). This harmonisation code will be needed to organise your data and run the code as detailled below. 
-- Ensure you have [organised your MRI data](/docs/prepare_data.md#prepare-the-mri-data-in-bids-format-mandatory) and [provided demographic information](/docs/prepare_data.md#prepare-the-demographic-information-to-run-the-harmonisation) before running this pipeline. 
+- Ensure you have [organised your MRI data](https://aid-hs.readthedocs.io/en/latest/prepare_data.html#prepare-the-mri-data-in-bids-format-mandatory) and [provided demographic information](https://aid-hs.readthedocs.io/en/latest/prepare_data.html#prepare-the-demographic-information-to-run-the-harmonisation) before running this pipeline. 
 
 
 ### Second step : Run the pipeline to get the harmonisation parameters
@@ -43,7 +43,7 @@ You can tune this command using additional variables and flags as detailed bello
 |-------|---|
 |```-harmo_code <harmo_code>```  |  The site code should start with H, e.g. H1. | 
 |```-ids <subjects_list>``` |  A text file containing the list of subjects. An example 'subjects_list.txt' is provided in the <aidhs_data_folder>. | 
-|```-demos <demographic_file>```| The name of the csv file containing the demographic information as detailled in the [guidelines](/docs/prepare_data.md#prepare-the-mri-data-in-bids-format-mandatory) and [provided demographic information](/docs/prepare_data.md#prepare-the-demographic-information-to-run-the-harmonisation). An example 'demographics_file.csv' is provided in the <aidhs_data_folder>.|
+|```-demos <demographic_file>```| The name of the csv file containing the demographic information as detailled in the [guidelines](https://aid-hs.readthedocs.io/en/latest/prepare_data.html#prepare-the-mri-data-in-bids-format-mandatory) and [provided demographic information](https://aid-hs.readthedocs.io/en/latest/prepare_data.html#prepare-the-demographic-information-to-run-the-harmonisation). An example 'demographics_file.csv' is provided in the <aidhs_data_folder>.|
 | **Optional variables** |
 |```--parallelise``` | use this flag to speed up the segmentation by running HippUnfold on multiple subjects in parallel. |
 |```--harmo_only``` | Use this flag to do all the processes up to the harmonisation. Usefull if you want to harmonise on some subjects but do not wish to predict on them |
@@ -51,4 +51,4 @@ You can tune this command using additional variables and flags as detailed bello
 
 ## What's next ? 
 Once you have successfully computed the harmonisation parameters, they should be saved in your <aidhs_data_folder>. The file is called 'AIDHS_<site_code>_combat_parameters.hdf5' and is stored in 'output/preprocessed_surf_data/AIDHS_<site_code>/'.
-You can now refer to the guidelines [to predict a new patient](/docs/run_prediction_pipeline.md) to predict lesion in patients from that same scanner.
+You can now refer to the guidelines [to predict a new patient](https://aid-hs.readthedocs.io/en/latest/run_prediction_pipeline.html) to predict lesion in patients from that same scanner.

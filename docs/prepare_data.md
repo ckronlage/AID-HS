@@ -25,7 +25,7 @@ The main key ingredients are :
 - in the anat folder your T1 and FLAIR nifti images should follow the structure : `<sub-subject_id>_<modality_suffix>.nii.gz` or `<sub-subject_id>_ses-<session>_<modality_suffix>.nii.gz` if you have a session.
 
 A simple example of the BIDS structure for patient sub-test001 is given below:\
-![example](/docs/images/input_structure_bids_format.png)
+![example](https://raw.githubusercontent.com//MELDProject/AID-HS/main/docs/images/input_structure_bids_format.png)
 
 Additionally, you will need to have two json files in the `input` folder:
 - `bids_config.json` containing the key words for session, datatype and modality suffix \
@@ -58,7 +58,7 @@ To compute the harmonisation parameters, you will need to provide a couple of in
 - `Sex`: "male" if male, "female" if female
 - `Scanner`: the scanner strenght associated with the MRI data ('3T' for 3 Tesla or '15T' for 1.5 Tesla)
 
-![example](/docs/images/example_demographic_csv.png)
+![example](https://raw.githubusercontent.com//MELDProject/AID-HS/main/docs/images/example_demographic_csv.png)
 
 Notes: 
 - please ensure the column names are unchanged and completed with the appropriate values, otherwise the pipeline will fail.
