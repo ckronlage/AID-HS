@@ -25,6 +25,14 @@ import aidhs.hippunfold_plotting as plotting
 import warnings
 warnings.filterwarnings('ignore')
 
+features_title = {
+                '.curvature' : 'mean curvature',
+                '.gauss-curv_filtered': 'intrinsic curvature ',
+                '.gyrification' : 'gyrification ',
+                '.thickness' : 'thickness (mm)',
+                '.hippunfold_volume' :'volume (mm$^3$)',
+    }
+
 def convert_bids_id(bids_id=None):
         #clean id
         list_exclude = ['{','}','_']
@@ -129,13 +137,6 @@ def plot_controls_chart(ax, data_c, feature, color = 'green', cmap=False, fill_c
     if cmap != False:
         cmap = matplotlib.cm.get_cmap(cmap)
 
-    features_title = {
-                '.curvature' : 'mean curvature',
-                '.gauss-curv_filtered': 'intrinsic curvature ',
-                '.gyrification' : 'gyrification ',
-                '.thickness' : 'thickness (mm)',
-                '.hippunfold_volume' :'volume (mm$^3$)',
-    }
 
     #plot percentiles 
     percentiles = np.sort(list(set(data_c['predict_vals_intervals'])))
@@ -172,7 +173,7 @@ def find_nearest(array, value):
     idx = (np.abs(array - value)).argmin()
     return idx, array[idx]
 
-def plot_patient_on_controls_charts(subj, features, controls_GAM, filename, harmo_code="noHarmo",):
+def plot_patient_on_controls_charts(subj, features, controls_GAM, filename, harmo_code="noHarmo", dict_pat={}):
     '''
     Plot patient left and right features on normative trajectories
     '''
@@ -216,6 +217,8 @@ def plot_patient_on_controls_charts(subj, features, controls_GAM, filename, harm
                 feat_out[hemi] = feat_out[hemi]+1
             else:
                 pass
+            
+            dict_pat[f'feature {return_features_title(feature, features_title)} {hemi} hemi'] = vals
         i=i+1
     #add legend
     axs.append(fig.add_subplot(gs1[i]))  
@@ -249,9 +252,11 @@ def plot_patient_on_controls_charts(subj, features, controls_GAM, filename, harm
     plt.tight_layout()
     #save plot
     fig.savefig(filename, bbox_inches="tight")
+    
+    return dict_pat
 
 
-def plot_abnormalities_direction_subject(subj, features, filename):
+def plot_abnormalities_direction_subject(subj, features, filename, dict_pat= {}):
     '''
     Plot magnitude and direction of asymmetries in subject
     '''
@@ -289,6 +294,7 @@ def plot_abnormalities_direction_subject(subj, features, filename):
         for hemi in ['lh','rh']:
             vals = subj.load_feature_values(feature, hemi)
             data_p[feature][hemi]=vals[0]
+            dict_pat[f'asymmetry {return_features_title(feature, features_title).split(" (")[0]} {hemi} hemi'] = vals[0]
         else:
             pass
 
@@ -311,7 +317,7 @@ def plot_abnormalities_direction_subject(subj, features, filename):
             #normalise threshold by abnormality direction and hemisphere
             thresh = thresh/abnormal_AI_direction_feat[feature]*direc 
             ax.plot([thresh, thresh], [i-0.2,i+0.2], color=color, linestyle='--', alpha=0.7)
-
+            
     #removing the default axis on all sides:
     for side in ['right','top','left']:
         ax.spines[side].set_visible(False)
@@ -333,7 +339,7 @@ def plot_abnormalities_direction_subject(subj, features, filename):
     #save plot
     fig.savefig(filename, bbox_inches="tight")
 
-    
+    return dict_pat
 
 def coords_seg_extract(seg_array):
     """
@@ -497,7 +503,7 @@ def plot_surfaces_subject(subject, hippunfold_folder, labels_file, output_file):
 
     fig.savefig(output_file, dpi=96, transparent =True)
 
-def write_prediction_subject(subj, output_file, cohort, filename_model, csv_output):
+def write_prediction_subject(subj, output_file, cohort, filename_model, dict_pat):
     '''
     Predict subject with a given trained model
     Plot the predicted probabilities of being left HS, right HS or no HS
@@ -575,24 +581,21 @@ def write_prediction_subject(subj, output_file, cohort, filename_model, csv_outp
         #fig.tight_layout()
     fig.savefig(output_file)
     
-    #save predictions in csv
-    values = {}
+    #save predictions
     for score_name, score_number in zip(scores_name, scores_number):
-        values[f'score {score_name}'] = score_number
-    values['prediction'] = group
-    df = pd.DataFrame([values])
-    df.to_csv(csv_output)
+        dict_pat[f'score {score_name}'] = score_number
+    dict_pat['prediction'] = group
     
-    return textstr
+    return dict_pat
 
-def plot_dice_score_subject(subject, hippunfold_folder, output_file):
+def plot_dice_score_subject(subject, hippunfold_folder, output_file, dict_pat = {}):
     subject_bids = convert_bids_id(subject)
     txt=['Quality check of segmentation (scores):']
     for i, hemi in enumerate(['L','R']):
         file_dice = os.path.join(hippunfold_folder, 'hippunfold', subject_bids, 'qc', f'{subject_bids}_hemi-{hemi}_desc-unetf3d_dice.tsv')
         df_temp = pd.read_csv(file_dice, sep = '\t', header=None)
         dice = round(df_temp.values[0][0],2)
-        
+        dict_pat[f'dice segmentation {hemi} hemi']=dice
         if dice<0.7:
             txt.append('{} hippocampi: {} - check segmentation'.format(hemi,dice))
         else:
@@ -605,6 +608,44 @@ def plot_dice_score_subject(subject, hippunfold_folder, output_file):
     ax.axis("off")
     #fig.tight_layout()
     fig.savefig(output_file)
+
+    return dict_pat
+
+def get_info_soft(harmo_code, model_name):
+    ''' Report information of software (e.g Freesurfer) '''
+    from aidhs import __version__
+
+    #find MELD version
+    if __version__ != None:
+        aidhs_version = __version__
+    else:
+        aidhs_version = "Unknown"
+
+    #HippUnfold version 
+    HippUnfold_version = 'v1.1.0'
+    HippUnfold_path = 'https://github.com/khanlab/hippunfold'
+    
+    #use harmonisation
+    if harmo_code == 'noHarmo':
+        harmo = "No" 
+    else:
+        harmo = "Yes"
+    
+    text = "\n".join((
+                "Information about AID-HS software:",
+                f"AID-HS package version: {aidhs_version}",
+                f"AID-HS model used: {model_name}",
+                "", 
+                "Information about segmentation software:",
+                f"HippUnfold version: {HippUnfold_version}",
+                f"HippUnfold website: {HippUnfold_path}",
+                "", 
+                "Information about features preprocessing:",
+                f"Harmonisation of the feature: {harmo}",
+                f"Harmonisation code: {harmo_code}",
+                ))
+    return text
+
 
 def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_code="noHarmo"):
     ''' Create report of hippocampal abnormalities
@@ -632,11 +673,14 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_co
         controls_GAM = pickle.load(handle)
     
     for subject in subject_ids:
-
+        
+        dict_pat = {}
+        dict_pat['ID'] = subject
+        
         # create dataset containing subject
         tmp = tempfile.NamedTemporaryFile(mode="w")
         create_dataset_file(subject, tmp.name)
-    
+
         # create cohort containing subject
         c_combat = AidhsCohort(hdf5_file_root='{site_code}_{group}_featurematrix_combat_avg.hdf5', dataset=tmp.name)
         c_norm =  AidhsCohort(hdf5_file_root='{site_code}_{group}_featurematrix_norm_avg.hdf5', dataset=tmp.name)
@@ -655,7 +699,7 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_co
 
         # add dices scores segmentation
         filename1bis = os.path.join(output_dir_subj, f'hippo_segmentation_dices.png')
-        plot_dice_score_subject(subject, hippunfold_dir, filename1bis)
+        dict_pat = plot_dice_score_subject(subject, hippunfold_dir, filename1bis, dict_pat)
 
         #add legend subfields
         filename1bis2 = os.path.join(output_dir_subj, f'hippo_segmentation_legend.png')
@@ -673,7 +717,7 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_co
         subj = AidhsSubject(subject, cohort=c_combat)
 
         filename3 = os.path.join(output_dir_subj,f'normative_charts.png')
-        plot_patient_on_controls_charts(subj, features, controls_GAM, filename3, harmo_code)
+        dict_pat = plot_patient_on_controls_charts(subj, features, controls_GAM, filename3, harmo_code, dict_pat)
         
 
         #-----------------------------------------
@@ -682,7 +726,7 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_co
         subj = AidhsSubject(subject, cohort=c_norm)  
 
         filename4 = os.path.join(output_dir_subj,f'abnormalities_directions.png')
-        plot_abnormalities_direction_subject(subj, features[::-1], filename= filename4)
+        dict_pat = plot_abnormalities_direction_subject(subj, features[::-1], filename4, dict_pat)
         
         #-----------------------------------------
         # write predictions 
@@ -693,13 +737,15 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_co
         filename_model = os.path.join(EXPERIMENT_PATH, f'model_LogReg_Hippunfold features_trainwhole.sav')
         filename5 = os.path.join(output_dir_subj,f'predictions_scores.png')
         csv_output = os.path.join(output_dir_subj,f'predictions.csv')
-        write_prediction_subject(subj, 
+        dict_pat = write_prediction_subject(subj, 
                                  filename5,
                                  cohort = c_norm,
                                  filename_model = filename_model,
-                                 csv_output = csv_output
+                                 dict_pat = dict_pat
                                 )
-        
+        # save in csv
+        df = pd.DataFrame([dict_pat])
+        df.to_csv(csv_output)
 
         # ----------------------------------------------
         # create PDF overview
@@ -717,6 +763,8 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_co
 
         footer_txt = "This report was created by Mathilde Ripart"
 
+        text_info_3 = get_info_soft(harmo_code, model_name=filename_model)
+        
         #### create main page with overview on inflated brain
 
         # add page
@@ -750,7 +798,6 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_co
          #add dices scores bellow segmentation 
         pdf.image(filename1bis, 5, 240, link='', type='', w=120, h=30)
 
-        
         #TODO add explanation box ?
 
         # add footer date
@@ -775,6 +822,16 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_co
         # add footer date
         pdf.custom_footer(footer_txt)
 
+        #### create last page with info for reproducibility
+        # add page
+        pdf.add_page()
+        # add line contours
+        pdf.lines()
+        # add info box
+        pdf.info_box(text_info_3)
+        # add footer date
+        pdf.custom_footer(footer_txt)
+        
         # save pdf
         file_path = os.path.join(output_dir_subj, f"Report_{subject}.pdf")
         pdf.output(file_path, "F")
