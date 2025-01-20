@@ -21,7 +21,7 @@ The AID-HS software is intended for research purposes only and has not been revi
 ### Installations available 
 You can install and use the AID-HS pipeline with :
 - [**docker container**](https://aid-hs.readthedocs.io/en/latest/install_docker.html) recommended for easy installation of the pipeline as all the prerequisite packages are already embeded into the container. Note: Dockers do not work on High Performance Computing (HCP) systems.
-- [**singularity container]**(https://aid-hs.readthedocs.io/en/latest/install_singularity.html) - to run a container on High Performance Computing (HCP) systems. 
+- [**singularity container**](https://aid-hs.readthedocs.io/en/latest/install_singularity.html) - to run a container on High Performance Computing (HCP) systems. 
 - [**native installation**](https://aid-hs.readthedocs.io/en/latest/install_native.html): Not supported 
 
 ### Running the pipeline 

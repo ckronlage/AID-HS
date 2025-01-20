@@ -3,15 +3,16 @@
 ## Information about the harmonisation
 The AID-HS pipeline enables the harmonisation of your patient's features before prediction, if you are providing harmonisation parameters.
 
-Harmonisation of your patient data is not mandatory but recommended, to remove any bias induced by the scanner and sequence used, and be able to interprete the normative curves. For more details on the AID-HS performances with and without harmonisation please refers to our (paper)[]
+Harmonisation of your patient data is not mandatory but recommended, to remove any bias induced by the scanner and sequence used, and be able to interprete the normative curves. For more details on the AID-HS performances with and without harmonisation please refers to our (paper)[https://onlinelibrary.wiley.com/doi/10.1002/ana.27089?af=R]
 
 ## Compute the harmonisation paramaters 
 
 The harmonisation parameters are computed using [Distributed Combat](https://doi.org/10.1016/j.neuroimage.2021.118822).
 To get these parameters you will need a cohort of subjects acquired from the same scanner and under the same protocol (sequence, parameters, ...).
-Subjects can be controls and/or patients, but we advise to use ***at least 20 subjects*** to enable an accurate harmonisation, and to not use HS patients for the harmonisation (see (paper)[]). 
+Subjects can be controls and/or patients, but we advise to use ***at least 20 subjects*** to enable an accurate harmonisation, and to not use HS patients for the harmonisation. 
 Try to ensure the data are high quality (i.e no blurring, no artefacts, no cavities in the brain).
 Demographic information (e.g age and sex) will be required for this process, follow the [guidelines](https://aid-hs.readthedocs.io/en/latest/prepare_data.html) 
+
 WARNING: zero variance in the demographics information (e.g. having the same age for all subjects) will lead to Combat failures or errors. 
 
 Once you have done the process once, you can follow the [general guidelines to predict on a new patient](https://aid-hs.readthedocs.io/en/latest/run_prediction_pipeline.html) 
@@ -27,9 +28,27 @@ Once you have done the process once, you can follow the [general guidelines to p
 
 Open a terminal and `cd` to where you extracted the release zip.
 
+::::{tab-set}
+:::{tab-item} Docker
+:sync: docker
+
 ```bash
 DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -harmo_code <harmo_code> -ids <subjects_list> -demos <demographic_file> --harmo_only
 ```
+:::
+:::{tab-item} Singularity
+:sync: Singularity
+
+First you will need to mount the `aidhs_data_folder` to the `/data` folder of the container by running:
+```bash
+export APPTAINER_BINDPATH=<path_to_aidhs_data_folder>:/data
+```
+And then run:
+```bash
+singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/new_patient_pipeline.py -harmo_code <harmo_code> -ids <subjects_list> -demos <demographic_file> --harmo_only"
+```
+:::
+::::
 
 This calls the AID-HS pipeline command. You can tune this command using the variables and flag describes further below. 
 
