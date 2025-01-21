@@ -3,7 +3,7 @@
 ## Information about the harmonisation
 The AID-HS pipeline enables the harmonisation of your patient's features before prediction, if you are providing harmonisation parameters.
 
-Harmonisation of your patient data is not mandatory but recommended, to remove any bias induced by the scanner and sequence used, and be able to interprete the normative curves. For more details on the AID-HS performances with and without harmonisation please refers to our (paper)[https://onlinelibrary.wiley.com/doi/10.1002/ana.27089?af=R]
+Harmonisation of your patient data is not mandatory but recommended, to remove any bias induced by the scanner and sequence used, and be able to interprete the normative curves. For more details on the AID-HS performances with and without harmonisation please refers to our [paper](https://onlinelibrary.wiley.com/doi/10.1002/ana.27089?af=R)
 
 ## Compute the harmonisation paramaters 
 
