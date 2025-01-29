@@ -10,6 +10,8 @@ Notes:
 - You will need **~20GB of space** to install the container
 - The docker image contains Miniconda 3, HippUnfold v1.1.0, and AID-HS. The whole image is ~18GB.  
 
+Here is the video tutorial demonstrating how to do the docker installation - [Docker and Singularity Installation of AID-HS Tutorial](https://www.youtube.com/watch?v=RRAET7r05ys&t=11s&ab_channel=MELDproject).
+
 ## Prerequisites
 
 ### Install Docker

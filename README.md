@@ -1,5 +1,9 @@
 # AID-HS
 
+**Full documentation: [here](https://aid-hs.readthedocs.io/en/latest/index.html)**
+
+**Intro to AID-HS and installation videos: [here]()**
+
 **Automated and Interpretable Detection of Hippocampal Sclerosis**
 
 AID-HS extracts hippocampal volume- and surface-based features from T1w scans using [HippUnfold](https://hippunfold.readthedocs.io/en/latest/), and provides an in-depth characterisation of hippocampal abnormalities as well as the automated detection and lateralisation of hippocampal sclerosis (HS). 
@@ -24,6 +28,8 @@ You can install and use the AID-HS pipeline with :
 - [**singularity container**](https://aid-hs.readthedocs.io/en/latest/install_singularity.html) - to run a container on High Performance Computing (HCP) systems. 
 - [**native installation**](https://aid-hs.readthedocs.io/en/latest/install_native.html): Not supported 
 
+**YouTube tutorial available for the [docker and singularity installation](https://www.youtube.com/watch?v=RRAET7r05ys&t=11s&ab_channel=MELDproject)**
+
 ### Running the pipeline 
 Once installed you will be able to use the AID-HS pipeline on your data following the steps:
 1. Prepare your data : [guidelines](https://aid-hs.readthedocs.io/en/latest/prepare_data.html)
@@ -31,6 +37,8 @@ Once installed you will be able to use the AID-HS pipeline on your data followin
 3. Run the prediction pipeline: [guidelines](https://aid-hs.readthedocs.io/en/latest/run_prediction_pipeline.html)
 4. Interpret the results: [guidelines](https://aid-hs.readthedocs.io/en/latest/interpret_results.html)
 
+
+**YouTube tutorials available to run the [harmonisation step](https://www.youtube.com/watch?v=drMap14Sm6Y&t=12s&ab_channel=MELDproject), to run the [prediction pipeline](https://www.youtube.com/watch?v=VBOdEFMNd2o&t=60s&ab_channel=MELDproject) and to [interpret the pipeline results](https://www.youtube.com/watch?v=FHArq9DdILg&t=37s&ab_channel=MELDproject)**
 
 **What is the harmonisation process ?**
 

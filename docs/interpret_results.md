@@ -2,6 +2,8 @@
 
 This guideline explains how to interpret the AID-HS pipeline results : Individual and interpretable patients reports
 
+Here is a video tutorial on how to interpret the AID-HS results: [Interpretation tutorial](https://www.youtube.com/watch?v=FHArq9DdILg&t=37s&ab_channel=MELDproject).
+
 ## Interpreting the AID-HS report
 
 The AID-HS pdf report and .png images of the pipeline results are saved in the folder:

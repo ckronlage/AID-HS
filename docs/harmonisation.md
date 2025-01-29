@@ -5,6 +5,8 @@ The AID-HS pipeline enables the harmonisation of your patient's features before 
 
 Harmonisation of your patient data is not mandatory but recommended, to remove any bias induced by the scanner and sequence used, and be able to interprete the normative curves. For more details on the AID-HS performances with and without harmonisation please refers to our [paper](https://onlinelibrary.wiley.com/doi/10.1002/ana.27089?af=R)
 
+Here is the video tutorial about how to run the harmonisation using the AID-HS pipeline: [Tutorial on how to run the harmonisation](https://www.youtube.com/watch?v=drMap14Sm6Y&t=12s&ab_channel=MELDproject).
+
 ## Compute the harmonisation paramaters 
 
 The harmonisation parameters are computed using [Distributed Combat](https://doi.org/10.1016/j.neuroimage.2021.118822).

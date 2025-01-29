@@ -4,6 +4,8 @@ The AID-HS pipeline offers a unique command line to detect and lateralize HS fro
 
 If you wish to use the harmonisation feature of the AID-HS pipeline, you will need to first have computed the harmonisation parameters for the scanner used to acquire the data and used the harmonisation code into the main pipeline command as described bellow. Please refer to our [guidelines to harmonise a new scanner](https://aid-hs.readthedocs.io/en/latest/harmonisation.html). 
 
+Here is the video tutorial about how to run the AID-HS pipeline: [Tutorial on how to run the AID-HS pipeline](https://www.youtube.com/watch?v=VBOdEFMNd2o&t=60s&ab_channel=MELDproject).
+
 ## Running
 
 - Ensure you have installed the AID-HS pipeline with [docker container](https://aid-hs.readthedocs.io/en/latest/install_docker.html)
