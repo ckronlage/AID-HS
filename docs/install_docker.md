@@ -72,6 +72,8 @@ services:
     user: $DOCKER_USER
 ```
 
+6. **WARNING** If you are running docker with Docker Desktop, you will need to ensure that the memory usage allowed by docker is to the maximum, as  Docker Desktop halves the memory usage by default. For that you can go in the Docker Desktop settings and change the memory limit (more help in this [post](https://forums.docker.com/t/how-to-increase-memory-size-that-is-available-for-a-docker-container/78483))
+
 ## Download AID-HS docker & Verify installation
 The line below will download AID-HS and then run a test to verify that everything is installed and set up properly. It may take up to an 1h to download the docker image and then takes approximately 1 minute to run the test.
 
