@@ -393,7 +393,7 @@ def return_labels_cmap(output_file=None):
     
     return subfields_atlas, cmap
 
-def plot_segmentations_subject(subject, hippunfold_folder, output_file, hemis=['L','R']):
+def plot_segmentations_subject(subject, hippunfold_folder, output_file, hemis=['R','L']):
     '''
     Plot HippUnfold segmentations for left and right hippocampi
     '''
@@ -413,33 +413,25 @@ def plot_segmentations_subject(subject, hippunfold_folder, output_file, hemis=['
         _ , cmap_labels = return_labels_cmap()
 
         # plot on conventional coronal view
-        img_array = np.rot90(img_array, 2)
-        seg_array = np.rot90(seg_array, 2)
         x,y,z = coords_seg_extract(seg_array)
-        axs[0,i].imshow(img_array[x,:,:], cmap='gray')
-        axs[0,i].imshow(seg_array[x,:,:], origin='lower', cmap=cmap_labels, alpha=0.4)
+        axs[0,i].imshow(np.fliplr(img_array[:,y,:]), cmap='gray')
+        axs[0,i].imshow(np.fliplr(seg_array[:,y,:]), origin='lower', cmap=cmap_labels, alpha=0.4)
         axs[0,i].axis('off')
         axs[0,i].text(1, 125, 'R', fontsize = 8, color='red')
         axs[0,i].text(240, 125, 'L', fontsize = 8, color='red')
         axs[0,i].text(125, 240, 'S', fontsize = 8, color='red')
         axs[0,i].text(125, 5, 'I', fontsize = 8, color='red')
         # plot on conventional axial view
-        img_array = np.flipud(img_array)
-        seg_array = np.flipud(seg_array)
-        x,y,z = coords_seg_extract(seg_array)
-        axs[1,i].imshow(img_array[:,y,:], origin='lower', cmap='gray')
-        axs[1,i].imshow(seg_array[:,y,:], origin='lower', cmap=cmap_labels, alpha=0.4)
+        axs[1,i].imshow(np.fliplr(img_array[x,:,:]), origin='lower', cmap='gray')
+        axs[1,i].imshow(np.fliplr(seg_array[x,:,:]), origin='lower', cmap=cmap_labels, alpha=0.4)
         axs[1,i].axis('off')
         axs[1,i].text(1, 125, 'R', fontsize = 8, color='red')
         axs[1,i].text(240, 125, 'L', fontsize = 8, color='red')
         axs[1,i].text(125, 240, 'A', fontsize = 8, color='red')
         axs[1,i].text(125, 5, 'P', fontsize = 8, color='red')
         # plot on conventional sagital view
-        x,y,z = coords_seg_extract(seg_array)
-        img_array = np.rot90(img_array, -1)
-        seg_array = np.rot90(seg_array, -1)
-        axs[2,i].imshow(img_array[:,:,z], origin='lower', cmap='gray')
-        axs[2,i].imshow(seg_array[:,:,z], origin='lower', cmap=cmap_labels, alpha=0.4)
+        axs[2,i].imshow(np.fliplr(img_array[:,:,z]), origin='lower', cmap='gray')
+        axs[2,i].imshow(np.fliplr(seg_array[:,:,z]), origin='lower', cmap=cmap_labels, alpha=0.4)
         axs[2,i].axis('off')
         axs[2,i].text(1, 125, 'A', fontsize = 8, color='red')
         axs[2,i].text(240, 125, 'P', fontsize = 8, color='red')
@@ -480,7 +472,7 @@ def plot_surfaces_subject(subject, hippunfold_folder, labels_file, output_file):
     vertices={}
     faces={}
     borders={}
-    for i,hemi in enumerate(['L','R']):
+    for i,hemi in enumerate(['R','L']):
         file_fold = os.path.join(hippunfold_folder, 'hippunfold', subject_bids, 'surf', f'{subject_bids}_hemi-{hemi}_space-T1w_den-0p5mm_label-hipp_midthickness.surf.gii')
         gii = nb.load(file_fold)
         vertices[hemi] = gii.get_arrays_from_intent('NIFTI_INTENT_POINTSET')[0].data
@@ -488,13 +480,13 @@ def plot_surfaces_subject(subject, hippunfold_folder, labels_file, output_file):
         borders[hemi] = labels
     
     #shift vertices of right hippo to be closer to left
-    shift = vertices['L'][:,0].max()-vertices['R'][:,0].min() + 3
-    vertices['R'][:,0] = vertices['R'][:,0]+shift
+    shift = vertices['R'][:,0].max()-vertices['L'][:,0].min() + 3
+    vertices['L'][:,0] = vertices['L'][:,0]+shift
 
     #concatenate surfaces on same space
-    vertices_both = np.concatenate((vertices['L'], vertices['R']))
-    faces_both = np.concatenate((faces['L'], faces['R'] + len(vertices['L'])))
-    borders_both = np.concatenate((borders['L'], borders['R']))
+    vertices_both = np.concatenate((vertices['R'], vertices['L']))
+    faces_both = np.concatenate((faces['R'], faces['L'] + len(vertices['R'])))
+    borders_both = np.concatenate((borders['R'], borders['L']))
 
     #plot
     im = create_surf_plot(borders_both, faces_both, vertices_both, cmap=colors)
