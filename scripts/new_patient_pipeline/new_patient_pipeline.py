@@ -73,8 +73,8 @@ if __name__ == "__main__":
 
      
     #write terminal output in a log
-    os.makedirs(os.path.join(BASE_PATH, 'logs'), exist_ok=True)
-    file_path=os.path.join(BASE_PATH, 'logs', 'AIDHS_pipeline_'+time.strftime('%Y-%m-%d-%H-%M-%S') + '.log')
+    os.makedirs(os.path.join(DATA_PATH, 'logs'), exist_ok=True)
+    file_path=os.path.join(DATA_PATH, 'logs', 'AIDHS_pipeline_'+time.strftime('%Y-%m-%d-%H-%M-%S') + '.log')
     sys.stdout = Logger(sys.stdout,file_path)
     sys.stderr = Logger(sys.stderr, file_path)
     

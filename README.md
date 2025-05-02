@@ -13,6 +13,13 @@ Note:
 - You will need the following demographic information (age at scan & sex) to run AID-HS on your patient's T1 MRI scan.
 - AID-HS has been developed on T1w scans acquired at 3T. It has not yet been thoroughly evaluated on 1.5T and 7T data
 
+**<span style="color: red;">SIGN UP TO THE AID-HS MAILING LIST</span>**:
+We request that all AID-HS users sign up to the mailing list. If you are using AID-HS, please send an email to `meld.study@gmail.com` with the subject 'Request to be added to the AID-HS mailing list' and provide use with your name and institute. This will ensure that we can update you about bug fixs and new releases. 
+
+**<span style="color: red;">EXISTING USERS: PLEASE UPDATE TO VERSION V1.0.1</span>**:
+We have released AID-HS V1.0.1 which fixes a couple of issues found by users. For more information about the release please see [AID-HS V1.0.1](https://github.com/MELDProject/AID-HS/releases/tag/v1.0.1). To update your code please follow the guidelines [Updating AID-HS to V1.0.1](https://aid-hs.readthedocs.io/en/latest/FAQs.html#Updating-AID-HS-to-V1.0.1) from our FAQ.
+
+
 Pipeline overview:\
 <img src="https://raw.githubusercontent.com//MELDProject/AID-HS/main/docs/images/overview_pipeline.jpg " height="500" />
 
@@ -29,6 +36,10 @@ You can install and use the AID-HS pipeline with :
 - [**native installation**](https://aid-hs.readthedocs.io/en/latest/install_native.html): Not supported 
 
 **YouTube tutorial available for the [docker and singularity installation](https://www.youtube.com/watch?v=RRAET7r05ys&t=11s&ab_channel=MELDproject)**
+
+**FAQs** 
+If you have a question or if you are running into issues at any stage (installation/use/interpretation), have a look at our [FAQs](https://aid-hs.readthedocs.io/en/latest/FAQs.html) page as we may have already have a solution. 
+
 
 ### Running the pipeline 
 Once installed you will be able to use the AID-HS pipeline on your data following the steps:

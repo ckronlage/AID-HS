@@ -28,7 +28,7 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_pati
 ```
 :::
 
-:::{tab-item} Docker Windows
+:::{tab-item} Docker Windows/Mac
 :sync: Docker Windows
 
 ```bash
@@ -74,7 +74,7 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_pati
 ```
 :::
 
-:::{tab-item} Docker Windows
+:::{tab-item} Docker Windows/Mac
 :sync: Docker Windows
 ```bash
 docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -id <subject_id> -demos <demographic_file> -harmo_code <harmonisation_code>
@@ -136,7 +136,7 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_pati
 ```
 :::
 
-:::{tab-item} Docker Windows
+:::{tab-item} Docker Windows/Mac
 :sync: Docker Windows
 
 ```bash
@@ -173,7 +173,7 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_pati
 ```
 :::
 
-:::{tab-item} Docker Windows
+:::{tab-item} Docker Windows/Mac
 :sync: Docker Windows
 
 ```bash
@@ -208,7 +208,7 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_pati
 ```
 :::
 
-:::{tab-item} Docker Windows
+:::{tab-item} Docker Windows/Mac
 :sync: Docker Windows
 ```bash
 docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -ids list_subjects.txt --parallelise

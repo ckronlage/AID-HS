@@ -33,7 +33,7 @@ Install the [*nvidia container toolkit*](https://docs.nvidia.com/datacenter/clou
 In order to run the docker, you'll need to configure a couple of files
 
 1. Download `aidhs.zip` from the [latest github release](https://github.com/MELDProject/AID-HS/releases/latest) and extract it.
-2. Download the aidhs_data_folder at https://figshare.com/s/16011ee4d6b5723b14b6
+2. Download the aidhs_data_folder from [figshare](https://figshare.com/s/48c92b1b53f8f0c67dec)
 3. Unzip the folder where you want to store the aidhs_data_folder
 4. In the AID-HS folder, open and edit the compose.yml to add the path to the aidhs_data_folder. The initial compose.yml file looks like :
 ```
@@ -66,7 +66,7 @@ For example, if you wanted the folder to be on a mounted drive such as "`/mnt/da
 On windows, if you're using absolute paths, use forward slashes and quotes:
 ```
     volumes:
-      - "C:/Users/John/Desktop/meld-data:/data"
+      - "C:/Users/John/Desktop/aidhs-data:/data"
 ```
 :::
 
@@ -97,7 +97,7 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs pytest
 ```
 :::
 
-:::{tab-item} Windows
+:::{tab-item} Windows/Mac
 :sync: windows
 ```bash
 docker compose run aidhs pytest
@@ -121,7 +121,7 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs pytest -s | tee pytest_
 ```
 :::
 
-:::{tab-item} Windows
+:::{tab-item} Windows/Mac
 :sync: windows
 ```bash
 docker compose run aidhs pytest -s | tee pytest_errors.log
@@ -150,7 +150,7 @@ To disable gpus, change it back to `0`.
 Note: if you don't have GPUs on your computer you should remove the lines aboves from the compose.yml file
 
 ## FAQs
-Please see our [FAQs](https://aid-hs.readthedocs.io/en/latest/FAQ.html) for common installation problems.
+Please see our [FAQs](https://aid-hs.readthedocs.io/en/latest/FAQs.html) for common installation problems.
 
 ## Contact
 

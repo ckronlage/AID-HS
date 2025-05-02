@@ -35,7 +35,7 @@ Before being able to use AID-HS on your data, data paths need to be set up and t
 1. Make sure you have 1GB available for the aidhs data.
 2. Download and unzip the aidhs_data_folder by running: 
 ```bash
-wget https://figshare.com/ndownloader/files/50785098?private_link=16011ee4d6b5723b14b6 --output-document aidhs_data_folder.tar.xz 
+wget https://figshare.com/ndownloader/files/54145361?private_link=48c92b1b53f8f0c67dec --output-document aidhs_data_folder.tar.xz 
 tar xf aidhs_data_folder.tar.xz 
 ```
 3. Run this command to set the paths needed:
@@ -70,7 +70,7 @@ singularity exec aidhs.sif /bin/bash -c "cd /app && pytest -s | tee pytest_error
 You will find `pytest_errors.log` in the folder where you launched the command. 
 
 ## FAQs
-Please see our [FAQ page](https://aid-hs.readthedocs.io/en/latest/FAQ.html) for common installation problems and questions
+Please see our [FAQ page](https://aid-hs.readthedocs.io/en/latest/FAQs.html) for common installation problems and questions
 
 ## Contact
 If you encounter any errors, please contact `m.ripart@ucl.ac.uk` for support

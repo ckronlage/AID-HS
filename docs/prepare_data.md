@@ -6,7 +6,7 @@ If you are preparing the data for the harmonisation step, you will also need to 
 
 You will need to prepare your data following a specific architecture:
 If not already done, please :
-- 1. Download the <aidhs_data_folder> from [Figshare](https://figshare.com/s/16011ee4d6b5723b14b6). 
+- 1. Download the <aidhs_data_folder> from [figshare](https://figshare.com/s/48c92b1b53f8f0c67dec)
 - 2. Unzip the folder where you want to store the <aidhs_data_folder>
 - 3. Follow the guidelines below to prepare your MRI data and demographic information
 
@@ -56,7 +56,6 @@ To compute the harmonisation parameters, you will need to provide a couple of in
 - `Group`: 'patient' if the subject is a patient or 'control' if the subject is a control 
 - `Age at preoperative`: The age of the subject at the time of the preoperative T1 scan (in years)
 - `Sex`: "male" if male, "female" if female
-- `Scanner`: the scanner strenght associated with the MRI data ('3T' for 3 Tesla or '15T' for 1.5 Tesla)
 
 ![example](https://raw.githubusercontent.com//MELDProject/AID-HS/main/docs/images/example_demographic_csv.png)
 

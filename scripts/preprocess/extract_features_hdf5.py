@@ -16,9 +16,9 @@ def load_gii_shape(filename):
 
 def get_group_site(fs_id, csv_path):
         """
-        Read demographic features from csv file and extract group, sex and scanner 
+        Read demographic features from csv file and extract harmo code and group 
         """
-        features_name=["Harmo code", "Group", "Scanner"]
+        features_name=["Harmo code", "Group"]
         df = pd.read_csv(csv_path, header=0, encoding="latin")
         # get index column
         id_col = None
@@ -67,16 +67,8 @@ def save_subject(subj_id, hemi, f_name, feature, base_path, demographic_file, hd
         print('label unknowns')
         return
     #get subject info from id
-    print(subj_id)
-    print(demographic_file)
-    site_code, c_p, scanner = get_group_site(subj_id, demographic_file)
-    if scanner in ("15T" , "1.5T" , "15t" , "1.5t" ):
-        scanner="15T"
-    elif scanner in ("3T" , "3t" ):
-        scanner="3T"
-    else:
-        print('scanner for subject '+ subj_id + ' cannot be identified as either 1.5T or 3T...')
-        scanner='false'
+    site_code, c_p= get_group_site(subj_id, demographic_file)
+    scanner="XT"
     #skip subject if info not available
     if 'false' in (c_p, scanner, site_code):
         print("Skipping subject " + subj_id)
