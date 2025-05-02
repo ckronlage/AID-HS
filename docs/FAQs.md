@@ -45,6 +45,16 @@ To remedy, you will need to:
     - `output/hippunfold_outputs/work/<subjectID>`
 3) Run the AID-HS command again. 
 
+### **Warning with Orphans containers**
+
+```bash
+WARN[0000] Found orphan containers ([aid-hs-101-aidhs-run-5818580c067f aid-hs-101-aidhs-run-bd51a3643bcb aid-hs-101-aidhs-run-e7a644059fdb aid-hs-101-aidhs-run-90b9a6b2d7e7 aid-hs-101-aidhs-run-109ef780e484 aid-hs-101-aidhs-run-483c2e531ac9 aid-hs-101-aidhs-run-acacca2b2930]) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up.
+```
+
+This is just a warning and will not impact the use of the pipeline. But to clean up the orphans containers please use the command below: 
+```bash
+docker-compose down --remove-orphans
+```
 
 ---
 
