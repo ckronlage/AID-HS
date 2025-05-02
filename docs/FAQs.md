@@ -102,7 +102,7 @@ pip install -e .
 
 **🐳 Docker Users:** You will need to pull the latest docker image
 ```bash
-docker pull MELDproject/aidhs:latest
+docker pull meldproject/aidhs:latest
 ```
 
 :::
@@ -112,7 +112,7 @@ docker pull MELDproject/aidhs:latest
 
 **🚀 Singularity Users:** You will need to pull the latest image
 ```bash
-singularity pull docker://MELDproject/aidhs:latest
+singularity pull docker://meldproject/aidhs:latest
 ```
 :::
 ::::
