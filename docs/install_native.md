@@ -21,7 +21,7 @@ AID-HS uses **Workbench Connectom** to create additional surface-based features.
 In order to run the pipeline, you'll need to configure a couple of files
 
 1. Download `aidhs.zip` from the [latest github release](https://github.com/MELDProject/aidhs/releases/latest) and extract it.
-2. Download the aidhs_data_folder at https://figshare.com/s/16011ee4d6b5723b14b6
+2. Download the aidhs_data_folder from [figshare](https://figshare.com/s/48c92b1b53f8f0c67dec)
 3. Unzip the folder where you want to store the aidhs_data_folder
 4. Open the file`'config.ini` and replace the line:
 ```
@@ -68,7 +68,7 @@ pytest -s | tee
 You will find `pytest_errors.log` in the folder where you launched the command. 
 
 ## FAQs
-Please see our [FAQs](/docs/FAQ.md) for common installation problems.
+Please see our [FAQs](https://aid-hs.readthedocs.io/en/latest/FAQs.html) for common installation problems.
 
 ## Contact
 

@@ -12,7 +12,6 @@ install_docker
 install_singularity
 install_native
 
-FAQs
 ```
 
 
@@ -37,3 +36,12 @@ figure_notebooks
 
 ```
 
+
+```{toctree}
+:caption: Help
+:hidden:
+:maxdepth: 2
+
+FAQs
+
+```
