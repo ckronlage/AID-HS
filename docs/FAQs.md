@@ -44,3 +44,120 @@ To remedy, you will need to:
     - `output/hippunfold_outputs/hippunfold/<subjectID>`
     - `output/hippunfold_outputs/work/<subjectID>`
 3) Run the AID-HS command again. 
+
+
+---
+
+## **Updating AID-HS to V1.0.1**
+
+The instructions below are for users that already have used AID-HS v1.0.0 on patients and would like to update to AID-HS v1.0.1 while keeping the same aidhs_data_folder folder.
+
+
+### 📥 **Get the updated code**
+
+Depending on wether you previously downloaded `V1.0.0` as a zip/tar folder or used Git to download the code, you will need to follow the same route to get the update `v1.0.1` code.
+
+::::{tab-set}
+
+:::{tab-item} Download
+1. Go to the [github releases page](https://github.com/MELDProject/AID-HS/releases) and download the latest source zip or tar of version `V1.0.1`.
+2. Extract the folder `AID-HS-1.0.1`
+3. Copy the files below from your old `AID-HS-1.0.0` directory to your new `AID-HS-1.0.1` directory:
+    - the `compose.yml`
+    - the `config.ini`
+:::
+
+:::{tab-item} Git
+1) Open a terminal in your `aidhs` folder
+2) Pull the latest code from GitHub (it will pull the latest data while keeping your changes made to the code)
+```bash
+git stash
+git pull 
+git stash pop
+```
+:::
+::::
+
+Then depending on if you have a Native, Docker or Singularity installation of AID-HS `v1.0.0` you will need to follow the same type of installation to update to `v1.0.1`: 
+
+::::{tab-set}
+
+:::{tab-item} Native
+:sync: Native
+**💻 Native Installation Users:** Your will need to update your environment with the new code. 
+
+1. Activate your conda environment
+```
+conda activate aidhs
+```
+2. Update the code package in the environment. Make sure you are in the new `AID-HS-1.0.1` directory and run:
+```
+pip install -e . 
+```
+
+:::
+
+:::{tab-item} Docker
+:sync: Docker
+
+**🐳 Docker Users:** You will need to pull the latest docker image
+```bash
+docker pull MELDproject/aidhs:latest
+```
+
+:::
+
+:::{tab-item} Singularity
+:sync: Singularity
+
+**🚀 Singularity Users:** You will need to pull the latest image
+```bash
+singularity pull docker://MELDproject/aidhs:latest
+```
+:::
+::::
+
+### ✔️ **Run pytest again**
+Follow the guidelines **"Verify installation"** to run the test again.
+- 💻[Native Installation Users](https://aid-hs.readthedocs.io/en/latest/install_native.html#verify-installation)
+- 🐳[Docker Users](https://aid-hs.readthedocs.io/en/latest/install_docker.html#verify-installation)
+- 🚀[Singularity Users](https://aid-hs.readthedocs.io/en/latest/install_singularity.html#verify-installation)
+
+### 🧠 **Update your predictions with the registration fix**
+If you want to update the predictions with the new registration for patients you have already ran through AID-HS, please follow the instructions bellow:
+
+1) Create a list of ids of patients you want to rerun: e.g. `list_subjects_rerun_v1.0.1.txt`
+
+2) Then run one of the commands below. It will recreate the PDF report for your patient. 
+
+**WARNING** This will overwrite the files and the patient report in `output/predictions_reports`
+
+::::{tab-set}
+
+:::{tab-item} Native
+:sync: Native
+
+**💻 Native Installation Users:** 
+```bash
+python scripts/new_patient_pipeline/run_pipeline_prediction.py -ids list_subjects_rerun_v1.0.1.txt
+```
+:::
+
+:::{tab-item} Docker
+:sync: Docker
+
+**🐳 Docker Users:** 
+```bash
+DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/run_pipeline_prediction.py -ids list_subjects_rerun_v1.0.1.txt
+```
+:::
+
+:::{tab-item} Singularity
+:sync: Singularity
+
+**🚀 Singularity Users:**
+```bash
+singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/run_pipeline_prediction.py -ids list_subjects_rerun_v1.0.1.txt"
+```
+:::
+::::
