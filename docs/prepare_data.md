@@ -56,7 +56,6 @@ To compute the harmonisation parameters, you will need to provide a couple of in
 - `Group`: 'patient' if the subject is a patient or 'control' if the subject is a control 
 - `Age at preoperative`: The age of the subject at the time of the preoperative T1 scan (in years)
 - `Sex`: "male" if male, "female" if female
-- `Scanner`: the scanner strenght associated with the MRI data ('3T' for 3 Tesla or '15T' for 1.5 Tesla)
 
 ![example](https://raw.githubusercontent.com//MELDProject/AID-HS/main/docs/images/example_demographic_csv.png)
 

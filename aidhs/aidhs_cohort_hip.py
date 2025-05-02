@@ -329,7 +329,7 @@ class AidhsCohort:
         if isinstance(site_codes, str):
             site_codes = [site_codes]
         # get scanners
-        scanners = kwargs.get("scanners", ["3T", "15T"])
+        scanners = kwargs.get("scanners", ["3T", "15T", "XT"])
         if not isinstance(scanners, list):
             scanners = [scanners]
 
@@ -447,16 +447,16 @@ class AidhsSubject:
     #adapted for hippo
     @property
     def scanner(self):
+        # Note: no need to specify scanner strength with AIDHS pipeline, but still need it to be compatible with previous AIDHS dataset
         scanner = self.get_demographic_features('Scanner')
+        if scanner is None:
+            scanner="XT" #no need to specify
         if scanner in ("15T" , "1.5T" , "15t" , "1.5t" ):
-            scanner="15T"
+            scanner="15T" # to be compatible with old way
         elif scanner in ("3T" , "3t" ):
-            scanner="3T"
+            scanner="3T" # to be compatible with old way
         else:
-            print(
-                f"Error: incorrect scanner for {self.subject_id}. Unable to determine if scanner 1.5T or 3T "
-            )
-            sys.exit()
+            scanner="XT" #no need to specify 
         return scanner
     
     #adapted for hippo
@@ -480,6 +480,11 @@ class AidhsSubject:
         """return path to features dir (surf_dir)"""
         return os.path.join(self.site_code, self.scanner, self.group, self.subject_id, hemi)
 
+    def find_path(self, name):
+         """ Find the first object with the subject id in the hdf5"""
+         if self.subject_id in name:
+             return name 
+         
     @property
     def is_patient(self):
         return self.group == "patient"
@@ -499,10 +504,10 @@ class AidhsSubject:
             return None
 
         with self.cohort._site_hdf5(self.site_code, self.group) as f:
-            surf_dir_lh = f.require_group(self.surf_dir_path("lh"))
+            surf_dir_lh = f[os.path.join(self.site_code, f[self.site_code].visit(self.find_path), "lh")]
             if ".on_lh.lesion.mgh" in surf_dir_lh.keys():
                 return "lh"
-            surf_dir_rh = f.require_group(self.surf_dir_path("rh"))
+            surf_dir_rh = f[os.path.join(self.site_code, f[self.site_code].visit(self.find_path), "rh")]
             if ".on_lh.lesion.mgh" in surf_dir_rh.keys():
                 return "rh"
         return None
@@ -514,7 +519,8 @@ class AidhsSubject:
     def get_feature_list(self, hemi="lh"):
         """Outputs a list of the features a participant has for each hemisphere"""
         with self.cohort._site_hdf5(self.site_code, self.group) as f:
-            keys = list(f[self.surf_dir_path(hemi)].keys())
+            surf_dir_path = os.path.join(self.site_code, f[self.site_code].visit(self.find_path), hemi)
+            keys =  list(f[surf_dir_path].keys())
             if ".on_lh.lesion.mgh" in keys:
                 keys.remove(".on_lh.lesion.mgh")
         return keys
@@ -573,6 +579,8 @@ class AidhsSubject:
                 
                 if "urfer" in desired_name:
                     matched_name = 'Freesurfer_nul'
+                elif "Scanner" in desired_name:
+                     return None
                 else:
                     self.log.warning(f"Unable to find column matching {desired_name}, please double check for typos")
                     return None
@@ -616,7 +624,7 @@ class AidhsSubject:
         feature_values = np.zeros(NVERT, dtype=np.float32)
         # read data from hdf5
         with self.cohort._site_hdf5(self.site_code, self.group) as f:
-            surf_dir = f[self.surf_dir_path(hemi)]
+            surf_dir = f[os.path.join(self.site_code, f[self.site_code].visit(self.find_path), hemi)]
             if feature in surf_dir.keys():
                 feature_values[:] = surf_dir[feature][:]
             else:
