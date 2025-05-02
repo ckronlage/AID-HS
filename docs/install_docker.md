@@ -66,7 +66,7 @@ For example, if you wanted the folder to be on a mounted drive such as "`/mnt/da
 On windows, if you're using absolute paths, use forward slashes and quotes:
 ```
     volumes:
-      - "C:/Users/John/Desktop/meld-data:/data"
+      - "C:/Users/John/Desktop/aidhs-data:/data"
 ```
 :::
 
@@ -97,7 +97,7 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs pytest
 ```
 :::
 
-:::{tab-item} Windows
+:::{tab-item} Windows/Mac
 :sync: windows
 ```bash
 docker compose run aidhs pytest
@@ -121,7 +121,7 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs pytest -s | tee pytest_
 ```
 :::
 
-:::{tab-item} Windows
+:::{tab-item} Windows/Mac
 :sync: windows
 ```bash
 docker compose run aidhs pytest -s | tee pytest_errors.log
