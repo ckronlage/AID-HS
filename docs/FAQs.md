@@ -65,12 +65,12 @@ The instructions below are for users that already have used AID-HS v1.0.0 on pat
 
 ### 📥 **Get the updated code**
 
-Depending on wether you previously downloaded `V1.0.0` as a zip/tar folder or used Git to download the code, you will need to follow the same route to get the update `v1.0.1` code.
+Please follow the Download method below to get the new code
 
 ::::{tab-set}
 
 :::{tab-item} Download
-1. Go to the [github releases page](https://github.com/MELDProject/AID-HS/releases) and download the latest source zip or tar of version `V1.0.1`.
+1. Go to the [github releases page](https://github.com/MELDProject/AID-HS/releases) and download the latest version `V1.0.1`, by clicking on `Source code (zip)` or `Source code (tar.gz)`.
 2. Extract the folder `AID-HS-1.0.1`
 3. Copy the files below from your old `AID-HS-1.0.0` directory to your new `AID-HS-1.0.1` directory:
     - the `compose.yml`
