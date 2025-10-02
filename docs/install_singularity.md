@@ -35,7 +35,7 @@ Before being able to use AID-HS on your data, data paths need to be set up and t
 1. Make sure you have 1GB available for the aidhs data.
 2. Download and unzip the aidhs_data_folder by running: 
 ```bash
-wget https://figshare.com/ndownloader/files/54145361?private_link=48c92b1b53f8f0c67dec --output-document aidhs_data_folder.tar.xz 
+wget https://figshare.com/ndownloader/files/54145361?private_link=48c92b1b53f8f0c67dec --output-document aidhs_data_folder.tar.xz --user-agent="Mozilla/5.0"
 tar xf aidhs_data_folder.tar.xz 
 ```
 3. Run this command to set the paths needed:
