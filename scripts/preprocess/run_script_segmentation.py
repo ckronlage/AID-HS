@@ -43,7 +43,8 @@ def run_hippunfold_parallel(subjects, bids_dir=None, hippo_dir=None, num_procs=1
     
     if subjects_to_run!=[]:
         print(get_m(f'Start Hippunfold segmentation in parallel for {subjects_to_run}', None, 'INFO'))
-        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {' '.join(subjects_to_run)} --core {num_procs} --modality T1w")
+        subjects_to_run_shortformat = [subject_id.split('sub-')[-1] for subject_id in subjects_to_run]
+        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {' '.join(subjects_to_run_shortformat)} --core {num_procs} --modality T1w")
         if verbose:
             print(command)
         proc = Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
@@ -55,8 +56,8 @@ def run_hippunfold_parallel(subjects, bids_dir=None, hippo_dir=None, num_procs=1
             if delete_intermediate:
                 print(get_m(f'Delete intermediate files that takes lot of space: hippunfold_outputs/hippunfold/<subject_id>/warps and hippunfold_outputs/work folders', subjects_to_run, 'INFO'))
                 for subject in subjects_to_run:
-                    shutil.rmtree(hippo_dir, 'hippunfold', subject, 'warps')
-                    shutil.rmtree(hippo_dir, 'work', f'{subject}_work.tar.gz')
+                    shutil.rmtree(os.path.join(hippo_dir, 'hippunfold', subject, 'warps'))
+                    shutil.rmtree(os.path.join(hippo_dir, 'work'))
             return True
         else:
             print(get_m(f'Hippunfold segmentation failed for 1 of the subject. Please check the logs at {hippo_dir}/logs/<subject_id>', None, 'ERROR'))
