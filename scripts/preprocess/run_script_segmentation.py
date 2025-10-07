@@ -5,6 +5,7 @@ from os.path import join as opj
 import subprocess
 from subprocess import Popen, DEVNULL, STDOUT, check_call
 from aidhs.tools_pipeline import get_m
+import torch # for checking GPU availability
 
 def init(lock):
     global starting
@@ -40,11 +41,14 @@ def run_hippunfold_parallel(subjects, bids_dir=None, hippo_dir=None, num_procs=1
             subjects_to_run.append(subject_id)
         else:
             print(get_m(f'Hippunfold outputs already exists. Hippunfold will be skipped', subject_id, 'INFO'))
+
+    # if gpu available, set gpu_flag to "--use-gpu"
+    gpu_flag = "--use-gpu" if torch.cuda.is_available() else ""
     
     if subjects_to_run!=[]:
         print(get_m(f'Start Hippunfold segmentation in parallel for {subjects_to_run}', None, 'INFO'))
         subjects_to_run_shortformat = [subject_id.split('sub-')[-1] for subject_id in subjects_to_run]
-        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {' '.join(subjects_to_run_shortformat)} --core {num_procs} --modality T1w")
+        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {' '.join(subjects_to_run_shortformat)} --core {num_procs} {gpu_flag} --modality T1w")
         if verbose:
             print(command)
         proc = Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
@@ -79,10 +83,14 @@ def run_hippunfold(subject, bids_dir=None, hippo_dir=None, delete_intermediate=F
 
     #check if outputs already exists
     files_surf = glob(f'{hippo_s}/surf/*_den-0p5mm_label-hipp_*.surf.gii')
+
+    # if gpu available
+    gpu_flag = "--use-gpu" if torch.cuda.is_available() else ""
+
     files_surf=[]
     if files_surf==[]:
         print(get_m(f'Start Hippunfold segmentation', subject_id, 'INFO'))
-        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {subject_id.split('sub-')[-1]} --core 3 --modality T1w")
+        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {subject_id.split('sub-')[-1]} --core 3 {gpu_flag} --modality T1w")
         if verbose:
             print(command)
         proc = Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
