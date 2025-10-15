@@ -120,7 +120,7 @@ class SubjectSeg:
         # look if BIDS format
         if subject_path == None:
             # get bids structure
-            layout = bids.layout.BIDSLayout(input_dir)
+            layout = bids.layout.BIDSLayout(input_dir, validate=False)
             # find parameters to extract bids file
             config_file = os.path.join(input_dir, 'bids_config.json')
             with open(config_file, "r") as json_file:
