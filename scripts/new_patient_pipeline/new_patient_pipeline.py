@@ -47,6 +47,12 @@ if __name__ == "__main__":
                         default=False,
                         action="store_true",
                         )
+    parser.add_argument("--num_procs", 
+                        help="Number of processes to use for parallelization", 
+                        required=False, 
+                        default=1,
+                        type=int
+                        )
     parser.add_argument('-demos', '--demographic_file', 
                         type=str, 
                         help='provide the demographic files for the harmonisation',
@@ -100,6 +106,7 @@ if __name__ == "__main__":
                         bids_dir=BIDS_SUBJECTS_PATH,
                         hippo_dir=HIPPUNFOLD_SUBJECTS_PATH, 
                         use_parallel=args.parallelise, 
+                        num_procs=args.num_procs,
                         skip_fs=False,
                         verbose=args.debug_mode
                         )
