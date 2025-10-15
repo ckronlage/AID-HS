@@ -56,8 +56,10 @@ def run_hippunfold_parallel(subjects, bids_dir=None, hippo_dir=None, num_procs=1
             if delete_intermediate:
                 print(get_m(f'Delete intermediate files that takes lot of space: hippunfold_outputs/hippunfold/<subject_id>/warps and hippunfold_outputs/work folders', subjects_to_run, 'INFO'))
                 for subject in subjects_to_run:
-                    shutil.rmtree(os.path.join(hippo_dir, 'hippunfold', subject, 'warps'))
-                    shutil.rmtree(os.path.join(hippo_dir, 'work'))
+                    if os.path.exists(os.path.join(hippo_dir, 'hippunfold', subject, 'warps')):
+                        shutil.rmtree(os.path.join(hippo_dir, 'hippunfold', subject, 'warps'))
+                    if os.path.isfile(os.path.join(hippo_dir, 'work', f'{subject_bids_id}_work.tar.gz')):
+                        os.remove(os.path.join(hippo_dir, 'work', f'{subject_bids_id}_work.tar.gz'))
             return True
         else:
             print(get_m(f'Hippunfold segmentation failed for 1 of the subject. Please check the logs at {hippo_dir}/logs/<subject_id>', None, 'ERROR'))
