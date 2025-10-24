@@ -107,7 +107,7 @@ if __name__ == "__main__":
                         hippo_dir=HIPPUNFOLD_SUBJECTS_PATH, 
                         use_parallel=args.parallelise, 
                         num_procs=args.num_procs,
-                        skip_fs=False,
+                        skip_hippunfold=False,
                         verbose=args.debug_mode
                         )
 

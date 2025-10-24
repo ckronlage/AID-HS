@@ -159,7 +159,7 @@ class SubjectSeg:
         return subject_path
 
 def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir=None, bids_dir=None, hippo_dir=None, 
-                use_parallel=False, num_procs=10, skip_fs=False, verbose=False):
+                use_parallel=False, num_procs=10, skip_hippunfold=False, verbose=False):
     subject_id=None
     subject_ids=None
     if list_ids != None:
@@ -193,14 +193,17 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
         #launch segmentation and feature extraction in parallel
         print(get_m(f'Run subjects in parallel', None, 'INFO'))   
         # prepare T1
-        print(get_m(f'STEP 2a: Prepare T1 for hippunfold', None, 'INFO'))
-        prepare_T1_parallel(subjects)
-        # extract surface based features
-        print(get_m(f'STEP 2b: Run hippunfold segmentation', None, 'INFO'))
-        result = run_hippunfold_parallel(subjects, bids_dir=bids_dir, hippo_dir=hippo_dir, delete_intermediate=True, num_procs=num_procs, verbose=verbose)
-        if result == False:
-            print(get_m(f'One step of the pipeline has failed. Process has been aborted for one subject', None, 'ERROR'))
-            return False
+        if not skip_hippunfold:
+            print(get_m(f'STEP 2a: Prepare T1 for hippunfold', None, 'INFO'))
+            prepare_T1_parallel(subjects)
+            # extract surface based features
+            print(get_m(f'STEP 2b: Run hippunfold segmentation', None, 'INFO'))
+            result = run_hippunfold_parallel(subjects, bids_dir=bids_dir, hippo_dir=hippo_dir, delete_intermediate=True, num_procs=num_procs, verbose=verbose)
+            if result == False:
+                print(get_m(f'One step of the pipeline has failed. Process has been aborted for one subject', None, 'ERROR'))
+                return False
+        else:
+            print(get_m(f'SKIP hippunfold segmentation as requested', None, 'INFO'))
         print(get_m(f'STEP 3: Extract hippocampal surface features', None, 'INFO')) 
         subject_ids_failed =[]
         for subject in subjects:
@@ -212,18 +215,21 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
         print(get_m(f'No parralelisation. Run subjects one after another', None, 'INFO')) 
         for subject in subjects:
             result = True
-            #prepare T1
-            print(get_m(f'STEP 2a: Prepare T1 for hippunfold', subject.id, 'INFO'))
-            result = prepare_T1(subject)
-            if result == False:
-                subject_ids_failed.append(subject.id)
-                continue
-            #run hippunfold segmentation
-            print(get_m(f'STEP 2b: Run hippunfold segmentation', subject.id, 'INFO'))
-            result = run_hippunfold(subject, bids_dir=bids_dir, hippo_dir=hippo_dir, delete_intermediate=True, verbose=verbose)
-            if result == False:
-                subject_ids_failed.append(subject.id)
-                continue
+            if not skip_hippunfold:
+                #prepare T1
+                print(get_m(f'STEP 2a: Prepare T1 for hippunfold', subject.id, 'INFO'))
+                result = prepare_T1(subject)
+                if result == False:
+                    subject_ids_failed.append(subject.id)
+                    continue
+                #run hippunfold segmentation
+                print(get_m(f'STEP 2b: Run hippunfold segmentation', subject.id, 'INFO'))
+                result = run_hippunfold(subject, bids_dir=bids_dir, hippo_dir=hippo_dir, delete_intermediate=True, verbose=verbose)
+                if result == False:
+                    subject_ids_failed.append(subject.id)
+                    continue
+            else:
+                print(get_m(f'SKIP hippunfold segmentation as requested', subject.id, 'INFO'))
             #extract surface based features
             print(get_m(f'STEP 3: Extract hippocampal surface features', subject.id, 'INFO'))
             result = extract_surface_features(subject, output_dir=hippo_dir)
@@ -260,8 +266,8 @@ if __name__ == "__main__":
                         default=1,
                         type=int
                         )
-    parser.add_argument("--skip_fs", 
-                        help="skip the segmentation with freesurfer", 
+    parser.add_argument("--skip_hippunfold", 
+                        help="skip the segmentation with hippunfold (assume it has already been run)", 
                         required=False, 
                         default=False,
                         action="store_true",
@@ -288,7 +294,7 @@ if __name__ == "__main__":
                 hippo_dir=hippo_dir, 
                 use_parallel=args.parallelise,
                 num_procs=args.num_procs,
-                skip_fs=args.skip_fs,
+                skip_hippunfold=args.skip_hippunfold,
                 verbose=False,
                         )
 
