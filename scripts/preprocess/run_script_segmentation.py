@@ -17,7 +17,7 @@ def check_FS_outputs(folder):
     else:
         return True
 
-def run_hippunfold_parallel(subjects, bids_dir=None, hippo_dir=None, num_procs=10, delete_intermediate=False, verbose=False):
+def run_hippunfold_parallel(subjects, bids_dir=None, hippo_dir=None, num_procs=10, delete_intermediate=False, rerun_existing=False, verbose=False):
     # parallel version of Hippunfold
 
     #make a directory for the outputs
@@ -39,7 +39,11 @@ def run_hippunfold_parallel(subjects, bids_dir=None, hippo_dir=None, num_procs=1
         if files_surf==[]:
             subjects_to_run.append(subject_id)
         else:
-            print(get_m(f'Hippunfold outputs already exists. Hippunfold will be skipped', subject_id, 'INFO'))
+            if rerun_existing:
+                subjects_to_run.append(subject_id)
+                print(get_m(f'Hippunfold outputs exists at least in parts, re-calling hippunfold as requested', subject_id, 'INFO'))
+            else:
+                print(get_m(f'Hippunfold outputs already exists. Hippunfold will be skipped', subject_id, 'INFO'))
     
     if subjects_to_run!=[]:
         print(get_m(f'Start Hippunfold segmentation in parallel for {subjects_to_run}', None, 'INFO'))

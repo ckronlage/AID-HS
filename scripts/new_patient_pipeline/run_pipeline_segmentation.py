@@ -159,7 +159,7 @@ class SubjectSeg:
         return subject_path
 
 def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir=None, bids_dir=None, hippo_dir=None, 
-                use_parallel=False, num_procs=10, skip_hippunfold=False, verbose=False):
+                use_parallel=False, num_procs=10, skip_hippunfold=False, rerun_existing_hippunfold=False, verbose=False):
     subject_id=None
     subject_ids=None
     if list_ids != None:
@@ -198,7 +198,13 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
             prepare_T1_parallel(subjects)
             # extract surface based features
             print(get_m(f'STEP 2b: Run hippunfold segmentation', None, 'INFO'))
-            result = run_hippunfold_parallel(subjects, bids_dir=bids_dir, hippo_dir=hippo_dir, delete_intermediate=True, num_procs=num_procs, verbose=verbose)
+            result = run_hippunfold_parallel(subjects, 
+                                             bids_dir=bids_dir, 
+                                             hippo_dir=hippo_dir,
+                                             delete_intermediate=True, 
+                                             num_procs=num_procs, 
+                                             rerun_existing=rerun_existing_hippunfold,
+                                             verbose=verbose)
             if result == False:
                 print(get_m(f'One step of the pipeline has failed. Process has been aborted for one subject', None, 'ERROR'))
                 return False
@@ -272,6 +278,12 @@ if __name__ == "__main__":
                         default=False,
                         action="store_true",
                         )
+    parser.add_argument("--rerun_existing_hippunfold", 
+                        help="rerun hippunfold even if outputs already exists", 
+                        required=False, 
+                        default=False,
+                        action="store_true",
+                        )
     
     args = parser.parse_args()
     print(args)
@@ -295,6 +307,7 @@ if __name__ == "__main__":
                 use_parallel=args.parallelise,
                 num_procs=args.num_procs,
                 skip_hippunfold=args.skip_hippunfold,
+                rerun_existing_hippunfold=args.rerun_existing_hippunfold,
                 verbose=False,
                         )
 
