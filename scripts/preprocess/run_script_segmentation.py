@@ -76,7 +76,9 @@ def run_hippunfold_parallel(subjects, bids_dir=None, hippo_dir=None, num_procs=1
             print(get_m(f'COMMAND failing : {command} with error {stderr}', None, 'ERROR'))
             return False
 
-def run_hippunfold(subject, bids_dir=None, hippo_dir=None, delete_intermediate=False,verbose=False):
+def run_hippunfold(subject, bids_dir=None, hippo_dir=None, num_procs=1,
+                   delete_intermediate=False, rerun_existing=False, hippunfold_args=None,
+                   verbose=False):
 
     hippo_s = subject.hippo_dir
     subject_bids_id = subject.bids_id
@@ -92,9 +94,13 @@ def run_hippunfold(subject, bids_dir=None, hippo_dir=None, delete_intermediate=F
     #check if outputs already exists
     files_surf = glob(f'{hippo_s}/surf/*_den-0p5mm_label-hipp_*.surf.gii')
     files_surf=[]
-    if files_surf==[]:
+    if files_surf==[] or rerun_existing:
         print(get_m(f'Start Hippunfold segmentation', subject_id, 'INFO'))
-        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {subject_id.split('sub-')[-1]} --core 3 --modality T1w")
+        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {subject_id.split('sub-')[-1]} --core {num_procs} --modality T1w")
+        if rerun_existing:
+            command += ' --rerun-incomplete'
+        if hippunfold_args is not None:
+            command += f' {" ".join(hippunfold_args)}'
         if verbose:
             print(command)
         proc = Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')

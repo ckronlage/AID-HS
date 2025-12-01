@@ -159,7 +159,7 @@ class SubjectSeg:
         return subject_path
 
 def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir=None, bids_dir=None, hippo_dir=None, 
-                use_parallel=False, num_procs=10, skip_hippunfold=False, rerun_existing_hippunfold=False, hippunfold_args=None,
+                use_parallel=False, num_procs=1, skip_hippunfold=False, rerun_existing_hippunfold=False, hippunfold_args=None,
                 verbose=False):
     subject_id=None
     subject_ids=None
@@ -220,7 +220,7 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
                 subject_ids_failed.append(subject.id)
     else:
         #launch segmentation and feature extraction for each subject one after another
-        print(get_m(f'No parralelisation. Run subjects one after another', None, 'INFO')) 
+        print(get_m(f'No parallelisation. Run subjects one after another', None, 'INFO')) 
         for subject in subjects:
             result = True
             if not skip_hippunfold:
@@ -232,7 +232,10 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
                     continue
                 #run hippunfold segmentation
                 print(get_m(f'STEP 2b: Run hippunfold segmentation', subject.id, 'INFO'))
-                result = run_hippunfold(subject, bids_dir=bids_dir, hippo_dir=hippo_dir, delete_intermediate=True, verbose=verbose)
+                result = run_hippunfold(subject, bids_dir=bids_dir, hippo_dir=hippo_dir, num_procs=num_procs,
+                                        delete_intermediate=True, rerun_existing=rerun_existing_hippunfold,
+                                        hippunfold_args=hippunfold_args,
+                                        verbose=verbose)
                 if result == False:
                     subject_ids_failed.append(subject.id)
                     continue
