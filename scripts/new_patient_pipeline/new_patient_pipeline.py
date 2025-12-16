@@ -129,6 +129,7 @@ if __name__ == "__main__":
                     list_ids=args.list_ids,
                     sub_id=args.id,
                     harmonisation_only = args.harmo_only,
+                    demographic_file_path = args.demographic_file,
                     verbose = args.debug_mode,
                     )
             
