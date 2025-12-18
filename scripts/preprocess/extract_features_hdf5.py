@@ -18,6 +18,8 @@ def get_group_site(fs_id, csv_path):
         """
         Read demographic features from csv file and extract harmo code and group 
         """
+        if csv_path is None:
+            csv_path = os.path.join(BASE_PATH, DEMOGRAPHIC_FEATURES_FILE)
         features_name=["Harmo code", "Group"]
         df = pd.read_csv(csv_path, header=0, encoding="latin")
         # get index column
@@ -164,7 +166,7 @@ def convert_bids_id(bids_id=None):
             bids_id = 'sub-'+bids_id
         return bids_id
     
-def extract_features_hdf5(list_ids=None, sub_id=None, data_dir=None, output_dir=None):
+def extract_features_hdf5(list_ids=None, sub_id=None, data_dir=None, output_dir=None, demographic_file=None):
     subject_id=None
     subject_ids=None
     if list_ids != None:
@@ -218,7 +220,7 @@ def extract_features_hdf5(list_ids=None, sub_id=None, data_dir=None, output_dir=
                                  f_name='.'+feature_name, 
                                  feature = overlay, 
                                  base_path= output_dir, 
-                                 demographic_file= DEMOGRAPHIC_FEATURES_FILE,
+                                 demographic_file=demographic_file,
                                  hdf5_file_root='{}_{}_featurematrix.hdf5', 
                                 label = label)
                 else:

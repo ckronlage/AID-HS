@@ -118,7 +118,8 @@ if __name__ == "__main__":
     extract_features_hdf5(list_ids=args.list_ids, 
                             sub_id=args.id, 
                             data_dir=HIPPUNFOLD_SUBJECTS_PATH, 
-                            output_dir=BASE_PATH)
+                            output_dir=BASE_PATH,
+                            demographic_file=args.demographic_file)
 
     #---------------------------------------------------------------------------------
     ### PREPROCESSING ###
