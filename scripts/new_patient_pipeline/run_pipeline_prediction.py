@@ -443,8 +443,10 @@ def plot_segmentations_subject(subject, hippunfold_folder, output_file, hemis=['
 
         fig.savefig(output_file, dpi=96, transparent =True)
 
-def create_surf_plot(borders, faces, vertices, cmap=False, file='/tmp/tmp.png'):
+def create_surf_plot(borders, faces, vertices, cmap=False, file=None):
     """plot and reload surface images"""
+    if file is None:
+        file = tempfile.NamedTemporaryFile(suffix='.png').name
     fig, ax_temp = plt.subplots(nrows=1, ncols=1, figsize=(8,8), subplot_kw={'projection': "3d"})
     plotting.surfplot_cdata(ax_temp,borders,faces,vertices, cmap=cmap)
     ax_temp.view_init(elev=90, azim=-90)
