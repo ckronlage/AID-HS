@@ -342,9 +342,6 @@ def plot_segmentations_subject(subject, hippunfold_folder, output_file, hemis=['
         img_array = sitk.GetArrayFromImage(img)
         seg_array = sitk.GetArrayFromImage(seg)
 
-        # convert to RAS orientation
-        img_array = np.flip(img_array, axis=1)
-
         # get cmap
         _ , cmap_labels = return_labels_cmap()
 
@@ -352,7 +349,7 @@ def plot_segmentations_subject(subject, hippunfold_folder, output_file, hemis=['
         img_array = np.rot90(img_array, 2)
         seg_array = np.rot90(seg_array, 2)
         x,y,z = coords_seg_extract(seg_array)
-        axs[0,i].imshow(img_array[x,:,:], cmap='gray')
+        axs[0,i].imshow(img_array[x,:,:], origin='lower', cmap='gray')
         axs[0,i].imshow(seg_array[x,:,:], origin='lower', cmap=cmap_labels, alpha=0.4)
         axs[0,i].axis('off')
         axs[0,i].text(1, 125, 'R', fontsize = 8, color='red')
