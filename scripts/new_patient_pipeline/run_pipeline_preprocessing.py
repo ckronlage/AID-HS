@@ -54,7 +54,7 @@ def check_demographic_file(demographic_file, subject_ids):
 
 
 
-def run_data_processing_new_subjects(subject_ids, harmo_code, output_dir=BASE_PATH, compute_harmonisation=False, harmonisation_only=False ):
+def run_data_processing_new_subjects(subject_ids, harmo_code, output_dir=BASE_PATH, compute_harmonisation=False, harmonisation_only=False, demographic_file_path=None):
 
     # initialise surface_features and smoothing kernel
     surface_features = {
@@ -169,7 +169,7 @@ def run_data_processing_new_subjects(subject_ids, harmo_code, output_dir=BASE_PA
         if len(np.unique(subject_ids))<20:
             print(get_m(f'We recommend to use at least 20 subjects for an acurate harmonisation of the data. Here you are using only {len(np.unique(subject_ids))}', None, 'WARNING'))
 
-        demographic_file = os.path.join(BASE_PATH, DEMOGRAPHIC_FEATURES_FILE)
+        demographic_file = demographic_file_path if demographic_file_path is not None else os.path.join(BASE_PATH, DEMOGRAPHIC_FEATURES_FILE)
         check_demographic_file(demographic_file, subject_ids)
     
         ### COMBAT DISTRIBUTED DATA ###
@@ -241,7 +241,7 @@ def run_data_processing_new_subjects(subject_ids, harmo_code, output_dir=BASE_PA
 
     print(time.asctime(time.localtime(time.time())))
 
-def run_pipeline_preprocessing(harmo_code, list_ids=None, sub_id=None, output_dir=BASE_PATH,  harmonisation_only=False, verbose=False):
+def run_pipeline_preprocessing(harmo_code, list_ids=None, sub_id=None, output_dir=BASE_PATH,  harmonisation_only=False, demographic_file_path=None, verbose=False):
     harmo_code = str(harmo_code)
     subject_ids=None
     if list_ids != None:
@@ -269,7 +269,7 @@ def run_pipeline_preprocessing(harmo_code, list_ids=None, sub_id=None, output_di
             print(get_m(f'Compute combat parameters for {harmo_code} with subjects {subject_ids}', None, 'INFO'))
             compute_harmonisation = True
             #check that demographic file exist and is adequate
-            demographic_file = os.path.join(DATA_PATH, DEMOGRAPHIC_FEATURES_FILE) 
+            demographic_file = demographic_file_path if demographic_file_path is not None else os.path.join(DATA_PATH, DEMOGRAPHIC_FEATURES_FILE)
             if os.path.isfile(demographic_file):
                 print(get_m(f'Use demographic file {demographic_file}', None, 'INFO'))
                 demographic_file = check_demographic_file(demographic_file, subject_ids) 
@@ -286,6 +286,7 @@ def run_pipeline_preprocessing(harmo_code, list_ids=None, sub_id=None, output_di
                                      harmo_code=harmo_code, 
                                      output_dir=output_dir, 
                                      compute_harmonisation = compute_harmonisation,
+                                     demographic_file_path=demographic_file_path,
                                      harmonisation_only=harmonisation_only)
 
 if __name__ == '__main__':
@@ -307,6 +308,12 @@ if __name__ == '__main__':
                         default="noHarmo",
                         help="harmonisation code",
                         required=False,
+                        )
+    parser.add_argument('-demos', '--demographic_file', 
+                        type=str, 
+                        help='provide the demographic files for the harmonisation',
+                        required=False,
+                        default=None,
                         )
     parser.add_argument('--harmo_only', 
                         action="store_true", 
@@ -330,6 +337,7 @@ if __name__ == '__main__':
                     list_ids=args.list_ids,
                     sub_id=args.id,
                     harmonisation_only = args.harmo_only,
+                    demographic_file_path = args.demographic_file,
                     verbose = args.debug_mode,
                     )
 
