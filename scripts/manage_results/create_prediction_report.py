@@ -335,8 +335,15 @@ def plot_segmentations_subject(subject, hippunfold_folder, output_file, hemis=['
         file_hipo_seg = os.path.join(hippunfold_folder, f'sub-{subject}', 'anat', f'sub-{subject}_hemi-{hemi}_space-cropT1w_desc-subfields_atlas-bigbrain_dseg.nii.gz')
 
         #load images
-        img_array = sitk.GetArrayFromImage(sitk.ReadImage(file_hipo, sitk.sitkFloat32))  # convert to sitk object
-        seg_array = sitk.GetArrayFromImage(sitk.ReadImage(file_hipo_seg, sitk.sitkInt64))
+        img = sitk.ReadImage(file_hipo, sitk.sitkFloat32)
+        seg = sitk.ReadImage(file_hipo_seg, sitk.sitkInt64)
+        img = sitk.DICOMOrient(img, 'RAS') # reorient to RAS to make sure plotting works as expected
+        seg = sitk.DICOMOrient(seg, 'RAS')
+        img_array = sitk.GetArrayFromImage(img)
+        seg_array = sitk.GetArrayFromImage(seg)
+
+        # convert to RAS orientation
+        img_array = np.flip(img_array, axis=1)
 
         # get cmap
         _ , cmap_labels = return_labels_cmap()
