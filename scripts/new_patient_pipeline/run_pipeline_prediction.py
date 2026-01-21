@@ -406,15 +406,19 @@ def plot_segmentations_subject(subject, hippunfold_folder, output_file, hemis=['
         file_hipo_seg = os.path.join(hippunfold_folder, 'hippunfold', subject_bids, 'anat', f'{subject_bids}_hemi-{hemi}_space-cropT1w_desc-subfields_atlas-bigbrain_dseg.nii.gz')
 
         #load images
-        img_array = sitk.GetArrayFromImage(sitk.ReadImage(file_hipo, sitk.sitkFloat32))  # convert to sitk object
-        seg_array = sitk.GetArrayFromImage(sitk.ReadImage(file_hipo_seg, sitk.sitkInt64))
+        img = sitk.ReadImage(file_hipo, sitk.sitkFloat32)
+        seg = sitk.ReadImage(file_hipo_seg, sitk.sitkInt64)
+        img = sitk.DICOMOrient(img, 'RAS') # reorient to RAS to make sure plotting works as expected
+        seg = sitk.DICOMOrient(seg, 'RAS')
+        img_array = sitk.GetArrayFromImage(img)
+        seg_array = sitk.GetArrayFromImage(seg)
 
         # get cmap
         _ , cmap_labels = return_labels_cmap()
 
         # plot on conventional coronal view
         x,y,z = coords_seg_extract(seg_array)
-        axs[0,i].imshow(np.fliplr(img_array[:,y,:]), cmap='gray')
+        axs[0,i].imshow(np.fliplr(img_array[:,y,:]), origin='lower', cmap='gray')
         axs[0,i].imshow(np.fliplr(seg_array[:,y,:]), origin='lower', cmap=cmap_labels, alpha=0.4)
         axs[0,i].axis('off')
         axs[0,i].text(1, 125, 'R', fontsize = 8, color='red')
