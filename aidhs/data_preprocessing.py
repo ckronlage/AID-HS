@@ -595,7 +595,7 @@ class Preprocess:
         new_site_data = np.array(precombat_features).T 
         dc.distributedCombat_site(new_site_data,
                                   bat, 
-                                  new_site_covars[['ages','sex','group']], 
+                                  new_site_covars[['ages','sex']], 
                                   file=os.path.join(site_combat_path,f"{site_code}_{feature}_summary.pickle"), 
                               ref_batch = 'H0', 
                               robust=True,)
@@ -606,12 +606,12 @@ class Preprocess:
         )
         # third, use variance estimates from full AIDHS cohort
         dc_out['var_pooled'] = pd.read_pickle(os.path.join(aidhs_combat_path,f'combat_{feature}_var.pickle')).ravel()
-        for c in ['ages','sex','group']:
+        for c in ['ages','sex']:
             new_site_covars[c]=new_site_covars[c].astype(np.float64)      
         print('step3')
         pickle_file = os.path.join(site_combat_path,f"{site_code}_{feature}_harmonisation_params_test.pickle")
         _=dc.distributedCombat_site(
-            pd.DataFrame(new_site_data), bat, new_site_covars[['ages','sex','group']], 
+            pd.DataFrame(new_site_data), bat, new_site_covars[['ages','sex']], 
             file=pickle_file,
              central_out=dc_out, 
             ref_batch = 'H0', 
