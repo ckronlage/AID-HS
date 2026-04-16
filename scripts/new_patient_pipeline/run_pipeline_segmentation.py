@@ -274,6 +274,12 @@ if __name__ == "__main__":
     # initialise parameters
     use_fastsurfer = True
     
+    #---------------------------------------------------------------------------------
+    ### Test aidhs license exists
+    from aidhs.test.test_aidhs_license import test_license
+    test_license()
+    #---------------------------------------------------------------------------------
+    
     run_pipeline_segmentation(list_ids=args.list_ids,
                 sub_id=args.id, 
                 input_dir=input_dir,

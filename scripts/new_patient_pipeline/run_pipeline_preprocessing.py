@@ -324,7 +324,13 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     print(args)
-   
+    
+    #---------------------------------------------------------------------------------
+    ### Test aidhs license exists
+    from aidhs.test.test_aidhs_license import test_license
+    test_license()
+    #---------------------------------------------------------------------------------
+    
     run_pipeline_preprocessing(
                     harmo_code=args.harmo_code,
                     list_ids=args.list_ids,

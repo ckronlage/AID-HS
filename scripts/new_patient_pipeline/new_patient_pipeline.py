@@ -80,6 +80,12 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     print(args)
+
+    #---------------------------------------------------------------------------------
+    ### Test aidhs license exists
+    from aidhs.test.test_aidhs_license import test_license
+    test_license()
+
     
     #---------------------------------------------------------------------------------
     ### CHECKS
