@@ -29,6 +29,9 @@ Enabling your computer's GPUs for running the pipeline accelerates the HippUnfol
 
 Install the [*nvidia container toolkit*](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
 
+## AID-HS license
+In order to run AID-HS you need to have a `aidhs_license.txt` in the aidhs folder. To get this file, please fill out the [AID-HS registration form](https://docs.google.com/forms/d/e/1FAIpQLSdPbtraBZ2s0HD1W8qtF11wr_fYVTWZjraED03Rtl2ZjxeRMA/viewform?usp=header). Once submitted, your application will be automatically reviewed and the aidhs_license.txt file will be send to your email.
+
 ## Installation & configuration
 In order to run the docker, you'll need to configure a couple of files
 

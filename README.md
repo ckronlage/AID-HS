@@ -13,8 +13,8 @@ Note:
 - You will need the following demographic information (age at scan & sex) to run AID-HS on your patient's T1 MRI scan.
 - AID-HS has been developed on T1w scans acquired at 3T. It has not yet been thoroughly evaluated on 1.5T and 7T data
 
-**<span style="color: red;">SIGN UP TO THE AID-HS MAILING LIST</span>**:
-We request that all AID-HS users sign up to the mailing list. If you are using AID-HS, please send an email to `meld.study@gmail.com` with the subject 'Request to be added to the AID-HS mailing list' and provide use with your name and institute. This will ensure that we can update you about bug fixs and new releases. 
+**<span style="color: red;">REGISTER TO GET YOUR AID-HS LICENSE</span>**:
+We request that all AID-HS users fill the [AID-HS registration form](https://docs.google.com/forms/d/e/1FAIpQLSdPbtraBZ2s0HD1W8qtF11wr_fYVTWZjraED03Rtl2ZjxeRMA/viewform?usp=header). Following registration you will received a license file. This file will be needed for use of all future AID-HS versions v1.1.0 and above. Your email address will be added to the AID-HS mailing list. This will ensure that we can update you about bugs fix and new releases. 
 
 **<span style="color: red;">EXISTING USERS: PLEASE UPDATE TO VERSION V1.0.1</span>**:
 We have released AID-HS V1.0.1 which fixes a couple of issues found by users. For more information about the release please see [AID-HS V1.0.1](https://github.com/MELDProject/AID-HS/releases/tag/v1.0.1). To update your code please follow the guidelines [Updating AID-HS to V1.0.1](https://aid-hs.readthedocs.io/en/latest/FAQs.html#Updating-AID-HS-to-V1.0.1) from our FAQ.

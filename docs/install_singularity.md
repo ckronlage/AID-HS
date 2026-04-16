@@ -29,6 +29,9 @@ Make sure you have 20GB of storage space available for the container
 singularity build aidhs.sif docker://meldproject/aidhs:latest 
 ```
 
+## AID-HS license
+In order to run AID-HS you need to have a `aidhs_license.txt` in the aidhs folder. To get this file, please fill out the [AID-HS registration form](https://docs.google.com/forms/d/e/1FAIpQLSdPbtraBZ2s0HD1W8qtF11wr_fYVTWZjraED03Rtl2ZjxeRMA/viewform?usp=header). Once submitted, your application will be automatically reviewed and the aidhs_license.txt file will be send to your email.
+
 ## Installation & configuration
 Before being able to use AID-HS on your data, data paths need to be set up and the pretrained model needs to be downloaded.
 

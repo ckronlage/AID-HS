@@ -4,6 +4,40 @@
 
 ## **Issues & questions with installation**
 
+### **Issue with the AID-HS License**
+
+- If your issue is:
+    ```bash
+    ERROR: Could not find a AIDHS_LICENSE environment variable. Please ensure you have exported the AIDHS_LICENSE environment following the AID-HS installation guidelines
+    ```
+    This means that the AIDHS_LICENSE variable has not been exported/initialised in the environment (terminal) you are using. The variable should be automatically exported when using compose.yml file for the Docker. For native installation, you can export manually the environment variable by doing: 
+    ```bash
+    export AIDHS_LICENSE=<path_to_aidhs_license_file>
+    ```
+    Please contact the team if the issue continues
+
+- If your issue is: 
+    ```bash
+    ERROR: The file aidhs_license.txt does not exist.
+    Please ensure you got the AID-HS license file by filling the registration form provided in the AID-HS installation guidelines and provided the right path to the file
+    ```
+    This means that the aidhs_license.txt cannot be found in the main aidhs folder (where the code is). This can happen if you did not get the AID-HS license file or if the file was placed in an incorect folder. To get the proper AID-HS license ID, please fill in to the [AID-HS registration form](https://docs.google.com/forms/d/e/1FAIpQLSdPbtraBZ2s0HD1W8qtF11wr_fYVTWZjraED03Rtl2ZjxeRMA/viewform?usp=header).
+
+- If your issue is:
+    ```bash
+    ERROR: The license ID provided does not seem correct.
+    Please ensure you got the correct AID-HS license file by filling the registration form provided in the AID-HS installation guidelines and provided the right path to the file
+    ```
+    or 
+    ```bash
+    ERROR: The license file aidhs_license.txt does not seem correct.
+    Please ensure you got the correct AID-HS license file by filling the registration form provided in the AID-HS installation guidelines and provided the right path to the file
+
+    ```
+    This means that the AID-HS license file exists and is at the correct place, but the license ID does not exist or is incorrect. To get the proper AID-HS license ID, please fill in the [AID-HS registration form](https://docs.google.com/forms/d/e/1FAIpQLSdPbtraBZ2s0HD1W8qtF11wr_fYVTWZjraED03Rtl2ZjxeRMA/viewform?usp=header).
+
+
+
 ### **Issue with Singularity - Not enough space when with creating the SIF**
 ```bash
 INFO:    Creating SIF file... 
@@ -70,7 +104,7 @@ Please follow the Download method below to get the new code
 ::::{tab-set}
 
 :::{tab-item} Download
-1. Go to the [github releases page](https://github.com/MELDProject/AID-HS/releases) and download the latest version `V1.0.1`, by clicking on `Source code (zip)` or `Source code (tar.gz)`.
+1. Go to the [github releases page](https://github.com/AID-HSProject/AID-HS/releases) and download the latest version `V1.0.1`, by clicking on `Source code (zip)` or `Source code (tar.gz)`.
 2. Extract the folder `AID-HS-1.0.1`
 3. Copy the files below from your old `AID-HS-1.0.0` directory to your new `AID-HS-1.0.1` directory:
     - the `compose.yml`
@@ -112,7 +146,7 @@ pip install -e .
 
 **🐳 Docker Users:** You will need to pull the latest docker image
 ```bash
-docker pull meldproject/aidhs:latest
+docker pull AID-HSproject/aidhs:latest
 ```
 
 :::
@@ -122,7 +156,7 @@ docker pull meldproject/aidhs:latest
 
 **🚀 Singularity Users:** You will need to pull the latest image
 ```bash
-singularity pull docker://meldproject/aidhs:latest
+singularity pull docker://AID-HSproject/aidhs:latest
 ```
 :::
 ::::

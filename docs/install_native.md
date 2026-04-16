@@ -17,6 +17,9 @@ AID-HS extracts volume- and surface-based features of the hippocampus using **Hi
 ### Workbench Connectom
 AID-HS uses **Workbench Connectom** to create additional surface-based features. Please follow instructions to [install Workbench Connectom](https://www.humanconnectome.org/software/get-connectome-workbench).
 
+## AID-HS license
+In order to run AID-HS you need to have a `aidhs_license.txt` in the aidhs folder. To get this file, please fill out the [AID-HS registration form](https://docs.google.com/forms/d/e/1FAIpQLSdPbtraBZ2s0HD1W8qtF11wr_fYVTWZjraED03Rtl2ZjxeRMA/viewform?usp=header). Once submitted, your application will be automatically reviewed and the aidhs_license.txt file will be send to your email.
+
 ## Installation & configuration
 In order to run the pipeline, you'll need to configure a couple of files
 
