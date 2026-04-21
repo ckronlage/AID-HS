@@ -7,11 +7,12 @@ from os.path import join as opj
 import pandas as pd
 import json
 import bids.layout
+import shutil
 
 from aidhs.tools_pipeline import get_m
 from scripts.preprocess.run_script_segmentation import run_hippunfold_parallel, run_hippunfold
 from scripts.preprocess.run_script_dataprep import prepare_T1_parallel ,prepare_T1, bidsify_results, extract_surface_features
-from aidhs.paths import DATA_PATH, FS_SUBJECTS_PATH, HIPPUNFOLD_SUBJECTS_PATH, BIDS_SUBJECTS_PATH
+from aidhs.paths import DATA_PATH, FS_SUBJECTS_PATH, HIPPUNFOLD_SUBJECTS_PATH, BIDS_SUBJECTS_PATH, DEMOGRAPHIC_FEATURES_FILE
 
 def init(lock):
     global starting
@@ -248,6 +249,12 @@ if __name__ == "__main__":
                         help="File containing list of ids. Can be txt or csv with 'ID' column",
                         required=False,
                         )
+    parser.add_argument('-demos', '--demographic_file', 
+                        type=str, 
+                        help='provide the name of the demographic files for the harmonisation (e.g. demographics_file.csv). this file should be placed in the main aidhs_data folder',
+                        required=False,
+                        default='demographics_file.csv',
+                        )
     parser.add_argument("--parallelise", 
                         help="parallelise segmentation", 
                         required=False,
@@ -278,6 +285,22 @@ if __name__ == "__main__":
     ### Test aidhs license exists
     from aidhs.test.test_aidhs_license import test_license
     test_license()
+
+    #---------------------------------------------------------------------------------
+    ### Create tmp demographic file 
+    demographic_file_tmp = DEMOGRAPHIC_FEATURES_FILE
+    if args.demographic_file is None:
+        demographic_file = os.path.join(DATA_PATH, "demographics_file.csv")
+        if not os.path.isfile(demographic_file):
+            print(f'ERROR: No demographic file found in default {demographic_file}.Please provide a demographic file.')
+            os.sys.exit(-1)
+    else:
+        demographic_file = os.path.join(DATA_PATH, args.demographic_file)
+        if not os.path.isfile(demographic_file):
+            print(f'ERROR: Could not find a demographic at {demographic_file}.Please ensure the demographic file is placed in the main aidhs_data folder and only the name of the demographic file is parsed (e.g. demographics_file.csv)')
+            os.sys.exit(-1)
+    shutil.copy(demographic_file, demographic_file_tmp)
+
     #---------------------------------------------------------------------------------
     
     run_pipeline_segmentation(list_ids=args.list_ids,

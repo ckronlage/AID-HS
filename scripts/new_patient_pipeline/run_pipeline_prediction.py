@@ -15,9 +15,9 @@ import subprocess
 import pickle
 from PIL import Image
 import tempfile
-
+import shutil
 from aidhs.aidhs_cohort_hip import AidhsCohort, AidhsSubject
-from aidhs.paths import DATA_PATH, HIPPUNFOLD_SUBJECTS_PATH, SUBFIELDS_LABEL_FILE, EXPERIMENT_PATH, PARAMS_PATH
+from aidhs.paths import DATA_PATH, HIPPUNFOLD_SUBJECTS_PATH, SUBFIELDS_LABEL_FILE, EXPERIMENT_PATH, PARAMS_PATH, DEMOGRAPHIC_FEATURES_FILE
 from aidhs.train_evaluate import create_dataset_file, predict_subject
 from aidhs.tools_pipeline import get_m
 import aidhs.hippunfold_plotting as plotting
@@ -881,6 +881,12 @@ if __name__ == "__main__":
                         help="Harmonisation code",
                         required=False,
                         )
+    parser.add_argument('-demos', '--demographic_file', 
+                        type=str, 
+                        help='provide the name of the demographic files for the harmonisation (e.g. demographics_file.csv). this file should be placed in the main aidhs_data folder',
+                        required=False,
+                        default='demographics_file.csv',
+                        )
     parser.add_argument("--debug_mode", 
                         help="mode to debug error", 
                         required=False,
@@ -895,6 +901,22 @@ if __name__ == "__main__":
     ### Test aidhs license exists
     from aidhs.test.test_aidhs_license import test_license
     test_license()
+
+    #---------------------------------------------------------------------------------
+    ### Create tmp demographic file 
+    demographic_file_tmp = DEMOGRAPHIC_FEATURES_FILE
+    if args.demographic_file is None:
+        demographic_file = os.path.join(DATA_PATH, "demographics_file.csv")
+        if not os.path.isfile(demographic_file):
+            print(f'ERROR: No demographic file found in default {demographic_file}.Please provide a demographic file.')
+            os.sys.exit(-1)
+    else:
+        demographic_file = os.path.join(DATA_PATH, args.demographic_file)
+        if not os.path.isfile(demographic_file):
+            print(f'ERROR: Could not find a demographic at {demographic_file}.Please ensure the demographic file is placed in the main aidhs_data folder and only the name of the demographic file is parsed (e.g. demographics_file.csv)')
+            os.sys.exit(-1)
+    shutil.copy(demographic_file, demographic_file_tmp)
+    
     #---------------------------------------------------------------------------------
 
     run_pipeline_prediction(
