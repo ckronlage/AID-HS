@@ -254,7 +254,7 @@ class AidhsCohort:
         sites = []
         for f in glob.glob(os.path.join(self.data_dir, "AIDHS_*")):
             if os.path.isdir(f):
-                sites.append(f.split("_")[-1])
+                sites.append(f.split("AIDHS_")[-1])
         return sites
 
     @contextmanager
