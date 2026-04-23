@@ -33,30 +33,34 @@ singularity build aidhs.sif docker://meldproject/aidhs:latest
 In order to run AID-HS you need to have a `aidhs_license.txt` in the aidhs folder. To get this file, please fill out the [AID-HS registration form](https://docs.google.com/forms/d/e/1FAIpQLSdPbtraBZ2s0HD1W8qtF11wr_fYVTWZjraED03Rtl2ZjxeRMA/viewform?usp=header). Once submitted, your application will be automatically reviewed and the aidhs_license.txt file will be send to your email.
 
 ## Installation & configuration
-Before being able to use AID-HS on your data, data paths need to be set up and the pretrained model needs to be downloaded.
 
-1. Make sure you have 1GB available for the aidhs data.
-2. Download and unzip the aidhs_data_folder by running: 
-```bash
-wget https://figshare.com/ndownloader/files/54145361?private_link=48c92b1b53f8f0c67dec --output-document aidhs_data_folder.tar.xz 
-tar xf aidhs_data_folder.tar.xz 
-```
+Before being able to use AID-HS on your data, data paths need to be set up and the pretrained model needs to be downloaded. 
+
+1. Make sure you have 20GB of storage space available for the docker, and 1GB available for the aidhs data.
+2. Create the **aidhs_data** folder, if it doesn't exist already. This folder is where where you would like to store MRI data to run the tool.
 3. Run this command to set the paths needed:
--  <path_to_aidhs_data_folder> : Add the path to aidhs_data_folder
+-  <path_to_aidhs_data_folder> : Add the path to aidhs_data folder
+-  <path_to_AIDHS_license>: path where the `aidhs_license.txt` has been saved
+
 ```bash
-export SINGULARITY_BINDPATH=/rds/project/kw350/rds-kw350-meld/test_aidhs/aidhs_data_folder/:/data
+export SINGULARITY_BINDPATH=/<path_to_aidhs_data_folder>:/data,<path_to_AIDHS_license>/aidhs_license.txt:/aidhs_license.txt:ro
+export SINGULARITYENV_AIDHS_LICENSE=/aidhs_license.txt
 ```
 OR with Apptainer
 ```bash
-export APPTAINER_BINDPATH=/rds/project/kw350/rds-kw350-meld/test_aidhs/aidhs_data_folder/:/data 
+export APPTAINER_BINDPATH=/<path_to_aidhs_data_folder>:/data,<path_to_AIDHS_license>/aidhs_license.txt:/aidhs_license.txt:ro
+export APPTAINERENV_AIDHS_LICENSE=/aidhs_license.txt
 ```
 
-## Download AID-HS container & Verify installation
-The line below will download AID-HS in the folder where you ran the command, and then run a test to verify that everything is installed and set up properly. It may take up to an 1h to download the singularity image and then takes approximately 1 minute to run the test.
-
+:::{admonition} Singularity
+:class: tip
+You can add those paths to your `~/.bashrc` file to ensure they are always activated when opening a new terminal. 
+:::
+4. Run this command to download the data folder 
 ```bash
-singularity exec aidhs.sif /bin/bash -c "cd /app && pytest" 
+singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/prepare_aidhs.py "
 ```
+It will download the data in the aidhs_data folder you set up in step 2. 
 
 ### Errors
 

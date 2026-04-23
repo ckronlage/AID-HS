@@ -36,8 +36,8 @@ In order to run AID-HS you need to have a `aidhs_license.txt` in the aidhs folde
 In order to run the docker, you'll need to configure a couple of files
 
 1. Download `aidhs.zip` from the [latest github release](https://github.com/MELDProject/AID-HS/releases/latest) and extract it.
-2. Download the aidhs_data_folder from [figshare](https://figshare.com/s/48c92b1b53f8f0c67dec)
-3. Unzip the folder where you want to store the aidhs_data_folder
+2. Copy the `aidhs_license.txt` into the extracted folder (see above how to get the AID-HS license)
+3. Create the aidhs_data folder, if it doesn't exist already. This folder is where you would like to store MRI data to run the classifier
 4. In the AID-HS folder, open and edit the compose.yml to add the path to the aidhs_data_folder. The initial compose.yml file looks like :
 ```
 services:
@@ -88,7 +88,35 @@ services:
 
 6. **WARNING** If you are running docker with Docker Desktop, you will need to ensure that the memory usage allowed by docker is to the maximum, as  Docker Desktop halves the memory usage by default. For that you can go in the Docker Desktop settings and change the memory limit (more help in this [post](https://stackoverflow.com/questions/43460770/docker-windows-container-memory-limit))
 
-## Download AID-HS docker & Verify installation
+## Set up paths and download model
+Before being able to use AID-HS on your data, data paths need to be set up and the pretrained model needs to be downloaded. 
+
+1. Make sure you have 20GB of storage space available for the docker, and 1GB available for the aidhs data.
+2. Run this command to download the docker image and the data folder
+
+::::{tab-set}
+
+:::{tab-item} Linux
+:sync: linux
+```bash
+DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/prepare_aidhs.py
+```
+:::
+
+:::{tab-item} Windows
+:sync: windows
+```bash
+docker compose run aidhs python scripts/new_patient_pipeline/prepare_aidhs.py
+```
+:::
+
+::::
+
+:::{note}
+:::
+
+## Verify installation
+
 The line below will download AID-HS and then run a test to verify that everything is installed and set up properly. It may take up to an 1h to download the docker image and then takes approximately 1 minute to run the test.
 
 ::::{tab-set}
