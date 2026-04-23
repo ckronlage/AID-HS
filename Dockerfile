@@ -42,6 +42,9 @@ RUN cd /app/ && conda run -n base /bin/bash -c "pip install -e ."
 # Set permissions for the entrypoint
 RUN chmod +x entrypoint.sh
 
+ENV KEEP_DATA_PATH=1
+ENV SILENT=1
+
 ENTRYPOINT ["/bin/bash","entrypoint.sh"]
 
 
