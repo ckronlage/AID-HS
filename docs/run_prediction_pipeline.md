@@ -111,7 +111,8 @@ You can tune the AID-HS pipeline command using additional variables and flags as
 | **Mandatory variables**         |  Comment | 
 |-------|---|
 |either ```-id <subject_id>```  |  if you want to run the pipeline on 1 single subject.|  
-|or ```-ids <subjects_list>``` |  if you want to run the pipeline on more than 1 subject, you can pass the name of a text file containing the list of subjects. An example 'subjects_list.txt' is provided in the <aidhs_data_folder>. | 
+|or ```-ids <subjects_list>``` |  if you want to run the pipeline on more than 1 subject, you can pass the name of a text file containing the list of subjects. An example 'subjects_list.txt' is provided in the <aidhs_data_folder>. |
+|```-demos <demographic_file>```| The name of the csv file containing the demographic information as detailled in the [guidelines](https://aid-hs.readthedocs.io/en/latest/prepare_data.html#prepare-the-mri-data-in-bids-format-mandatory) and [provided demographic information](https://aid-hs.readthedocs.io/en/latest/prepare_data.html#prepare-the-demographic-information-to-run-the-harmonisation). An example 'demographics_file.csv' is provided in the <aidhs_data_folder>.|
 | **Optional variables** |
 | ```-harmo_code <harmo_code>```  | provide the harmonisation code if you want to harmonise your data before prediction. This requires to have [computed the harmonisation parameters](https://aid-hs.readthedocs.io/en/latest/harmonisation.html) beforehand. The harmonisation code should start with H, e.g. H1. | 
 |```--parallelise``` | use this flag to speed up the segmentation by running HippUnfold on multiple subjects in parallel. |
@@ -132,7 +133,7 @@ To run the whole prediction pipeline on subject 'test001' without harmonising th
 :sync: Docker Linux
 
 ```bash
-DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001
+DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001 -demos demographics_file.csv
 ```
 :::
 
@@ -140,7 +141,7 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_pati
 :sync: Docker Windows
 
 ```bash
-docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001
+docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001 -demos demographics_file.csv
 ```
 :::
 
@@ -148,7 +149,7 @@ docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipelin
 :sync: Singularity
 
 ```bash
-singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001"
+singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001 -demos demographics_file.csv"
 ```
 
 :::
@@ -156,7 +157,7 @@ singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_p
 :sync: native
 
 ```bash
-python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001
+python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001 -demos demographics_file.csv
 ```
 
 :::
@@ -169,7 +170,7 @@ To run the whole prediction pipeline on subject 'test001' using harmonisation co
 :sync: Docker Linux
 
 ```bash
-DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001 -harmo_code H1
+DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001 -harmo_code H1 -demos demographics_file.csv
 ```
 :::
 
@@ -177,7 +178,7 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_pati
 :sync: Docker Windows
 
 ```bash
-docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001 -harmo_code H1
+docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001 -harmo_code H1 -demos demographics_file.csv
 ```
 :::
 
@@ -185,14 +186,14 @@ docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipelin
 :sync: Singularity
 
 ```bash
-singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001 -harmo_code H1"
+singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001 -harmo_code H1 -demos demographics_file.csv"
 ```
 :::
 :::{tab-item} Native
 :sync: native
 
 ```bash
-python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001 -harmo_code H1
+python scripts/new_patient_pipeline/new_patient_pipeline.py -id sub-test001 -harmo_code H1 -demos demographics_file.csv
 ```
 
 :::
@@ -204,14 +205,14 @@ To run the whole prediction pipeline on multiples subjects with parallelisation:
 :::{tab-item} Docker Linux
 :sync: Docker linux
 ```bash
-DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -ids list_subjects.txt --parallelise
+DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -ids list_subjects.txt -demos demographics_file.csv --parallelise
 ```
 :::
 
 :::{tab-item} Docker Windows/Mac
 :sync: Docker Windows
 ```bash
-docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -ids list_subjects.txt --parallelise
+docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -ids list_subjects.txt -demos demographics_file.csv --parallelise
 ```
 :::
 
@@ -219,7 +220,7 @@ docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipelin
 :sync: Singularity
 
 ```bash
-singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/new_patient_pipeline.py -ids list_subjects.txt --parallelise"
+singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/new_patient_pipeline.py -ids list_subjects.txt -demos demographics_file.csv --parallelise"
 ```
 
 :::
@@ -227,7 +228,7 @@ singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_p
 :sync: native
 
 ```bash
-python scripts/new_patient_pipeline/new_patient_pipeline.py -ids list_subjects.txt --parallelise
+python scripts/new_patient_pipeline/new_patient_pipeline.py -ids list_subjects.txt -demos demographics_file.csv --parallelise
 ```
 
 :::

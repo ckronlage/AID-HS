@@ -4,6 +4,40 @@
 
 ## **Issues & questions with installation**
 
+### **Issue with the AID-HS License**
+
+- If your issue is:
+    ```bash
+    ERROR: Could not find a AIDHS_LICENSE environment variable. Please ensure you have exported the AIDHS_LICENSE environment following the AID-HS installation guidelines
+    ```
+    This means that the AIDHS_LICENSE variable has not been exported/initialised in the environment (terminal) you are using. The variable should be automatically exported when using compose.yml file for the Docker. For native installation, you can export manually the environment variable by doing: 
+    ```bash
+    export AIDHS_LICENSE=<path_to_aidhs_license_file>
+    ```
+    Please contact the team if the issue continues
+
+- If your issue is: 
+    ```bash
+    ERROR: The file aidhs_license.txt does not exist.
+    Please ensure you got the AID-HS license file by filling the registration form provided in the AID-HS installation guidelines and provided the right path to the file
+    ```
+    This means that the aidhs_license.txt cannot be found in the main aidhs folder (where the code is). This can happen if you did not get the AID-HS license file or if the file was placed in an incorect folder. To get the proper AID-HS license ID, please fill in to the [AID-HS registration form](https://docs.google.com/forms/d/e/1FAIpQLSdPbtraBZ2s0HD1W8qtF11wr_fYVTWZjraED03Rtl2ZjxeRMA/viewform?usp=header).
+
+- If your issue is:
+    ```bash
+    ERROR: The license ID provided does not seem correct.
+    Please ensure you got the correct AID-HS license file by filling the registration form provided in the AID-HS installation guidelines and provided the right path to the file
+    ```
+    or 
+    ```bash
+    ERROR: The license file aidhs_license.txt does not seem correct.
+    Please ensure you got the correct AID-HS license file by filling the registration form provided in the AID-HS installation guidelines and provided the right path to the file
+
+    ```
+    This means that the AID-HS license file exists and is at the correct place, but the license ID does not exist or is incorrect. To get the proper AID-HS license ID, please fill in the [AID-HS registration form](https://docs.google.com/forms/d/e/1FAIpQLSdPbtraBZ2s0HD1W8qtF11wr_fYVTWZjraED03Rtl2ZjxeRMA/viewform?usp=header).
+
+
+
 ### **Issue with Singularity - Not enough space when with creating the SIF**
 ```bash
 INFO:    Creating SIF file... 
@@ -58,23 +92,26 @@ docker-compose down --remove-orphans
 
 ---
 
-## **Updating AID-HS to V1.0.1**
+## **Updating AID-HS to V1.1.0**
 
-The instructions below are for users that already have used AID-HS v1.0.0 on patients and would like to update to AID-HS v1.0.1 while keeping the same aidhs_data_folder folder.
+The instructions below are for users that already have used AID-HS v1.0.1 on patients and would like to update to AID-HS v1.1.0 while keeping the same aidhs_data_folder folder.
 
+### ** Register to get your AID-HS license**:
+Register at [AID-HS registration form](https://docs.google.com/forms/d/e/1FAIpQLSdPbtraBZ2s0HD1W8qtF11wr_fYVTWZjraED03Rtl2ZjxeRMA/viewform?usp=header). Following registration you will received a license file. This file will be needed for use of all future AID-HS versions v1.1.0 and above. Your email address will be added to the AID-HS mailing list. This will ensure that we can update you about bugs fix and new releases. 
 
 ### 📥 **Get the updated code**
 
-Depending on wether you previously downloaded `V1.0.0` as a zip/tar folder or used Git to download the code, you will need to follow the same route to get the update `v1.0.1` code.
+Please follow the Download method below to get the new code
 
 ::::{tab-set}
 
 :::{tab-item} Download
-1. Go to the [github releases page](https://github.com/MELDProject/AID-HS/releases) and download the latest source zip or tar of version `V1.0.1`.
-2. Extract the folder `AID-HS-1.0.1`
-3. Copy the files below from your old `AID-HS-1.0.0` directory to your new `AID-HS-1.0.1` directory:
+1. Go to the [github releases page](https://github.com/AID-HSProject/AID-HS/releases) and download the latest version `V1.1.0`, by clicking on `Source code (zip)` or `Source code (tar.gz)`.
+2. Extract the folder `AID-HS-1.1.0`
+3. Copy the files below from your old `AID-HS-1.0.1` directory to your new `AID-HS-1.1.0` directory:
     - the `compose.yml`
     - the `config.ini`
+4. Copy the `aidhs_license.txt` into the extracted folder (see above how to get the AID-HS license)
 :::
 
 :::{tab-item} Git
@@ -85,10 +122,11 @@ git stash
 git pull 
 git stash pop
 ```
+3) Copy the `aidhs_license.txt` into the extracted folder (see above how to get the AID-HS license)
 :::
 ::::
 
-Then depending on if you have a Native, Docker or Singularity installation of AID-HS `v1.0.0` you will need to follow the same type of installation to update to `v1.0.1`: 
+Then depending on if you have a Native, Docker or Singularity installation of AID-HS `v1.0.1` you will need to follow the same type of installation to update to `v1.1.0`: 
 
 ::::{tab-set}
 
@@ -100,7 +138,7 @@ Then depending on if you have a Native, Docker or Singularity installation of AI
 ```
 conda activate aidhs
 ```
-2. Update the code package in the environment. Make sure you are in the new `AID-HS-1.0.1` directory and run:
+2. Update the code package in the environment. Make sure you are in the new `AID-HS-1.1.0` directory and run:
 ```
 pip install -e . 
 ```
@@ -112,7 +150,7 @@ pip install -e .
 
 **🐳 Docker Users:** You will need to pull the latest docker image
 ```bash
-docker pull meldproject/aidhs:latest
+docker pull MELDproject/aidhs:latest
 ```
 
 :::
@@ -122,7 +160,7 @@ docker pull meldproject/aidhs:latest
 
 **🚀 Singularity Users:** You will need to pull the latest image
 ```bash
-singularity pull docker://meldproject/aidhs:latest
+singularity pull docker://MELDproject/aidhs:latest
 ```
 :::
 ::::
@@ -133,14 +171,14 @@ Follow the guidelines **"Verify installation"** to run the test again.
 - 🐳[Docker Users](https://aid-hs.readthedocs.io/en/latest/install_docker.html#verify-installation)
 - 🚀[Singularity Users](https://aid-hs.readthedocs.io/en/latest/install_singularity.html#verify-installation)
 
-### 🧠 **Update your predictions with the registration fix**
+### 🧠 **Update your predictions with the harmonisation parameters fix**
 If you want to update the predictions with the new registration for patients you have already ran through AID-HS, please follow the instructions bellow:
 
-1) Create a list of ids of patients you want to rerun: e.g. `list_subjects_rerun_v1.0.1.txt`
+1) Create a list of ids of patients you want to rerun: e.g. `list_subjects_rerun_v1.1.0.txt`
 
-2) Then run one of the commands below. It will recreate the PDF report for your patient. 
+2) Then run the pipeline again. It will recreate the PDF report for your patient.
 
-**WARNING** This will overwrite the files and the patient report in `output/predictions_reports`
+**WARNING** This will overwrite the data for that patient and the patient report in `output/predictions_reports`
 
 ::::{tab-set}
 
@@ -149,7 +187,7 @@ If you want to update the predictions with the new registration for patients you
 
 **💻 Native Installation Users:** 
 ```bash
-python scripts/new_patient_pipeline/run_pipeline_prediction.py -ids list_subjects_rerun_v1.0.1.txt
+python scripts/new_patient_pipeline/new_patient_pipeline.py -ids list_subjects_rerun_v1.1.0.txt -demos demographics_file.csv
 ```
 :::
 
@@ -158,7 +196,7 @@ python scripts/new_patient_pipeline/run_pipeline_prediction.py -ids list_subject
 
 **🐳 Docker Users:** 
 ```bash
-DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/run_pipeline_prediction.py -ids list_subjects_rerun_v1.0.1.txt
+DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/new_patient_pipeline.py -ids list_subjects_rerun_v1.1.0.txt -demos demographics_file.csv
 ```
 :::
 
@@ -167,7 +205,7 @@ DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_pati
 
 **🚀 Singularity Users:**
 ```bash
-singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/run_pipeline_prediction.py -ids list_subjects_rerun_v1.0.1.txt"
+singularity exec aidhs.sif /bin/bash -c "cd /app && python scripts/new_patient_pipeline/new_patient_pipeline.py -ids list_subjects_rerun_v1.1.0.txt -demos demographics_file.csv"
 ```
 :::
 ::::

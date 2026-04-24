@@ -57,7 +57,7 @@ except (NoOptionError, NoSectionError) as e:
 
 
 # paths to important data files - relative to BASE_PATH
-DEMOGRAPHIC_FEATURES_FILE = os.path.join(DATA_PATH, "demographics_file.csv")
+DEMOGRAPHIC_FEATURES_FILE = f"/tmp/demographics_file_{os.getpid()}.csv"
 
 # params file
 CLIPPING_PARAMS_FILE='clipping_parameters_sigma.json'

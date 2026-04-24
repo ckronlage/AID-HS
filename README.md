@@ -13,12 +13,8 @@ Note:
 - You will need the following demographic information (age at scan & sex) to run AID-HS on your patient's T1 MRI scan.
 - AID-HS has been developed on T1w scans acquired at 3T. It has not yet been thoroughly evaluated on 1.5T and 7T data
 
-**<span style="color: red;">SIGN UP TO THE AID-HS MAILING LIST</span>**:
-We request that all AID-HS users sign up to the mailing list. If you are using AID-HS, please send an email to `meld.study@gmail.com` with the subject 'Request to be added to the AID-HS mailing list' and provide use with your name and institute. This will ensure that we can update you about bug fixs and new releases. 
-
-**<span style="color: red;">EXISTING USERS: PLEASE UPDATE TO VERSION V1.0.1</span>**:
-We have released AID-HS V1.0.1 which fixes a couple of issues found by users. For more information about the release please see [AID-HS V1.0.1](https://github.com/MELDProject/AID-HS/releases/tag/v1.0.1). To update your code please follow the guidelines [Updating AID-HS to V1.0.1](https://aid-hs.readthedocs.io/en/latest/FAQs.html#Updating-AID-HS-to-V1.0.1) from our FAQ.
-
+**<span style="color: red;">REGISTER TO GET YOUR AID-HS LICENSE</span>**:
+We request that all AID-HS users fill the [AID-HS registration form](https://docs.google.com/forms/d/e/1FAIpQLSdPbtraBZ2s0HD1W8qtF11wr_fYVTWZjraED03Rtl2ZjxeRMA/viewform?usp=header). Following registration you will received a license file. This file will be needed for use of all future AID-HS versions v1.1.0 and above. Your email address will be added to the AID-HS mailing list. This will ensure that we can update you about bugs fix and new releases. 
 
 Pipeline overview:\
 <img src="https://raw.githubusercontent.com//MELDProject/AID-HS/main/docs/images/overview_pipeline.jpg " height="500" />
@@ -36,6 +32,7 @@ You can install and use the AID-HS pipeline with :
 - [**native installation**](https://aid-hs.readthedocs.io/en/latest/install_native.html): Not supported 
 
 **YouTube tutorial available for the [docker and singularity installation](https://www.youtube.com/watch?v=RRAET7r05ys&t=11s&ab_channel=MELDproject)**
+Note: for installation, please follow the online guidelines on github which are up to date compare to the videos
 
 **FAQs** 
 If you have a question or if you are running into issues at any stage (installation/use/interpretation), have a look at our [FAQs](https://aid-hs.readthedocs.io/en/latest/FAQs.html) page as we may have already have a solution. 
@@ -56,7 +53,7 @@ Once installed you will be able to use the AID-HS pipeline on your data followin
 Features extracted from MRI scans from different MRI scanners have systematic differences between them. To remove scanner related biases we recommend harmonising your MRI data to the MRI data that was used in the AID-HS manuscript. This harmonisation is required for each MRI scanner / T1 sequence you are using. 
 
 Notes: 
-- This step needs to be run only once, and requires data from at least 20 subjects acquired on the same scanner with the same T1 sequence and demographic information (e.g age and sex). See [harmonisation instructions](https://aid-hs.readthedocs.io/en/latest/harmonisation.html) for more details. 
+- This step needs to be run only once, and requires data from at least 20 controls acquired on the same scanner with the same T1 sequence and demographic information (e.g age and sex). See [harmonisation instructions](https://aid-hs.readthedocs.io/en/latest/harmonisation.html) for more details. 
 - The AID-HS pipeline can also be run without harmonisation with no drop in performances. However, the characterisation of the hippocampal features compared to the normative growth curves will not be interpretable.
 
 
@@ -69,9 +66,14 @@ An overview of the notebooks that we used to create the figures can be found [he
 
 ## Contacts
 
-Mathilde Ripart, PhD \ 
+MELD project\
+`meld.study@gmail.com`
+
+Mathilde Ripart, PhD \
 Research Fellow at UCL Great Ormond Street Institute of Child Health \
 `m.ripart@ucl.ac.uk` 
+
+
 
 
 

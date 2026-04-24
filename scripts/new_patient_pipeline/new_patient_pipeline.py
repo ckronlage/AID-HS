@@ -2,13 +2,13 @@ import os
 import argparse
 import sys
 import time
-
+import shutil
 from scripts.new_patient_pipeline.run_pipeline_segmentation import run_pipeline_segmentation
 from scripts.preprocess.extract_features_hdf5 import extract_features_hdf5
 from scripts.new_patient_pipeline.run_pipeline_preprocessing import run_pipeline_preprocessing
 from scripts.new_patient_pipeline.run_pipeline_prediction import run_pipeline_prediction
 from aidhs.tools_pipeline import get_m
-from aidhs.paths import DATA_PATH, BASE_PATH, FS_SUBJECTS_PATH, HIPPUNFOLD_SUBJECTS_PATH, BIDS_SUBJECTS_PATH
+from aidhs.paths import DATA_PATH, BASE_PATH, FS_SUBJECTS_PATH, HIPPUNFOLD_SUBJECTS_PATH, BIDS_SUBJECTS_PATH, DEMOGRAPHIC_FEATURES_FILE
 
 class Logger(object):
     def __init__(self, sys_type=sys.stdout, filename='AIDHS_output.log'):
@@ -49,9 +49,9 @@ if __name__ == "__main__":
                         )
     parser.add_argument('-demos', '--demographic_file', 
                         type=str, 
-                        help='provide the demographic files for the harmonisation',
+                        help='provide the name of the demographic files for the harmonisation (e.g. demographics_file.csv). this file should be placed in the main aidhs_data folder',
                         required=False,
-                        default=None,
+                        default='demographics_file.csv',
                         )
     parser.add_argument('--harmo_only', 
                         action="store_true", 
@@ -80,13 +80,33 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     print(args)
-    
+
+    #---------------------------------------------------------------------------------
+    ### Test aidhs license exists
+    from aidhs.test.test_aidhs_license import test_license
+    test_license()
+
     #---------------------------------------------------------------------------------
     ### CHECKS
     if (args.harmo_only) & (args.list_ids == None):
         print('ERROR: Please provide a list of subjects for the harmonisation. We recommend 20 subjects')
         os.sys.exit(-1)
 
+    #---------------------------------------------------------------------------------
+    ### Create tmp demographic file 
+    demographic_file_tmp = DEMOGRAPHIC_FEATURES_FILE
+    if args.demographic_file is None:
+        demographic_file = os.path.join(DATA_PATH, "demographics_file.csv")
+        if not os.path.isfile(demographic_file):
+            print(f'ERROR: No demographic file found in default {demographic_file}.Please provide a demographic file.')
+            os.sys.exit(-1)
+    else:
+        demographic_file = os.path.join(DATA_PATH, args.demographic_file)
+        if not os.path.isfile(demographic_file):
+            print(f'ERROR: Could not find a demographic at {demographic_file}.Please ensure the demographic file is placed in the main aidhs_data folder and only the name of the demographic file is parsed (e.g. demographics_file.csv)')
+            os.sys.exit(-1)
+    shutil.copy(demographic_file, demographic_file_tmp)
+    
     #---------------------------------------------------------------------------------
     ### SEGMENTATION ###
 

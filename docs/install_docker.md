@@ -1,16 +1,13 @@
 # Docker container
 
-
-**WARNING: Installation and use has not yet been tested on Windows. Please let us know if you have succeeded or are having challenges using the docker container on Windows**
-
 The Docker container has all the prerequisites embedded into it. This makes it easier to install and compatible with most OS systems. 
 
 Notes: 
-- Currently only tested on **Linux** (HPC Singularity coming soon)
+- tested on **Linux**, **Windows**
 - You will need **~20GB of space** to install the container
 - The docker image contains Miniconda 3, HippUnfold v1.1.0, and AID-HS. The whole image is ~18GB.  
 
-Here is the video tutorial demonstrating how to do the docker installation - [Docker and Singularity Installation of AID-HS Tutorial](https://www.youtube.com/watch?v=RRAET7r05ys&t=11s&ab_channel=MELDproject).
+Here is the video tutorial demonstrating how to do the docker installation - [Docker and Singularity Installation of AID-HS Tutorial](https://www.youtube.com/watch?v=RRAET7r05ys&t=11s&ab_channel=MELDproject). Note that some part of the installation video are outdated for AID-HS > v1.1.0. Please follow the github guidelines for up to date instructions.
 
 ## Prerequisites
 
@@ -29,12 +26,15 @@ Enabling your computer's GPUs for running the pipeline accelerates the HippUnfol
 
 Install the [*nvidia container toolkit*](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
 
+## AID-HS license
+In order to run AID-HS you need to have a `aidhs_license.txt` in the aidhs folder. To get this file, please fill out the [AID-HS registration form](https://docs.google.com/forms/d/e/1FAIpQLSdPbtraBZ2s0HD1W8qtF11wr_fYVTWZjraED03Rtl2ZjxeRMA/viewform?usp=header). Once submitted, your application will be automatically reviewed and the aidhs_license.txt file will be send to your email.
+
 ## Installation & configuration
 In order to run the docker, you'll need to configure a couple of files
 
 1. Download `aidhs.zip` from the [latest github release](https://github.com/MELDProject/AID-HS/releases/latest) and extract it.
-2. Download the aidhs_data_folder from [figshare](https://figshare.com/s/48c92b1b53f8f0c67dec)
-3. Unzip the folder where you want to store the aidhs_data_folder
+2. Copy the `aidhs_license.txt` into the extracted folder (see above how to get the AID-HS license)
+3. Create the aidhs_data folder, if it doesn't exist already. This folder is where you would like to store MRI data to run the classifier
 4. In the AID-HS folder, open and edit the compose.yml to add the path to the aidhs_data_folder. The initial compose.yml file looks like :
 ```
 services:
@@ -43,6 +43,10 @@ services:
     platform: "linux/amd64"
     volumes:
       - volumes:/data
+    environment: 
+      - AIDHS_LICENSE=/run/secrets/aidhs_license.txt
+    secrets:
+      - aidhs_license.txt
     user: $DOCKER_USER
     deploy:
       resources:
@@ -50,6 +54,10 @@ services:
           devices:
             - capabilities: [gpu]
               count: 0
+
+secrets:
+  aidhs_license.txt:
+    file: ./aidhs_license.txt
 
 ```
 Change the line below "`volumes:`" to point to the aidhs_data_folder. Do not delete the "`:/data`" at the end.\
@@ -71,7 +79,7 @@ On windows, if you're using absolute paths, use forward slashes and quotes:
 :::
 
 
-5. **WARNING:** If you do not have GPU on your computer (e.g. Mac laptop) you will need to open the compose.yml file and remove the last 6th lines of the text (everything that includes `deploy` and below).\
+5. **WARNING:** If you do not have GPU on your computer (e.g. Mac laptop) you will need to open the compose.yml file and remove the 6th lines of the text below (everything that includes `deploy` up to secrets).\
 Your file should look like that: 
 ```
 services:
@@ -80,12 +88,48 @@ services:
     platform: "linux/amd64"
     volumes:
       - volumes:/data
+    environment: 
+      - AIDHS_LICENSE=/run/secrets/aidhs_license.txt
+    secrets:
+      - aidhs_license.txt
     user: $DOCKER_USER
+
+secrets:
+  aidhs_license.txt:
+    file: ./aidhs_license.txt
 ```
 
 6. **WARNING** If you are running docker with Docker Desktop, you will need to ensure that the memory usage allowed by docker is to the maximum, as  Docker Desktop halves the memory usage by default. For that you can go in the Docker Desktop settings and change the memory limit (more help in this [post](https://stackoverflow.com/questions/43460770/docker-windows-container-memory-limit))
 
-## Download AID-HS docker & Verify installation
+## Set up paths and download model
+Before being able to use AID-HS on your data, data paths need to be set up and the pretrained model needs to be downloaded. 
+
+1. Make sure you have 20GB of storage space available for the docker, and 1GB available for the aidhs data.
+2. Run this command to download the docker image and the data folder
+
+::::{tab-set}
+
+:::{tab-item} Linux
+:sync: linux
+```bash
+DOCKER_USER="$(id -u):$(id -g)" docker compose run aidhs python scripts/new_patient_pipeline/prepare_aidhs.py
+```
+:::
+
+:::{tab-item} Windows
+:sync: windows
+```bash
+docker compose run aidhs python scripts/new_patient_pipeline/prepare_aidhs.py
+```
+:::
+
+::::
+
+:::{note}
+:::
+
+## Verify installation
+
 The line below will download AID-HS and then run a test to verify that everything is installed and set up properly. It may take up to an 1h to download the docker image and then takes approximately 1 minute to run the test.
 
 ::::{tab-set}
@@ -154,4 +198,4 @@ Please see our [FAQs](https://aid-hs.readthedocs.io/en/latest/FAQs.html) for com
 
 ## Contact
 
-If you encounter any errors, please contact `m.ripart@ucl.ac.uk` for support
+If you encounter any errors, please contact `meld.study@gmail.com` for support

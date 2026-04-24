@@ -10,6 +10,10 @@ RUN rm /opt/hippunfold_cache/trained_model.3d_fullres.Task102_hcp1200_T2w.nnUNet
 
 # Update OS and install prerequisite
 ENV DEBIAN_FRONTEND="noninteractive"
+# Use archived repositories for Debian Buster (since it's EOL)
+RUN sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list && \
+	sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list && \
+	sed -i '/buster-updates/d' /etc/apt/sources.list
 RUN apt-get --allow-releaseinfo-change update
 RUN apt-get install -y python3-pip \
 	time \
@@ -37,6 +41,9 @@ RUN cd /app/ && conda run -n base /bin/bash -c "pip install -e ."
 
 # Set permissions for the entrypoint
 RUN chmod +x entrypoint.sh
+
+ENV KEEP_DATA_PATH=1
+ENV SILENT=1
 
 ENTRYPOINT ["/bin/bash","entrypoint.sh"]
 

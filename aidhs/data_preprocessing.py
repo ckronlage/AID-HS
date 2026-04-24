@@ -201,7 +201,6 @@ class Preprocess:
         covars = pd.DataFrame()
         ages = []
         sex = []
-        group = []
         sites_scanners = []
         for subject in subject_ids:
             subj = AidhsSubject(subject, cohort=self.cohort)
@@ -215,12 +214,10 @@ class Preprocess:
                 sex.append(s)
             else:
                 print(f'ERROR: There is an issue with the coded sex of subject {subject}')
-            group.append(subj.is_patient)
             sites_scanners.append(subj.site_code) # just site code now
 
         covars["ages"] = ages
         covars["sex"] = sex
-        covars["group"] = group
         covars["site_scanner"] = sites_scanners
         covars["ID"] = subject_ids
 
@@ -497,7 +494,7 @@ class Preprocess:
         print(f"INFO: exclude subjects {np.array(self.subject_ids)[~combat_subject_include]}")
         if precombat_features:
             precombat_features = np.array(precombat_features)
-            # load in covariates - age, sex, group, site and scanner unless provided
+            # load in covariates - age, sex, site and scanner unless provided
             covars = self.covars[combat_subject_include].copy()
             # check for nan
             index_nan = pd.isnull(covars).any(1).to_numpy().nonzero()[0]
@@ -518,7 +515,7 @@ class Preprocess:
                         precombat_features.T,
                         covars,
                         batch_col="site_scanner",
-                        categorical_cols=["sex", "group"],
+                        categorical_cols=["sex"],
                         continuous_cols="ages",
                     )
                     #
@@ -579,7 +576,7 @@ class Preprocess:
         if len(np.array(listids)[np.array(combat_subject_include)])==0:
             print(f'Cannot compute harmonisation for {feature} because no subject found with this feature')
             return
-        # load in covariates - age, sex, group, site and scanner unless provided    
+        # load in covariates - age, sex, site and scanner unless provided    
         new_site_covars = self.load_covars(subject_ids=np.array(listids)[np.array(combat_subject_include)], demographic_file=demographic_file).copy()
         #check site_scanner codes are the same for all subjects
         if len(new_site_covars['site_scanner'].unique())==1:
@@ -595,7 +592,7 @@ class Preprocess:
         new_site_data = np.array(precombat_features).T 
         dc.distributedCombat_site(new_site_data,
                                   bat, 
-                                  new_site_covars[['ages','sex','group']], 
+                                  new_site_covars[['ages','sex']], 
                                   file=os.path.join(site_combat_path,f"{site_code}_{feature}_summary.pickle"), 
                               ref_batch = 'H0', 
                               robust=True,)
@@ -606,12 +603,12 @@ class Preprocess:
         )
         # third, use variance estimates from full AIDHS cohort
         dc_out['var_pooled'] = pd.read_pickle(os.path.join(aidhs_combat_path,f'combat_{feature}_var.pickle')).ravel()
-        for c in ['ages','sex','group']:
+        for c in ['ages','sex']:
             new_site_covars[c]=new_site_covars[c].astype(np.float64)      
         print('step3')
         pickle_file = os.path.join(site_combat_path,f"{site_code}_{feature}_harmonisation_params_test.pickle")
         _=dc.distributedCombat_site(
-            pd.DataFrame(new_site_data), bat, new_site_covars[['ages','sex','group']], 
+            pd.DataFrame(new_site_data), bat, new_site_covars[['ages','sex']], 
             file=pickle_file,
              central_out=dc_out, 
             ref_batch = 'H0', 

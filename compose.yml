@@ -1,9 +1,13 @@
 services:
   aidhs:
-    image: meldproject/aidhs:latest
+    image: meldproject/aidhs:v1.1.0
     platform: "linux/amd64"
     volumes:
       - volumes:/data
+    environment: 
+      - AIDHS_LICENSE=/run/secrets/aidhs_license.txt
+    secrets:
+      - aidhs_license.txt
     user: $DOCKER_USER
     deploy:
       resources:
@@ -11,4 +15,8 @@ services:
           devices:
             - capabilities: [gpu]
               count: 0
+
+secrets:
+  aidhs_license.txt:
+    file: ./aidhs_license.txt
 

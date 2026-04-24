@@ -9,10 +9,11 @@ Here is the video tutorial about how to run the harmonisation using the AID-HS p
 
 ## Compute the harmonisation paramaters 
 
-The harmonisation parameters are computed using [Distributed Combat](https://doi.org/10.1016/j.neuroimage.2021.118822).
-To get these parameters you will need a cohort of subjects acquired from the same scanner and under the same protocol (sequence, parameters, ...).
-Subjects can be controls and/or patients, but we advise to use ***at least 20 subjects*** to enable an accurate harmonisation, and to not use HS patients for the harmonisation. 
-Try to ensure the data are high quality (i.e no blurring, no artefacts, no cavities in the brain).
+The harmonisation parameters are computed using [Distributed Combat](https://doi.org/10.1016/j.neuroimage.2021.118822).\
+To get these parameters you will need a cohort of subjects acquired from the same scanner and under the same protocol (sequence, parameters, ...).\
+Subjects can be **controls** and/or **patients with no hippocampal abnormalities** (e.g. frontal FCD). <span style="color: red;">Do not use HS patients for the harmonisation.</span>\
+We advise to use ***at least 20 subjects*** to enable an accurate harmonisation.\
+Try to ensure the data are high quality (i.e no blurring, no artefacts, no cavities in the brain).\
 Demographic information (e.g age and sex) will be required for this process, follow the [guidelines](https://aid-hs.readthedocs.io/en/latest/prepare_data.html) 
 
 WARNING: zero variance in the demographics information (e.g. having the same age for all subjects) will lead to Combat failures or errors. 
@@ -22,7 +23,7 @@ Once you have done the process once, you can follow the [general guidelines to p
 ## Running
 
 - Ensure you have installed the AID-HS pipeline with [docker container](https://aid-hs.readthedocs.io/en/latest/install_docker.html). 
-- **Chose a harmonisation** code for this scanner starting by 'H' (e.g H1, H2, ..). This harmonisation code will be needed to organise your data and run the code as detailled below. 
+- **Chose a harmonisation** code for this scanner starting by 'H' (e.g H1, H2, ..). Avoid underscores '_' in the code. This harmonisation code will be needed to organise your data and run the code as detailled below. 
 - Ensure you have [organised your MRI data](https://aid-hs.readthedocs.io/en/latest/prepare_data.html#prepare-the-mri-data-in-bids-format-mandatory) and [provided demographic information](https://aid-hs.readthedocs.io/en/latest/prepare_data.html#prepare-the-demographic-information-to-run-the-harmonisation) before running this pipeline. 
 
 
