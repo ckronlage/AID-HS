@@ -1,16 +1,13 @@
 # Docker container
 
-
-**WARNING: Installation and use has not yet been tested on Windows. Please let us know if you have succeeded or are having challenges using the docker container on Windows**
-
 The Docker container has all the prerequisites embedded into it. This makes it easier to install and compatible with most OS systems. 
 
 Notes: 
-- Currently only tested on **Linux** (HPC Singularity coming soon)
+- tested on **Linux**, **Windows**
 - You will need **~20GB of space** to install the container
 - The docker image contains Miniconda 3, HippUnfold v1.1.0, and AID-HS. The whole image is ~18GB.  
 
-Here is the video tutorial demonstrating how to do the docker installation - [Docker and Singularity Installation of AID-HS Tutorial](https://www.youtube.com/watch?v=RRAET7r05ys&t=11s&ab_channel=MELDproject).
+Here is the video tutorial demonstrating how to do the docker installation - [Docker and Singularity Installation of AID-HS Tutorial](https://www.youtube.com/watch?v=RRAET7r05ys&t=11s&ab_channel=MELDproject). Note that some part of the installation video are outdated for AID-HS > v1.1.0. Please follow the github guidelines for up to date instructions.
 
 ## Prerequisites
 
@@ -46,6 +43,10 @@ services:
     platform: "linux/amd64"
     volumes:
       - volumes:/data
+    environment: 
+      - AIDHS_LICENSE=/run/secrets/aidhs_license.txt
+    secrets:
+      - aidhs_license.txt
     user: $DOCKER_USER
     deploy:
       resources:
@@ -53,6 +54,10 @@ services:
           devices:
             - capabilities: [gpu]
               count: 0
+
+secrets:
+  aidhs_license.txt:
+    file: ./aidhs_license.txt
 
 ```
 Change the line below "`volumes:`" to point to the aidhs_data_folder. Do not delete the "`:/data`" at the end.\
@@ -74,7 +79,7 @@ On windows, if you're using absolute paths, use forward slashes and quotes:
 :::
 
 
-5. **WARNING:** If you do not have GPU on your computer (e.g. Mac laptop) you will need to open the compose.yml file and remove the last 6th lines of the text (everything that includes `deploy` and below).\
+5. **WARNING:** If you do not have GPU on your computer (e.g. Mac laptop) you will need to open the compose.yml file and remove the 6th lines of the text below (everything that includes `deploy` up to secrets).\
 Your file should look like that: 
 ```
 services:
@@ -83,7 +88,15 @@ services:
     platform: "linux/amd64"
     volumes:
       - volumes:/data
+    environment: 
+      - AIDHS_LICENSE=/run/secrets/aidhs_license.txt
+    secrets:
+      - aidhs_license.txt
     user: $DOCKER_USER
+
+secrets:
+  aidhs_license.txt:
+    file: ./aidhs_license.txt
 ```
 
 6. **WARNING** If you are running docker with Docker Desktop, you will need to ensure that the memory usage allowed by docker is to the maximum, as  Docker Desktop halves the memory usage by default. For that you can go in the Docker Desktop settings and change the memory limit (more help in this [post](https://stackoverflow.com/questions/43460770/docker-windows-container-memory-limit))
@@ -185,4 +198,4 @@ Please see our [FAQs](https://aid-hs.readthedocs.io/en/latest/FAQs.html) for com
 
 ## Contact
 
-If you encounter any errors, please contact `m.ripart@ucl.ac.uk` for support
+If you encounter any errors, please contact `meld.study@gmail.com` for support

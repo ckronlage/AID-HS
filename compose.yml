@@ -16,7 +16,6 @@ services:
             - capabilities: [gpu]
               count: 0
 
-
 secrets:
   aidhs_license.txt:
     file: ./aidhs_license.txt

@@ -1,7 +1,5 @@
 # Singularity container
 
-**WARNING: Installation and use not yet tested. Please do let us know if you are succeeding / failing to use the singularity container on HPC**
-
 The Singularity container has been created to be used on HPC supporting Linux as they do not work with Docker container. If you are not working on a HPC, we recommend to install the docker version of container. 
 
 Notes: 
@@ -9,7 +7,7 @@ Notes:
 - You will need **~20GB of space** to install the container
 - The image contains Miniconda 3, HippUnfold v1.1.0, and AID-HS. The whole image is ~18GB. .  
 
-Here is the video tutorial demonstrating how to do the singularity installation - [Docker and Singularity Installation of AID-HS Tutorial](https://www.youtube.com/watch?v=RRAET7r05ys&t=11s&ab_channel=MELDproject).
+Here is the video tutorial demonstrating how to do the singularity installation - [Docker and Singularity Installation of AID-HS Tutorial](https://www.youtube.com/watch?v=RRAET7r05ys&t=11s&ab_channel=MELDproject). Note that some part of the installation video are outdated for AID-HS > v1.1.0. Please follow the github guidelines for up to date instructions.
 
 ## Prerequisites
 
@@ -80,4 +78,4 @@ You will find `pytest_errors.log` in the folder where you launched the command.
 Please see our [FAQ page](https://aid-hs.readthedocs.io/en/latest/FAQs.html) for common installation problems and questions
 
 ## Contact
-If you encounter any errors, please contact `m.ripart@ucl.ac.uk` for support
+If you encounter any errors, please contact `meld.stydy@gmail.com` for support

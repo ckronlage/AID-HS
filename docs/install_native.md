@@ -25,15 +25,6 @@ In order to run the pipeline, you'll need to configure a couple of files
 
 1. Download `aidhs.zip` from the [latest github release](https://github.com/MELDProject/AID-HS/releases/latest) and extract it.
 2. Copy the `aidhs_license.txt` into the extracted folder (see above how to get the AID-HS license)
-3. Create the aidhs_data folder, if it doesn't exist already. This folder is where you would like to store MRI data to run the classifier
-4. Open the file`'config.ini` and replace the line:
-```
-data_path = /data
-```
-by 
-```
-data_path = <the path to where your aidhs_data_folder is stored>
-```
 
 ### Create the environment
 
@@ -52,15 +43,13 @@ pip install -e .
 
 ## Set up paths and download model
 
-First, you will need to copy the AID_HS `aidhs_license.txt` into the aidhs folder (see above how to get the AID-HS license)
-
 Before being able to use AID-HS on your data, some paths need to be set up and the pretrained model needs to be downloaded. For this, run:
 ```bash
 python prepare_aidhs.py
 ```
 
 This script will ask you if you want to change the path to the data folder, answer **'y'** for yes. \
-Then, it will ask for the the location of your **AID-HS data folder**, where you would like to store MRI data to run the classifier. Create the **AID-HS data folder**, if it doesn't exist, and provide the path. It will download the pretrained model and test data to a folder inside your AID-HS data folder
+Then, it will ask for the the location of your **AID-HS data folder** where you would like to store MRI data to run the classifier. Create the **AID-HS data folder**, if it doesn't exist, and provide the path. It will download the pretrained model and test data to a folder inside your AID-HS data folder
 
 ## Verify installation
 To verify that you have installed all packages, set up paths correctly, and downloaded all data, this verification script will run the pipeline to predict the HS side on a test patient which already has the hippocampal segmentation done. It takes approximately 1 minutes to run.
@@ -73,12 +62,7 @@ pytest
 ```
 
 ### Errors
-If you run into errors at this stage and need help, you can re-run by changing the last line of the command by the command below to save the terminal outputs in a txt file. Please send `pytest_errors.log` to us so we can work with you to solve any problems. [How best to reach us.](#contact)
-
-```bash
-# run the test
-pytest -s | tee 
-```
+The native installation is not supported as it is very system and software dependant. If you encounter any issues at this stage we recommend to install the docker version. 
 
 You will find `pytest_errors.log` in the folder where you launched the command. 
 
@@ -87,4 +71,4 @@ Please see our [FAQs](https://aid-hs.readthedocs.io/en/latest/FAQs.html) for com
 
 ## Contact
 
-If have any question please contact `m.ripart@ucl.ac.uk` for support
+If have any question please contact `meld.study@gmail.com`
