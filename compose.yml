@@ -1,6 +1,6 @@
 services:
   aidhs:
-    image: meldproject/aidhs:latest
+    image: meldproject/aidhs:v1.1.0
     platform: "linux/amd64"
     volumes:
       - volumes:/data
