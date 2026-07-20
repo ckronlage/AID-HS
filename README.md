@@ -11,7 +11,7 @@ For more details please read our [manuscript](https://onlinelibrary.wiley.com/do
 
 Note: 
 - You will need the following demographic information (age at scan & sex) to run AID-HS on your patient's T1 MRI scan.
-- AID-HS has been developed on T1w scans acquired at 3T. It has not yet been thoroughly evaluated on 1.5T and 7T data
+- AID-HS requires a 3D T1 (WITHOUT gadolinium agent) acquired at 3T. It has not yet been thoroughly evaluated on 1.5T and 7T data.
 
 **<span style="color: red;">REGISTER TO GET YOUR AID-HS LICENSE</span>**:
 We request that all AID-HS users fill the [AID-HS registration form](https://docs.google.com/forms/d/e/1FAIpQLSdPbtraBZ2s0HD1W8qtF11wr_fYVTWZjraED03Rtl2ZjxeRMA/viewform?usp=header). Following registration you will received a license file. This file will be needed for use of all future AID-HS versions v1.1.0 and above. Your email address will be added to the AID-HS mailing list. This will ensure that we can update you about bugs fix and new releases. 
