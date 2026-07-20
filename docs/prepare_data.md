@@ -12,7 +12,14 @@ If not already done, please :
 
 #### MRI data
 
-Note: AID-HS has been developped on 3D T1w scans acquired at 3T. We cannot guarantee robustness and accuracy of the results on 2D scans nor scans acquired at lower (1.5T) or higher (7T) magnetic strenghts.
+Note: AID-HS has been developed on 3D T1w scans acquired at 3T (WITHOUT gadolinium agent).\
+We cannot guarantee robustness and accuracy of the results on:
+- other MRI scans contrast than T1w
+- MRI scans with gadolinium
+- 2D MRI scans
+- scans acquired with lower (1.5T) or higher (7T) than 3T
+
+
 
 ## Prepare the MRI data in BIDS format (Mandatory)
 
