@@ -41,11 +41,23 @@ if __name__ == "__main__":
                         help="Harmonisation code",
                         required=False,
                         )
+    parser.add_argument("--disable_bids_validation",
+                        help="Disable BIDS validation when running hippunfold (e.g. for custom suffixes)",
+                        required=False,
+                        default=False,
+                        action="store_true",
+                        )
     parser.add_argument("--parallelise", 
                         help="parallelise segmentation", 
                         required=False,
                         default=False,
                         action="store_true",
+                        )
+    parser.add_argument("--num_procs", 
+                        help="Number of processes to use for parallelization", 
+                        required=False, 
+                        default=1,
+                        type=int
                         )
     parser.add_argument('-demos', '--demographic_file', 
                         type=str, 
@@ -119,8 +131,9 @@ if __name__ == "__main__":
                         fs_dir=FS_SUBJECTS_PATH,
                         bids_dir=BIDS_SUBJECTS_PATH,
                         hippo_dir=HIPPUNFOLD_SUBJECTS_PATH, 
+                        bids_validation=not args.disable_bids_validation,
                         use_parallel=args.parallelise, 
-                        skip_fs=False,
+                        num_procs=args.num_procs,
                         verbose=args.debug_mode
                         )
 

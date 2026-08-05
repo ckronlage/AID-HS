@@ -17,7 +17,14 @@ def check_FS_outputs(folder):
     else:
         return True
 
-def run_hippunfold_parallel(subjects, bids_dir=None, hippo_dir=None, num_procs=10, delete_intermediate=False, verbose=False):
+def run_hippunfold_parallel(subjects, 
+                            bids_dir=None, 
+                            hippo_dir=None, 
+                            num_procs=10, 
+                            delete_intermediate=False, 
+                            rerun_existing=False, 
+                            hippunfold_args=None,
+                            verbose=False):
     # parallel version of Hippunfold
 
     #make a directory for the outputs
@@ -39,12 +46,20 @@ def run_hippunfold_parallel(subjects, bids_dir=None, hippo_dir=None, num_procs=1
         if files_surf==[]:
             subjects_to_run.append(subject_id)
         else:
-            print(get_m(f'Hippunfold outputs already exists. Hippunfold will be skipped', subject_id, 'INFO'))
+            if rerun_existing:
+                subjects_to_run.append(subject_id)
+                print(get_m(f'Hippunfold outputs exists at least in parts, re-calling hippunfold as requested', subject_id, 'INFO'))
+            else:
+                print(get_m(f'Hippunfold outputs already exists. Hippunfold will be skipped', subject_id, 'INFO'))
     
     if subjects_to_run!=[]:
         print(get_m(f'Start Hippunfold segmentation in parallel for {subjects_to_run}', None, 'INFO'))
         subjects_to_run_shortformat = [subject_id.split('sub-')[-1] for subject_id in subjects_to_run]
         command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {' '.join(subjects_to_run_shortformat)} --core {num_procs} --modality T1w")
+        if rerun_existing:
+            command += ' --rerun-incomplete'
+        if hippunfold_args is not None:
+            command += f' {" ".join(hippunfold_args)}'
         if verbose:
             print(command)
         proc = Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
@@ -66,7 +81,9 @@ def run_hippunfold_parallel(subjects, bids_dir=None, hippo_dir=None, num_procs=1
             print(get_m(f'COMMAND failing : {command} with error {stderr}', None, 'ERROR'))
             return False
 
-def run_hippunfold(subject, bids_dir=None, hippo_dir=None, delete_intermediate=False,verbose=False):
+def run_hippunfold(subject, bids_dir=None, hippo_dir=None, num_procs=1,
+                   delete_intermediate=False, rerun_existing=False, hippunfold_args=None,
+                   verbose=False):
 
     hippo_s = subject.hippo_dir
     subject_bids_id = subject.bids_id
@@ -82,9 +99,13 @@ def run_hippunfold(subject, bids_dir=None, hippo_dir=None, delete_intermediate=F
     #check if outputs already exists
     files_surf = glob(f'{hippo_s}/surf/*_den-0p5mm_label-hipp_*.surf.gii')
     files_surf=[]
-    if files_surf==[]:
+    if files_surf==[] or rerun_existing:
         print(get_m(f'Start Hippunfold segmentation', subject_id, 'INFO'))
-        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {subject_id.split('sub-')[-1]} --core 3 --modality T1w")
+        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {subject_id.split('sub-')[-1]} --core {num_procs} --modality T1w")
+        if rerun_existing:
+            command += ' --rerun-incomplete'
+        if hippunfold_args is not None:
+            command += f' {" ".join(hippunfold_args)}'
         if verbose:
             print(command)
         proc = Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')

@@ -19,7 +19,7 @@ def init(lock):
     starting = lock
 
 class SubjectSeg:
-    def __init__(self, subject_id, input_dir=None, fs_dir=None, bids_dir=None, hippo_dir=None, bids_id=None):
+    def __init__(self, subject_id, input_dir=None, fs_dir=None, bids_dir=None, hippo_dir=None, bids_id=None, validate=True):
         
         #initialise
         self.id=subject_id
@@ -35,7 +35,9 @@ class SubjectSeg:
    
         #update inputs path 
         if self.input_dir!=None:
-           self.t1_input = self.get_inputs_volumes_path(modality='T1', input_dir=input_dir)
+           self.t1_input = self.get_inputs_volumes_path(modality='T1', 
+                                                        input_dir=input_dir,
+                                                        validate=validate)
            
         #update bids path
         if self.bids_dir!=None:
@@ -95,7 +97,10 @@ class SubjectSeg:
         return self.hippo_dir
 
     #find inputs volumes paths
-    def get_inputs_volumes_path(self, modality='T1',input_dir=None):
+    def get_inputs_volumes_path(self, 
+                                modality='T1', 
+                                input_dir=None,
+                                validate=True):
         '''Find input volume in BIDS or MELD format'''
         if input_dir == None :
             input_dir= self.input_dir
@@ -121,7 +126,7 @@ class SubjectSeg:
         # look if BIDS format
         if subject_path == None:
             # get bids structure
-            layout = bids.layout.BIDSLayout(input_dir)
+            layout = bids.layout.BIDSLayout(input_dir, validate=validate)
             # find parameters to extract bids file
             config_file = os.path.join(input_dir, 'bids_config.json')
             with open(config_file, "r") as json_file:
@@ -159,8 +164,18 @@ class SubjectSeg:
         subject_path = opj(subject_bids_dir, mod_type, f'{bids_id}_{modality}.nii.gz')
         return subject_path
 
-def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir=None, bids_dir=None, hippo_dir=None, 
-                use_parallel=False, skip_fs=False, verbose=False):
+def run_pipeline_segmentation(list_ids=None, 
+                              sub_id=None, 
+                              input_dir=None, 
+                              fs_dir=None, 
+                              bids_dir=None, 
+                              hippo_dir=None, 
+                              bids_validation=True,
+                              use_parallel=False, 
+                              num_procs=1, 
+                              rerun_existing_hippunfold=False, 
+                              hippunfold_args=None,
+                              verbose=False):
     subject_id=None
     subject_ids=None
     if list_ids != None:
@@ -186,7 +201,13 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
   
     subjects=[]
     for i, subject_id in enumerate(np.array(subject_ids)):
-        subjects.append(SubjectSeg(subject_id, input_dir=input_dir, fs_dir=fs_dir, bids_dir=bids_dir, hippo_dir=hippo_dir, bids_id=subject_bids_ids[i]))
+        subjects.append(SubjectSeg(subject_id, 
+                                   input_dir=input_dir, 
+                                   fs_dir=fs_dir, 
+                                   bids_dir=bids_dir, 
+                                   hippo_dir=hippo_dir, 
+                                   bids_id=subject_bids_ids[i], 
+                                   validate=bids_validation))
     
     subject_ids_failed=[]
 
@@ -198,7 +219,14 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
         prepare_T1_parallel(subjects)
         # extract surface based features
         print(get_m(f'STEP 2b: Run hippunfold segmentation', None, 'INFO'))
-        result = run_hippunfold_parallel(subjects, bids_dir=bids_dir, hippo_dir=hippo_dir, delete_intermediate=True, verbose=verbose)
+        result = run_hippunfold_parallel(subjects, 
+                                            bids_dir=bids_dir, 
+                                            hippo_dir=hippo_dir,
+                                            delete_intermediate=True, 
+                                            num_procs=num_procs, 
+                                            rerun_existing=rerun_existing_hippunfold,
+                                            hippunfold_args=hippunfold_args,
+                                            verbose=verbose)
         if result == False:
             print(get_m(f'One step of the pipeline has failed. Process has been aborted for one subject', None, 'ERROR'))
             return False
@@ -210,7 +238,7 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
                 subject_ids_failed.append(subject.id)
     else:
         #launch segmentation and feature extraction for each subject one after another
-        print(get_m(f'No parralelisation. Run subjects one after another', None, 'INFO')) 
+        print(get_m(f'No parallelisation. Run subjects one after another', None, 'INFO')) 
         for subject in subjects:
             result = True
             #prepare T1
@@ -221,10 +249,14 @@ def run_pipeline_segmentation(list_ids=None, sub_id=None, input_dir=None, fs_dir
                 continue
             #run hippunfold segmentation
             print(get_m(f'STEP 2b: Run hippunfold segmentation', subject.id, 'INFO'))
-            result = run_hippunfold(subject, bids_dir=bids_dir, hippo_dir=hippo_dir, delete_intermediate=True, verbose=verbose)
+            result = run_hippunfold(subject, bids_dir=bids_dir, hippo_dir=hippo_dir, num_procs=num_procs,
+                                    delete_intermediate=True, rerun_existing=rerun_existing_hippunfold,
+                                    hippunfold_args=hippunfold_args,
+                                    verbose=verbose)
             if result == False:
                 subject_ids_failed.append(subject.id)
                 continue
+
             #extract surface based features
             print(get_m(f'STEP 3: Extract hippocampal surface features', subject.id, 'INFO'))
             result = extract_surface_features(subject, output_dir=hippo_dir)
@@ -255,17 +287,35 @@ if __name__ == "__main__":
                         required=False,
                         default='demographics_file.csv',
                         )
+    parser.add_argument("--disable_bids_validation",
+                        help="Disable BIDS validation when running hippunfold (e.g. for custom suffixes)",
+                        required=False,
+                        default=False,
+                        action="store_true",
+                        )
     parser.add_argument("--parallelise", 
                         help="parallelise segmentation", 
                         required=False,
                         default=False,
                         action="store_true",
                         )
-    parser.add_argument("--skip_fs", 
-                        help="skip the segmentation with freesurfer", 
+    parser.add_argument("--num_procs", 
+                        help="Number of processes to use for parallelization", 
+                        required=False, 
+                        default=1,
+                        type=int
+                        )
+    parser.add_argument("--rerun_existing_hippunfold", 
+                        help="rerun hippunfold even if outputs already exists", 
                         required=False, 
                         default=False,
                         action="store_true",
+                        )
+    parser.add_argument("--hippunfold_args",
+                        help="Additional arguments to pass to hippunfold command, uses all remaining arguments after this flag",
+                        default="",
+                        nargs=argparse.REMAINDER,
+                        required=False,
                         )
     
     args = parser.parse_args()
@@ -308,11 +358,14 @@ if __name__ == "__main__":
                 input_dir=input_dir,
                 fs_dir=fs_dir,
                 bids_dir=bids_dir,
-                hippo_dir=hippo_dir, 
-                use_parallel=args.parallelise, 
-                skip_fs=args.skip_fs,
+                hippo_dir=hippo_dir,
+                bids_validation=not args.disable_bids_validation,
+                use_parallel=args.parallelise,
+                num_procs=args.num_procs,
+                rerun_existing_hippunfold=args.rerun_existing_hippunfold,
+                hippunfold_args=args.hippunfold_args,
                 verbose=False,
-                        )
+            )
 
 
 
