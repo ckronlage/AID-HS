@@ -13,30 +13,29 @@ def init(lock):
     global starting
     starting = lock
 
-def prepare_T1_parallel(subjects, num_procs=20):
+def prepare_modality_parallel(subjects, modality='T1w', num_procs=20):
     # parallel version of the pipeline, finish each stage for all subjects first
 
     pool = multiprocessing.Pool(processes=num_procs, initializer=init, initargs=[multiprocessing.Lock()])
-    for _ in pool.imap_unordered(partial(prepare_T1), subjects):
+    for _ in pool.imap_unordered(partial(prepare_modality, modality=modality), subjects):
         pass
 
-def prepare_T1(subject):
-   
+def prepare_modality(subject, modality='T1w'):
+
     subject_id = subject.id
     bids_s = subject.bids_dir
 
-    #check t1 fs file exists
-    # t1_s = opj(subject.fs_dir, 'mri', 'T1.mgz') #use T1 from FS dir
-    t1_s = subject.t1_input #use raw T1
-    if not os.path.isfile(t1_s):
-        print(f'ERROR: Could not find the T1 file for subject {subject_id}')
+    #check raw input file exists
+    input_s = subject.t1_input #use raw input volume for the chosen modality
+    if not os.path.isfile(input_s):
+        print(f'ERROR: Could not find the {modality} file for subject {subject_id}')
         return
-  
-    #bidsify 
+
+    #bidsify
     if bids_s != None:
-        bidsify_results(subject, t1_s, 'T1w')
+        bidsify_results(subject, input_s, modality)
     else:
-        print(f'INFO: no modality T1w found. Skip preparation for this modality')
+        print(f'INFO: no modality {modality} found. Skip preparation for this modality')
     
 def bidsify_results(subject, file, modality, verbose=False):
     
@@ -83,8 +82,8 @@ def bidsify_results(subject, file, modality, verbose=False):
     else:
         print(get_m(f'Skip bidsify for {modality}. Modality already exists at {output_file}', subject.id, 'INFO')) 
 
-def extract_surface_features(subject, output_dir=None, verbose=False):
-   
+def extract_surface_features(subject, output_dir=None, modality='T1w', verbose=False):
+
     #initialise
     hippo_s = subject.hippo_dir
     if subject.bids_id != None:   
@@ -114,7 +113,7 @@ def extract_surface_features(subject, output_dir=None, verbose=False):
                 if (label=='label-dentate') & (feat=='thickness'):
                     pass
                 else:
-                    input_file = opj(hippo_s,'surf', f'{subject_id}_hemi-{hemi_old}_space-T1w_den-0p5mm_{label}_{feat}.shape.gii')
+                    input_file = opj(hippo_s,'surf', f'{subject_id}_hemi-{hemi_old}_space-{modality}_den-0p5mm_{label}_{feat}.shape.gii')
                     if os.path.isfile(input_file):
                         shutil.copy(input_file, opj(surf_s, f'{hemi}.{label}.{feat}.shape.gii'))
                     else:
@@ -122,7 +121,7 @@ def extract_surface_features(subject, output_dir=None, verbose=False):
                         return False
             #create mean and intrinsic curvature
             print(get_m(f'Create mean and intrinsic curvature', subject.id, 'INFO')) 
-            input_file = f'{hippo_s}/surf/{subject_id}_hemi-{hemi_old}_space-T1w_den-0p5mm_{label}_outer.surf.gii'
+            input_file = f'{hippo_s}/surf/{subject_id}_hemi-{hemi_old}_space-{modality}_den-0p5mm_{label}_outer.surf.gii'
             if os.path.isfile(input_file):
                 #create mean curv
                 command = format(

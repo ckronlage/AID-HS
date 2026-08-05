@@ -393,7 +393,7 @@ def return_labels_cmap(output_file=None):
     
     return subfields_atlas, cmap
 
-def plot_segmentations_subject(subject, hippunfold_folder, output_file, hemis=['R','L']):
+def plot_segmentations_subject(subject, hippunfold_folder, output_file, hemis=['R','L'], modality='T1w'):
     '''
     Plot HippUnfold segmentations for left and right hippocampi
     '''
@@ -402,8 +402,8 @@ def plot_segmentations_subject(subject, hippunfold_folder, output_file, hemis=['
     fig, axs = plt.subplots(3, 2, figsize=(4,6), layout=None)
 
     for i,hemi in enumerate(hemis):
-        file_hipo = os.path.join(hippunfold_folder, 'hippunfold', subject_bids, 'anat', f'{subject_bids}_hemi-{hemi}_space-cropT1w_desc-preproc_T1w.nii.gz')
-        file_hipo_seg = os.path.join(hippunfold_folder, 'hippunfold', subject_bids, 'anat', f'{subject_bids}_hemi-{hemi}_space-cropT1w_desc-subfields_atlas-bigbrain_dseg.nii.gz')
+        file_hipo = os.path.join(hippunfold_folder, 'hippunfold', subject_bids, 'anat', f'{subject_bids}_hemi-{hemi}_space-crop{modality}_desc-preproc_{modality}.nii.gz')
+        file_hipo_seg = os.path.join(hippunfold_folder, 'hippunfold', subject_bids, 'anat', f'{subject_bids}_hemi-{hemi}_space-crop{modality}_desc-subfields_atlas-bigbrain_dseg.nii.gz')
 
         #load images
         img = sitk.ReadImage(file_hipo, sitk.sitkFloat32)
@@ -462,7 +462,7 @@ def create_surf_plot(borders, faces, vertices, cmap=False, file=None):
     plt.close('all')
     return im1
 
-def plot_surfaces_subject(subject, hippunfold_folder, labels_file, output_file):
+def plot_surfaces_subject(subject, hippunfold_folder, labels_file, output_file, modality='T1w'):
     '''
     Plot hippocampal surface folded extracted from HippUnfold
     '''
@@ -470,16 +470,16 @@ def plot_surfaces_subject(subject, hippunfold_folder, labels_file, output_file):
     #get labels
     labels = nb.load(labels_file).darrays[0].data
     # subfields=list(set(labels))
-    # subfields_name={1:'Sub', 2:'CA1', 3:'CA2', 4:'CA3', 5:'CA4', 6:'DG'} 
+    # subfields_name={1:'Sub', 2:'CA1', 3:'CA2', 4:'CA3', 5:'CA4', 6:'DG'}
     colors =  np.array([[0,0,128/255], [0,79/255,1], [0,200/255,1],  [0,1,108/255], [1,188/255,0], [128/255,128/255,128/255] ])
-    
+
     #get surfaces and plot
     fig, ax = plt.subplots(1,1,figsize=(8,8) )
     vertices={}
     faces={}
     borders={}
     for i,hemi in enumerate(['R','L']):
-        file_fold = os.path.join(hippunfold_folder, 'hippunfold', subject_bids, 'surf', f'{subject_bids}_hemi-{hemi}_space-T1w_den-0p5mm_label-hipp_midthickness.surf.gii')
+        file_fold = os.path.join(hippunfold_folder, 'hippunfold', subject_bids, 'surf', f'{subject_bids}_hemi-{hemi}_space-{modality}_den-0p5mm_label-hipp_midthickness.surf.gii')
         gii = nb.load(file_fold)
         vertices[hemi] = gii.get_arrays_from_intent('NIFTI_INTENT_POINTSET')[0].data
         faces[hemi] = gii.get_arrays_from_intent('NIFTI_INTENT_TRIANGLE')[0].data
@@ -645,7 +645,7 @@ def get_info_soft(harmo_code, model_name):
     return text
 
 
-def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_code="noHarmo"):
+def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_code="noHarmo", modality='T1w'):
     ''' Create report of hippocampal abnormalities
     inputs: 
         subject_ids: subjects ID
@@ -693,7 +693,7 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_co
         #-----------------------------------------
         # plot segmentation hippocampus 
         filename1 = os.path.join(output_dir_subj, f'hippo_segmentation.png')
-        plot_segmentations_subject(subject, hippunfold_dir, filename1)
+        plot_segmentations_subject(subject, hippunfold_dir, filename1, modality=modality)
 
         # add dices scores segmentation
         filename1bis = os.path.join(output_dir_subj, f'hippo_segmentation_dices.png')
@@ -707,7 +707,7 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_co
         # plot surarface hippocampus 
         labels_file = SUBFIELDS_LABEL_FILE
         filename2 = os.path.join(output_dir_subj, f'hippo_surfaces.png')
-        plot_surfaces_subject(subject, hippunfold_dir, labels_file, output_file=filename2)
+        plot_surfaces_subject(subject, hippunfold_dir, labels_file, output_file=filename2, modality=modality)
 
         #-----------------------------------------
         # plot patient on normative charts
@@ -836,7 +836,7 @@ def generate_prediction_report(subject_ids, hippunfold_dir, output_dir, harmo_co
 
         print(f'Report ready at {file_path}')
 
-def run_pipeline_prediction(list_ids=None, sub_id=None, harmo_code='noHarmo', verbose=False):
+def run_pipeline_prediction(list_ids=None, sub_id=None, harmo_code='noHarmo', modality='T1w', verbose=False):
     harmo_code = str(harmo_code)
     subject_ids=None
     if list_ids != None:
@@ -861,6 +861,7 @@ def run_pipeline_prediction(list_ids=None, sub_id=None, harmo_code='noHarmo', ve
         hippunfold_dir=HIPPUNFOLD_SUBJECTS_PATH,
         output_dir=os.path.join(DATA_PATH,'output','predictions_reports'),
         harmo_code = harmo_code,
+        modality = modality,
     )
 
 if __name__ == "__main__":
@@ -887,11 +888,17 @@ if __name__ == "__main__":
                         required=False,
                         default='demographics_file.csv',
                         )
-    parser.add_argument("--debug_mode", 
-                        help="mode to debug error", 
+    parser.add_argument("--debug_mode",
+                        help="mode to debug error",
                         required=False,
                         default=False,
                         action="store_true",
+                        )
+    parser.add_argument("-modality", "--modality",
+                        help="MRI contrast to run the pipeline on",
+                        choices=["T1w", "T2w"],
+                        default="T1w",
+                        required=False,
                         )
 
     args = parser.parse_args()
@@ -923,7 +930,8 @@ if __name__ == "__main__":
                     list_ids=args.list_ids,
                     sub_id=args.id,
                     verbose = args.debug_mode,
-                    harmo_code=args.harmo_code
+                    harmo_code=args.harmo_code,
+                    modality=args.modality,
                     )
 
 

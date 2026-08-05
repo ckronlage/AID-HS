@@ -269,7 +269,7 @@ class Preprocess:
             print('no data to save')
             pass
 
-    def extract_volumes_avg(self, feature):
+    def extract_volumes_avg(self, feature, modality='T1w'):
         """
         Extract average volumes from Freesurfer or Hippunfold
         """
@@ -283,8 +283,8 @@ class Preprocess:
                 vals_rh = extract_volume_freesurfer(os.path.join(FS_SUBJECTS_PATH, 'sub-'+subject), hemi='rh')
             elif 'hippunfold' in feature:
                 subject_bids=convert_bids_id(subject)
-                vals_lh = extract_volume_hippunfold(os.path.join(HIPPUNFOLD_SUBJECTS_PATH, 'hippunfold',subject_bids,'anat', f'{subject_bids}_'), hemi='lh')
-                vals_rh = extract_volume_hippunfold(os.path.join(HIPPUNFOLD_SUBJECTS_PATH, 'hippunfold',subject_bids,'anat', f'{subject_bids}_'), hemi='rh')
+                vals_lh = extract_volume_hippunfold(os.path.join(HIPPUNFOLD_SUBJECTS_PATH, 'hippunfold',subject_bids,'anat', f'{subject_bids}_'), hemi='lh', modality=modality)
+                vals_rh = extract_volume_hippunfold(os.path.join(HIPPUNFOLD_SUBJECTS_PATH, 'hippunfold',subject_bids,'anat', f'{subject_bids}_'), hemi='rh', modality=modality)
             else:
                 return
             if (vals_lh!=0) & (vals_rh!=0):
@@ -840,9 +840,9 @@ class Preprocess:
         self.save_cohort_features(feature_asym, asym_combat, included_subjects)
 
     
-def extract_volume_hippunfold(path,hemi="lh", DGexcluded=False):
-    # extract number of voxels in subfields of hippocampus from hippunfold segmentation 
-    data = pd.read_csv(path+'space-cropT1w_desc-subfields_atlas-bigbrain_volumes.tsv',sep='\t')    
+def extract_volume_hippunfold(path,hemi="lh", DGexcluded=False, modality='T1w'):
+    # extract number of voxels in subfields of hippocampus from hippunfold segmentation
+    data = pd.read_csv(path+f'space-crop{modality}_desc-subfields_atlas-bigbrain_volumes.tsv',sep='\t')
     if hemi=='lh':
         hemi='L'
     elif hemi=='rh':

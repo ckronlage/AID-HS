@@ -11,7 +11,7 @@ import shutil
 
 from aidhs.tools_pipeline import get_m
 from scripts.preprocess.run_script_segmentation import run_hippunfold_parallel, run_hippunfold
-from scripts.preprocess.run_script_dataprep import prepare_T1_parallel ,prepare_T1, bidsify_results, extract_surface_features
+from scripts.preprocess.run_script_dataprep import prepare_modality_parallel, prepare_modality, bidsify_results, extract_surface_features
 from aidhs.paths import DATA_PATH, FS_SUBJECTS_PATH, HIPPUNFOLD_SUBJECTS_PATH, BIDS_SUBJECTS_PATH, DEMOGRAPHIC_FEATURES_FILE
 
 def init(lock):
@@ -19,29 +19,33 @@ def init(lock):
     starting = lock
 
 class SubjectSeg:
-    def __init__(self, subject_id, input_dir=None, fs_dir=None, bids_dir=None, hippo_dir=None, bids_id=None, validate=True):
-        
+    def __init__(self, subject_id, input_dir=None, fs_dir=None, bids_dir=None, hippo_dir=None, bids_id=None, validate=True, modality='T1w'):
+
         #initialise
         self.id=subject_id
-        
+        self.modality = modality
+
         #update bids id
         self.bids_id = self.convert_bids_id(bids_id=bids_id)
-        
+
         #update directories
         self.get_input_dir(input_dir)
         self.get_fs_dir(fs_dir)
         self.get_bids_dir(bids_dir)
         self.get_hippo_dir(hippo_dir)
-   
-        #update inputs path 
+
+        #update inputs path
+        # 'T1'/'T2' (no trailing 'w') is the modality key used for the MELD-format
+        # subfolder name and the bids_config.json lookup, derived from modality (e.g. 'T1w'/'T2w')
+        modality_key = modality[:-1] if modality.endswith('w') else modality
         if self.input_dir!=None:
-           self.t1_input = self.get_inputs_volumes_path(modality='T1', 
+           self.t1_input = self.get_inputs_volumes_path(modality=modality_key,
                                                         input_dir=input_dir,
                                                         validate=validate)
-           
+
         #update bids path
         if self.bids_dir!=None:
-           self.t1_bids = self.get_bids_volumes_path(modality='T1w', bids_dir=bids_dir)
+           self.t1_bids = self.get_bids_volumes_path(modality=modality, bids_dir=bids_dir)
 
 
     #functions
@@ -165,16 +169,17 @@ class SubjectSeg:
         return subject_path
 
 def run_pipeline_segmentation(list_ids=None, 
-                              sub_id=None, 
-                              input_dir=None, 
-                              fs_dir=None, 
-                              bids_dir=None, 
-                              hippo_dir=None, 
+                              sub_id=None,
+                              input_dir=None,
+                              fs_dir=None,
+                              bids_dir=None,
+                              hippo_dir=None,
                               bids_validation=True,
-                              use_parallel=False, 
-                              num_procs=1, 
-                              rerun_existing_hippunfold=False, 
+                              use_parallel=False,
+                              num_procs=1,
+                              rerun_existing_hippunfold=False,
                               hippunfold_args=None,
+                              modality='T1w',
                               verbose=False):
     subject_id=None
     subject_ids=None
@@ -201,49 +206,51 @@ def run_pipeline_segmentation(list_ids=None,
   
     subjects=[]
     for i, subject_id in enumerate(np.array(subject_ids)):
-        subjects.append(SubjectSeg(subject_id, 
-                                   input_dir=input_dir, 
-                                   fs_dir=fs_dir, 
-                                   bids_dir=bids_dir, 
-                                   hippo_dir=hippo_dir, 
-                                   bids_id=subject_bids_ids[i], 
-                                   validate=bids_validation))
+        subjects.append(SubjectSeg(subject_id,
+                                   input_dir=input_dir,
+                                   fs_dir=fs_dir,
+                                   bids_dir=bids_dir,
+                                   hippo_dir=hippo_dir,
+                                   bids_id=subject_bids_ids[i],
+                                   validate=bids_validation,
+                                   modality=modality))
     
     subject_ids_failed=[]
 
     if use_parallel:
         #launch segmentation and feature extraction in parallel
-        print(get_m(f'Run subjects in parallel', None, 'INFO'))   
-        # prepare T1
-        print(get_m(f'STEP 2a: Prepare T1 for hippunfold', None, 'INFO'))
-        prepare_T1_parallel(subjects)
+        print(get_m(f'Run subjects in parallel', None, 'INFO'))
+        # prepare inputs
+        print(get_m(f'STEP 2a: Prepare {modality} for hippunfold', None, 'INFO'))
+        prepare_modality_parallel(subjects, modality=modality)
         # extract surface based features
         print(get_m(f'STEP 2b: Run hippunfold segmentation', None, 'INFO'))
-        result = run_hippunfold_parallel(subjects, 
-                                            bids_dir=bids_dir, 
+        result = run_hippunfold_parallel(subjects,
+                                            bids_dir=bids_dir,
                                             hippo_dir=hippo_dir,
-                                            delete_intermediate=True, 
-                                            num_procs=num_procs, 
+                                            delete_intermediate=True,
+                                            num_procs=num_procs,
                                             rerun_existing=rerun_existing_hippunfold,
                                             hippunfold_args=hippunfold_args,
+                                            modality=modality,
                                             verbose=verbose)
         if result == False:
             print(get_m(f'One step of the pipeline has failed. Process has been aborted for one subject', None, 'ERROR'))
             return False
-        print(get_m(f'STEP 3: Extract hippocampal surface features', None, 'INFO')) 
+        print(get_m(f'STEP 3: Extract hippocampal surface features', None, 'INFO'))
         subject_ids_failed =[]
         for subject in subjects:
-            result = extract_surface_features(subject, output_dir=hippo_dir, verbose=verbose)
+            result = extract_surface_features(subject, output_dir=hippo_dir, modality=modality, verbose=verbose)
             if result == False:
                 subject_ids_failed.append(subject.id)
     else:
         #launch segmentation and feature extraction for each subject one after another
-        print(get_m(f'No parallelisation. Run subjects one after another', None, 'INFO')) 
+        print(get_m(f'No parallelisation. Run subjects one after another', None, 'INFO'))
         for subject in subjects:
             result = True
-            #prepare T1
-            print(get_m(f'STEP 2a: Prepare T1 for hippunfold', subject.id, 'INFO'))
-            result = prepare_T1(subject)
+            #prepare inputs
+            print(get_m(f'STEP 2a: Prepare {modality} for hippunfold', subject.id, 'INFO'))
+            result = prepare_modality(subject, modality=modality)
             if result == False:
                 subject_ids_failed.append(subject.id)
                 continue
@@ -252,6 +259,7 @@ def run_pipeline_segmentation(list_ids=None,
             result = run_hippunfold(subject, bids_dir=bids_dir, hippo_dir=hippo_dir, num_procs=num_procs,
                                     delete_intermediate=True, rerun_existing=rerun_existing_hippunfold,
                                     hippunfold_args=hippunfold_args,
+                                    modality=modality,
                                     verbose=verbose)
             if result == False:
                 subject_ids_failed.append(subject.id)
@@ -259,7 +267,7 @@ def run_pipeline_segmentation(list_ids=None,
 
             #extract surface based features
             print(get_m(f'STEP 3: Extract hippocampal surface features', subject.id, 'INFO'))
-            result = extract_surface_features(subject, output_dir=hippo_dir)
+            result = extract_surface_features(subject, output_dir=hippo_dir, modality=modality)
             if result == False:
                 subject_ids_failed.append(subject.id)
                 continue
@@ -317,7 +325,13 @@ if __name__ == "__main__":
                         nargs=argparse.REMAINDER,
                         required=False,
                         )
-    
+    parser.add_argument("-modality", "--modality",
+                        help="MRI contrast to run the pipeline on",
+                        choices=["T1w", "T2w"],
+                        default="T1w",
+                        required=False,
+                        )
+
     args = parser.parse_args()
     print(args)
 
@@ -364,6 +378,7 @@ if __name__ == "__main__":
                 num_procs=args.num_procs,
                 rerun_existing_hippunfold=args.rerun_existing_hippunfold,
                 hippunfold_args=args.hippunfold_args,
+                modality=args.modality,
                 verbose=False,
             )
 

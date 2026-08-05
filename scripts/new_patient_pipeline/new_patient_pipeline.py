@@ -75,13 +75,19 @@ if __name__ == "__main__":
                         action="store_true",
                         help='Skip the segmentation and extraction of the AIDHS features',
                         )
-    parser.add_argument("--debug_mode", 
-                        help="mode to debug error", 
+    parser.add_argument("--debug_mode",
+                        help="mode to debug error",
                         required=False,
                         default=False,
                         action="store_true",
                         )
-    
+    parser.add_argument("-modality", "--modality",
+                        help="MRI contrast to run the pipeline on",
+                        choices=["T1w", "T2w"],
+                        default="T1w",
+                        required=False,
+                        )
+
 
      
     #write terminal output in a log
@@ -126,14 +132,15 @@ if __name__ == "__main__":
         print(get_m(f'Call script segmentation', None, 'SCRIPT 1'))
         result = run_pipeline_segmentation(
                         list_ids=args.list_ids,
-                        sub_id=args.id, 
+                        sub_id=args.id,
                         input_dir= os.path.join(DATA_PATH, 'input'),
                         fs_dir=FS_SUBJECTS_PATH,
                         bids_dir=BIDS_SUBJECTS_PATH,
-                        hippo_dir=HIPPUNFOLD_SUBJECTS_PATH, 
+                        hippo_dir=HIPPUNFOLD_SUBJECTS_PATH,
                         bids_validation=not args.disable_bids_validation,
-                        use_parallel=args.parallelise, 
+                        use_parallel=args.parallelise,
                         num_procs=args.num_procs,
+                        modality=args.modality,
                         verbose=args.debug_mode
                         )
 
@@ -164,6 +171,7 @@ if __name__ == "__main__":
                     sub_id=args.id,
                     harmonisation_only = args.harmo_only,
                     demographic_file_path = args.demographic_file,
+                    modality=args.modality,
                     verbose = args.debug_mode,
                     )
             
@@ -176,7 +184,8 @@ if __name__ == "__main__":
                     list_ids=args.list_ids,
                     sub_id=args.id,
                     verbose = args.debug_mode,
-                    harmo_code=args.harmo_code
+                    harmo_code=args.harmo_code,
+                    modality=args.modality,
                     )
         if result == False:
             print(get_m(f'Prediction and creating report has failed at least for one subject. See log at {file_path}. Consider fixing errors or excluding these subjects before re-running the pipeline. Segmentation will be skipped for subjects already processed', None, 'SCRIPT 3'))    

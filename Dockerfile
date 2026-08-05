@@ -3,9 +3,8 @@
 FROM khanlab/hippunfold:v1.1.0
 USER root
 
-# Remove hippunfold model not used
-RUN rm /opt/hippunfold_cache/trained_model.3d_fullres.Task102_hcp1200_T2w.nnUNetTrainerV2.model_best.tar && \
-	rm /opt/hippunfold_cache/trained_model.3d_fullres.Task110_hcp1200_b1000crop.nnUNetTrainerV2.model_best.tar && \
+# Remove hippunfold models not used (keep the T2w model to support --modality T2w)
+RUN rm /opt/hippunfold_cache/trained_model.3d_fullres.Task110_hcp1200_b1000crop.nnUNetTrainerV2.model_best.tar && \
 	rm /opt/hippunfold_cache/trained_model.3d_fullres.Task205_hcp1200_b1000_finetuneround2_dhcp_T1w.nnUNetTrainerV2.model_best.tar
 
 # Update OS and install prerequisite

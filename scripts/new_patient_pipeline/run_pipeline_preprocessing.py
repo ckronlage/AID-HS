@@ -54,7 +54,7 @@ def check_demographic_file(demographic_file, subject_ids):
 
 
 
-def run_data_processing_new_subjects(subject_ids, harmo_code, output_dir=BASE_PATH, compute_harmonisation=False, harmonisation_only=False, demographic_file_path=None):
+def run_data_processing_new_subjects(subject_ids, harmo_code, output_dir=BASE_PATH, compute_harmonisation=False, harmonisation_only=False, demographic_file_path=None, modality='T1w'):
 
     # initialise surface_features and smoothing kernel
     surface_features = {
@@ -129,7 +129,7 @@ def run_data_processing_new_subjects(subject_ids, harmo_code, output_dir=BASE_PA
     for feature in base_features:
         print(feature)
         if 'volume' in feature:
-            avg.extract_volumes_avg(feature)
+            avg.extract_volumes_avg(feature, modality=modality)
         else:
             avg.compute_avg_feature(feature)
 
@@ -241,7 +241,7 @@ def run_data_processing_new_subjects(subject_ids, harmo_code, output_dir=BASE_PA
 
     print(time.asctime(time.localtime(time.time())))
 
-def run_pipeline_preprocessing(harmo_code, list_ids=None, sub_id=None, output_dir=BASE_PATH,  harmonisation_only=False, demographic_file_path=None, verbose=False):
+def run_pipeline_preprocessing(harmo_code, list_ids=None, sub_id=None, output_dir=BASE_PATH,  harmonisation_only=False, demographic_file_path=None, modality='T1w', verbose=False):
     harmo_code = str(harmo_code)
     subject_ids=None
     if list_ids != None:
@@ -282,12 +282,13 @@ def run_pipeline_preprocessing(harmo_code, list_ids=None, sub_id=None, output_di
         compute_harmonisation = False
         combat_params_file = None
     #compute the combat parameters for a new harmo
-    run_data_processing_new_subjects(subject_ids, 
-                                     harmo_code=harmo_code, 
-                                     output_dir=output_dir, 
+    run_data_processing_new_subjects(subject_ids,
+                                     harmo_code=harmo_code,
+                                     output_dir=output_dir,
                                      compute_harmonisation = compute_harmonisation,
                                      demographic_file_path=demographic_file_path,
-                                     harmonisation_only=harmonisation_only)
+                                     harmonisation_only=harmonisation_only,
+                                     modality=modality)
 
 if __name__ == '__main__':
 
@@ -321,14 +322,19 @@ if __name__ == '__main__':
                         required=False,
                         default=False,
                         )
-    parser.add_argument("--debug_mode", 
-                        help="mode to debug error", 
+    parser.add_argument("--debug_mode",
+                        help="mode to debug error",
                         required=False,
                         default=False,
                         action="store_true",
                         )
+    parser.add_argument("-modality", "--modality",
+                        help="MRI contrast to run the pipeline on",
+                        choices=["T1w", "T2w"],
+                        default="T1w",
+                        required=False,
+                        )
 
-    
     args = parser.parse_args()
     print(args)
     
@@ -359,6 +365,7 @@ if __name__ == '__main__':
                     sub_id=args.id,
                     harmonisation_only = args.harmo_only,
                     demographic_file_path = args.demographic_file,
+                    modality = args.modality,
                     verbose = args.debug_mode,
                     )
 

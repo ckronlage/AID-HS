@@ -17,13 +17,14 @@ def check_FS_outputs(folder):
     else:
         return True
 
-def run_hippunfold_parallel(subjects, 
-                            bids_dir=None, 
-                            hippo_dir=None, 
-                            num_procs=10, 
-                            delete_intermediate=False, 
-                            rerun_existing=False, 
+def run_hippunfold_parallel(subjects,
+                            bids_dir=None,
+                            hippo_dir=None,
+                            num_procs=10,
+                            delete_intermediate=False,
+                            rerun_existing=False,
                             hippunfold_args=None,
+                            modality='T1w',
                             verbose=False):
     # parallel version of Hippunfold
 
@@ -55,7 +56,7 @@ def run_hippunfold_parallel(subjects,
     if subjects_to_run!=[]:
         print(get_m(f'Start Hippunfold segmentation in parallel for {subjects_to_run}', None, 'INFO'))
         subjects_to_run_shortformat = [subject_id.split('sub-')[-1] for subject_id in subjects_to_run]
-        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {' '.join(subjects_to_run_shortformat)} --core {num_procs} --modality T1w")
+        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {' '.join(subjects_to_run_shortformat)} --core {num_procs} --modality {modality}")
         if rerun_existing:
             command += ' --rerun-incomplete'
         if hippunfold_args is not None:
@@ -83,7 +84,7 @@ def run_hippunfold_parallel(subjects,
 
 def run_hippunfold(subject, bids_dir=None, hippo_dir=None, num_procs=1,
                    delete_intermediate=False, rerun_existing=False, hippunfold_args=None,
-                   verbose=False):
+                   modality='T1w', verbose=False):
 
     hippo_s = subject.hippo_dir
     subject_bids_id = subject.bids_id
@@ -101,7 +102,7 @@ def run_hippunfold(subject, bids_dir=None, hippo_dir=None, num_procs=1,
     files_surf=[]
     if files_surf==[] or rerun_existing:
         print(get_m(f'Start Hippunfold segmentation', subject_id, 'INFO'))
-        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {subject_id.split('sub-')[-1]} --core {num_procs} --modality T1w")
+        command =  format(f"hippunfold {bids_dir} {hippo_dir} participant --participant-label {subject_id.split('sub-')[-1]} --core {num_procs} --modality {modality}")
         if rerun_existing:
             command += ' --rerun-incomplete'
         if hippunfold_args is not None:
